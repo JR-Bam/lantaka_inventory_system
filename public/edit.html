@@ -7,7 +7,8 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #ADD8E6;
+            background: url('/images/bg_pic.png') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -60,20 +61,25 @@
 <div class="edit-container">
     <a href="inventory.html" class="btn btn-secondary back-btn">Back</a>
     <h2>Edit Product</h2>
-    <form action="..." method="post"> 
+    <form method="post"> 
         <input type="hidden" name="I_ID" value="<?php echo $I_ID; ?>">
 
+        <!-- Product Name (read-only) -->
         <div class="form-group">
             <label for="Product">Product Name:</label>
-            <input type="text" class="form-control" id="I_Product" name="I_Product" value="<?php echo $product_name; ?>" required>
+            <input type="text" class="form-control" id="I_Product" name="I_Product" value="" readonly>
         </div>
+
+        <!-- Quantity (editable) -->
         <div class="form-group">
             <label for="Quantity">Quantity:</label>
-            <input type="number" class="form-control" id="I_Quantity" name="I_Quantity" value="<?php echo $product_quantity; ?>" required>
+            <input type="number" class="form-control" id="I_Quantity" name="I_Quantity" value="" required>
         </div>
+
+        <!-- Location (editable) -->
         <div class="form-group">
-            <label for="Price">Price:</label>
-            <input type="number" step="0.01" class="form-control" id="I_Price" name="I_Price" value="<?php echo $product_price; ?>" required>
+            <label for="I_Location">Located at:</label>
+            <input type="text" class="form-control" id="I_Location" name="I_Location" value="" required>
         </div>
 
         <button type="submit" class="btn btn-success btn-block">Update Product</button>
