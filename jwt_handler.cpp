@@ -2,8 +2,8 @@
 #include "jwt-cpp/jwt.h"
 #include <chrono>
 
-const std::string jwt_handler::secretKey = "lantaka-IMS-RESTAPI";
-const std::string jwt_handler::issuer = ":333333";
+const std::string jwt_handler::secretKey = ":33333"; // Ideally this'll be stored somewhere secret (malamang)
+const std::string jwt_handler::issuer = "lantaka-IMS-RESTAPI";
 
 std::string jwt_handler::create_token(std::string username)
 {
