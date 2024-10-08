@@ -1,5 +1,5 @@
 // lantaka_inventory_system.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// !!!!!! Run in Release MODE !!!!!!
 
 #include <iostream>
 #include "json.hpp"
