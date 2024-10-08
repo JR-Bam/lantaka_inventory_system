@@ -4,6 +4,7 @@
 #include <iostream>
 #include "json.hpp"
 #include "httplib.h"
+#include "jwt-cpp/jwt.h"
 
 using namespace httplib;
 using json = nlohmann::json;
@@ -42,9 +43,20 @@ void verifyAccount(const Request& req, Response& res) {
     }
 }
 
+void testJWT() {
+    std::string token = jwt::create()
+        .set_issuer("lantaka-IMS-RESTAPI")
+        .set_type("JWT")
+        .set_payload_claim("username", jwt::claim(std::string("admin")))
+        .sign(jwt::algorithm::hs256{"secret-key"});
+
+    std::cout << "Generated JWT: " << token << std::endl;
+}
+
 int main()
 {
     Server svr;
+    testJWT();
 
     // For HTML Files
     svr.set_mount_point("/", "./public");
