@@ -1,5 +1,16 @@
 #pragma once
 #include <string>
+
+struct TokenResponse {
+	bool valid;
+	std::string username;
+
+	TokenResponse(bool valid)
+		: valid{ valid }, username{""} {}
+	TokenResponse(bool valid, std::string username) 
+		: valid{ valid }, username{ username } {}
+};
+
 class jwt_handler
 {
 private:
@@ -7,8 +18,7 @@ private:
 	static const std::string issuer;
 public:
 	static std::string create_token(std::string);
-	static bool isValidToken(std::string);
-	static std::string getUsername(std::string);
+	static TokenResponse validate_token(std::string);
 
 };
 

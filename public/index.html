@@ -114,25 +114,46 @@
         formData.forEach((value, key) => { jsonData[key] = value });
         
         // Send the JSON data via POST
-        fetch('/api/verify', {
+        fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(jsonData)
-        }).then(response => response.json())
-            .then(data => {
-                const status = data.status;
+        })
+        .then(response => response.json())
+        .then(data => {
+            const status = data.status;
 
-                if (status == "error"){
-                    const errorType = data.errorType;
-                    errorDiv.classList.remove("d-none"); // Make error div visible
-                    errorDiv.innerHTML = "Error: " + errorType;
-                } else {
-                    window.location.href = "inventory.html";
-                }
+            if (status == "error"){
+                const errorType = data.errorType;
+                errorDiv.classList.remove("d-none"); // Make error div visible
+                errorDiv.innerHTML = "Error: " + errorType;
+            } else {
+                const token = data.token;
+                localStorage.setItem("Lantaka-IMS-Sess-Token", token);
+                window.location.href = "/home";
+            }
 
-            })
-            .catch(error => console.error('Error:', error));
+        })
+        .catch(
+            error => console.error('Error:', error)
+        );
     });
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+        // Create a URLSearchParams object from the current URL
+        const params = new URLSearchParams(window.location.search);
+
+        // Get the 'status' parameter
+        const status = params.get('status');
+
+        // Check if the parameter exists and do something with it
+        if (status) {
+            errorDiv.classList.remove("d-none"); // Make error div visible
+            errorDiv.innerHTML = "Error: " + status;
+        }
+
+    });
+
 </script>

@@ -106,7 +106,7 @@
         }
     </style>
 </head>
-<body>
+<body class="d-none">
 <div class="signup-container">
     <h2 class="text-center">Inventory</h2>
 
@@ -138,7 +138,7 @@
             </button>
         </div>
 
-        <button type="button" class="btn btn-danger btn-lg" onclick="document.location='/'">Logout</button>      
+        <button type="button" class="btn btn-danger btn-lg" onclick="logout()">Logout</button>      
     </div>
 
     <div class="table-container">
@@ -245,6 +245,39 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+function logout(){
+    localStorage.removeItem("Lantaka-IMS-Sess-Token");
+    document.location.href = '/';
+}
+
+const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
+if (!token){
+    window.location.href = "/?status=UNAUTHORIZED_ACCESS";
+} else {
+    fetch('/api/validate-token', {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        if (!response.ok){
+            localStorage.removeItem("Lantaka-IMS-Sess-Token");
+            window.location.href = "/?status=UNAUTHORIZED_ACCESS";
+        }
+        return response.text();
+    })
+    .then(data => {
+        document.body.classList.remove("d-none");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
+    });
+}
+
 </script>
 
 </body>
