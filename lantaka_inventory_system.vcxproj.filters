@@ -18,9 +18,13 @@
     <ClCompile Include="lantaka_inventory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="jwt_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="dependencies\bin\libcrypto-3-x64.dll" />
-    <CopyFileToFolders Include="dependencies\bin\libcrypto-3-x64.pdb" />
+    <ClInclude Include="jwt_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

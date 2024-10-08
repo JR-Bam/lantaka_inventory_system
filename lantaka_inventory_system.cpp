@@ -1,10 +1,11 @@
 // lantaka_inventory_system.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // !!!!!! Run in Release MODE !!!!!!
 
+#include "jwt_handler.h"
+
 #include <iostream>
 #include "json.hpp"
 #include "httplib.h"
-#include "jwt-cpp/jwt.h"
 
 using namespace httplib;
 using json = nlohmann::json;
@@ -44,13 +45,14 @@ void verifyAccount(const Request& req, Response& res) {
 }
 
 void testJWT() {
-    std::string token = jwt::create()
-        .set_issuer("lantaka-IMS-RESTAPI")
-        .set_type("JWT")
-        .set_payload_claim("username", jwt::claim(std::string("admin")))
-        .sign(jwt::algorithm::hs256{"secret-key"});
-
-    std::cout << "Generated JWT: " << token << std::endl;
+    std::string token = jwt_handler::create_token("admin");
+    
+    if (jwt_handler::isValidToken(token)) {
+        std::cout << "Token: " << token << std::endl;
+        std::cout << "Username: " << jwt_handler::getUsername(token) << std::endl;
+    } else {
+        std::cout << "Not valid token\n";
+    }
 }
 
 int main()
