@@ -126,9 +126,9 @@
             const status = data.status;
 
             if (status == "error"){
-                const errorType = data.errorType;
+                const message = data.message;
                 errorDiv.classList.remove("d-none"); // Make error div visible
-                errorDiv.innerHTML = "Error: " + errorType;
+                errorDiv.innerHTML = "Error: " + message;
             } else {
                 const token = data.token;
                 localStorage.setItem("Lantaka-IMS-Sess-Token", token);

@@ -1,5 +1,5 @@
-#include "jwt_handler.h"
 #include "jwt-cpp/jwt.h"
+#include "jwt_handler.h"
 #include <chrono>
 
 const std::string jwt_handler::secretKey = ":33333"; // Ideally this'll be stored somewhere secret (malamang)
@@ -11,7 +11,7 @@ std::string jwt_handler::create_token(std::string username)
         .set_issuer(jwt_handler::issuer)
         .set_type("JWT")
         .set_issued_at(std::chrono::system_clock::now())
-        .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(12))
+        .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(3)) // JWT Token Expires at 3 hours after creation
         .set_payload_claim("username", jwt::claim(std::string(username)))
         .sign(jwt::algorithm::hs256{ secretKey });
 }
@@ -28,10 +28,14 @@ TokenResponse jwt_handler::validate_token(std::string token)
         verifier.verify(decoded);
 
         return TokenResponse(
-            true, 
+            Token::Valid, 
             decoded.get_payload_claim("username").as_string()
         );
-	} catch (const std::exception&) {
-        return TokenResponse(false);
-	}
+	} catch (const jwt::token_verification_exception&) {
+        return TokenResponse(Token::Expired);
+	} catch (const std::invalid_argument&) {
+        return TokenResponse(Token::Malformed);
+    } catch (...) {
+        return TokenResponse(Token::Unhandled);
+    }
 }

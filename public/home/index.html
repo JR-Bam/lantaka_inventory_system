@@ -253,7 +253,7 @@ function logout(){
 
 const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
 if (!token){
-    window.location.href = "/?status=UNAUTHORIZED_ACCESS";
+    window.location.href = "/?status=Please Log In First";
 } else {
     fetch('/api/validate-token', {
         method: "GET",
@@ -265,11 +265,12 @@ if (!token){
     .then(response => {
         if (!response.ok){
             localStorage.removeItem("Lantaka-IMS-Sess-Token");
-            window.location.href = "/?status=UNAUTHORIZED_ACCESS";
+            window.location.href = "/?status=Session Expired. Login Again.";
         }
-        return response.text();
+        return response.json();
     })
     .then(data => {
+        console.log(data);
         document.body.classList.remove("d-none");
     })
     .catch(error => {

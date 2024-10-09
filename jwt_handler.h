@@ -1,14 +1,22 @@
 #pragma once
 #include <string>
 
+namespace Token {
+	enum Status {
+		Valid,
+		Expired,
+		Malformed,
+		Unhandled
+	};
+}
+
+
 struct TokenResponse {
-	bool valid;
+	Token::Status status;
 	std::string username;
 
-	TokenResponse(bool valid)
-		: valid{ valid }, username{""} {}
-	TokenResponse(bool valid, std::string username) 
-		: valid{ valid }, username{ username } {}
+	TokenResponse(Token::Status status, std::string username = "") 
+		: status{ status }, username{ username } {}
 };
 
 class jwt_handler
