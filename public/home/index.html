@@ -106,7 +106,7 @@
         }
     </style>
 </head>
-<body class="d-none">
+<body class="">
 <div class="signup-container">
     <h2 class="text-center">Inventory</h2>
 
@@ -250,6 +250,7 @@ function logout(){
     localStorage.removeItem("Lantaka-IMS-Sess-Token");
     document.location.href = '/';
 }
+
 
 const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
 if (!token){

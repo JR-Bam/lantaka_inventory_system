@@ -7,6 +7,10 @@
 
 #include <iostream>
 
+void hello(const Request& req, Response& res) {
+    res.set_content("Hello, World!", "text/plain");
+}
+
 int main()
 {
     Server svr;
@@ -20,6 +24,7 @@ int main()
     // Routes
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
+    svr.Get("/hello-world", &hello);
 
     std::cout << "Starting server..." << std::endl;
     svr.listen("localhost", 8080);

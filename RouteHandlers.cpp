@@ -1,4 +1,5 @@
 #include "RouteHandlers.h"
+#include "jwt_handler.h"
 
 static const std::string dummyUsername = "admin";
 static const std::string dummyPassword = "password";

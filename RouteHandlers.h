@@ -1,5 +1,4 @@
 #pragma once
-#include "jwt_handler.h"
 
 #include "httplib.h"
 #include "json.hpp"
