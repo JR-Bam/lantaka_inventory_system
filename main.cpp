@@ -6,7 +6,8 @@
 #include "RouteHandlers.h"
 
 #include <iostream>
-#include "mysqlx/xdevapi.h"
+#include "mysqlx/xdevapi.h"     // Library for MYSQLX 
+#include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
 
 void hello(const Request& req, Response& res) {
     res.set_content("Hello, World!", "text/plain");

@@ -36,6 +36,7 @@
   <ItemGroup>
     <CopyFileToFolders Include="dependencies\bin\libssl-3-x64.dll" />
     <CopyFileToFolders Include="dependencies\bin\libcrypto-3-x64.dll" />
+    <CopyFileToFolders Include="dependencies\bin\mysqlcppconn-10-vs14.dll" />
     <CopyFileToFolders Include="dependencies\bin\mysqlcppconnx-2-vs14.dll" />
   </ItemGroup>
 </Project>
