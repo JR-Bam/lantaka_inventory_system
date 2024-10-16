@@ -46,6 +46,8 @@ Open the project in Visual Studio 2022, then build and run in **Release** mode.
 - [JDBC MySQL Driver](https://dev.mysql.com/doc/x-devapi-userguide/en/) - `#include "mysql/jdbc.h" `
 
 
+> [!NOTE]
+> [`server_shutdown.exe`](https://github.com/JR-Bam/lantaka_inventory_system/blob/master/server_shutdown.exe) is the one you need to run to turn off the server. It's a program I made that simply calls an HTTP GET request onto our server to shut it down, the source code is not included in this project so hit me up if you want to see it. So the main flow of running and building it is to do the aforementioned steps and if you want to shut down the server either do it in Visual Studio or run the exe file.
 
 ## MySQL JDBC Mini Walkthrough
 
