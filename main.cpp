@@ -5,49 +5,27 @@
 
 #include "RouteHandlers.h"
 
+#include <thread>
+#include <chrono>
 #include <iostream>
-#include "mysqlx/xdevapi.h"     // Library for MYSQLX 
+#include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
 #include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
 
 void hello(const Request& req, Response& res) {
     res.set_content("Hello, World!", "text/plain");
 }
 
-
-// Testing out the mysql library. This is just to print all the databases within my mysql server
-void testMySQL() {
-    using namespace mysqlx;
-    try
-    {
-        Session sesh(
-            SessionOption::HOST, "127.0.0.1",
-            SessionOption::PORT, 33060,
-            SessionOption::USER, "app",
-            SessionOption::PWD, ""
-        ); // Change these to fit your own mysql server
-
-        for (auto schema : sesh.getSchemas()) {
-            std::cout << "Database name: " << schema.getName() << std::endl;
-        }
-
-        sesh.close();
-    }
-    catch (const mysqlx::Error& err) {
-        std::cerr << "Error: " << err.what() << '\n';
-        exit(1);
-    }
-    catch (const std::exception& e) {
-        std::cerr << e.what() << '\n';
-        exit(1);
-    }
-
+void shutdown_server(Server& svr) {
+    // Wait for 3 seconds before stopping
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    svr.stop();
+    // TODO: Log into file that server has stopped with timestamp
+    std::cout << "Server offline...\n";
 }
 
 int main()
 {
     Server svr;
-
-    testMySQL();
 
     // For HTML Files
     svr.set_mount_point("/", "./public");
@@ -55,12 +33,19 @@ int main()
     // For the images
     svr.set_mount_point("/images", "./assets");
 
-    // Routes
+    // Endpoints
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/hello-world", &hello);
+    svr.Get("/shutdown", [&svr](const Request& req, Response& res) {
+        res.set_content("Server is shutting down in 3 seconds...", "text/plain");
+        // Start the shutdown in a detached thread to avoid blocking the response
+        std::thread shutdown_thread(shutdown_server, std::ref(svr));
+        shutdown_thread.detach();
+    });
 
     std::cout << "Starting server..." << std::endl;
+    // TODO: Log into file the time in which server as started
     svr.listen("localhost", 8080);
 
     return 0;

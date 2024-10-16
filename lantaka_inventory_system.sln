@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lantaka_inventory_system", "lantaka_inventory_system.vcxproj", "{A20E6910-5C7D-43E2-9A2A-59A0DAF4C088}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server_shutdown", "..\server_shutdown\server_shutdown.vcxproj", "{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{A20E6910-5C7D-43E2-9A2A-59A0DAF4C088}.Release|x64.Build.0 = Release|x64
 		{A20E6910-5C7D-43E2-9A2A-59A0DAF4C088}.Release|x86.ActiveCfg = Release|Win32
 		{A20E6910-5C7D-43E2-9A2A-59A0DAF4C088}.Release|x86.Build.0 = Release|Win32
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Debug|x64.ActiveCfg = Debug|x64
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Debug|x64.Build.0 = Debug|x64
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Debug|x86.ActiveCfg = Debug|Win32
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Debug|x86.Build.0 = Debug|Win32
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Release|x64.ActiveCfg = Release|x64
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Release|x64.Build.0 = Release|x64
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Release|x86.ActiveCfg = Release|Win32
+		{4C82FD9A-4152-4E7A-9421-12EEC8BD4EFC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
