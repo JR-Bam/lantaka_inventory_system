@@ -34,6 +34,7 @@ int main()
     svr.set_mount_point("/images", "./assets");
 
     // Endpoints
+    svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/hello-world", &hello);

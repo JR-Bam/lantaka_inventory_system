@@ -2,6 +2,8 @@
 
 #include "httplib.h"
 #include "json.hpp"
+#include <mysql/jdbc.h>
+#include <string>
 
 
 using namespace httplib;
@@ -14,9 +16,16 @@ private:
 	static void handle_success_verifyAcc(Response& res, std::string& username);
 	static void handle_unauthorized(Response& res, std::string message);
 	static void handle_bad_request(Response& res, std::string message);
+	
+	static void handle_success_insert(Response& res, const std::string& message);
+	static void handle_error_insert(Response& res, const std::string& message, int status_code);
+	static sql::Connection* connectDB();
+
 public:
 	static void verifyAccount(const Request& req, Response& res);
 	static void authSession(const Request& req, Response& res);
+
+	static void addEquipment(const Request& req, Response& res);
 };
 
 
