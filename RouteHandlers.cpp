@@ -63,14 +63,14 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
             !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
             !req_json.contains("Unit") || !req_json.contains("Location") ||
             !req_json.contains("Storage")) {
-            handle_error_insert(res, "Missing required fields", 400);
+            handle_error_insert(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
 
         // Connect to the database
         sql::Connection* con = connectDB();
         if (!con) {
-            handle_error_insert(res, "Database connection failed", 500);
+            handle_error_insert(res, "Database connection failed", StatusCode::InternalServerError_500);
             return;
         }
 
@@ -95,7 +95,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         delete con;
     }
     catch (const std::exception& e) {
-        handle_error_insert(res, std::string("Error occurred: ") + e.what(), 500);
+        handle_error_insert(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
 
@@ -129,7 +129,7 @@ void RouteHandlers::handle_success_authSess(Response& res, std::string& username
         {"username", username}
     };
     res.set_content(response_json.dump(), "application/json");
-    res.status = 200; // HTTP 200 OK
+    res.status = StatusCode::OK_200; // HTTP 200 OK
 }
 
 void RouteHandlers::handle_success_verifyAcc(Response& res, std::string& username)
@@ -139,7 +139,7 @@ void RouteHandlers::handle_success_verifyAcc(Response& res, std::string& usernam
         {"token", jwt_handler::create_token(username)}
     };
     res.set_content(response_json.dump(), "application/json");
-    res.status = 200; // HTTP 200 OK
+    res.status = StatusCode::OK_200; // HTTP 200 OK
 }
 
 void RouteHandlers::handle_unauthorized(Response& res, std::string message)
@@ -150,7 +150,7 @@ void RouteHandlers::handle_unauthorized(Response& res, std::string message)
         {"message", message}
     };
     res.set_content(response_json.dump(), "application/json");
-    res.status = 401; // HTTP 401 Unauthorized
+    res.status = StatusCode::Unauthorized_401; // HTTP 401 Unauthorized
 }
 
 void RouteHandlers::handle_bad_request(Response& res, std::string message)
@@ -162,7 +162,7 @@ void RouteHandlers::handle_bad_request(Response& res, std::string message)
     };
 
     res.set_content(response_json.dump(), "application/json");
-    res.status = 400;  // HTTP 400 Bad Request
+    res.status = StatusCode::BadRequest_400;  // HTTP 400 Bad Request
 }
 
 
@@ -174,7 +174,7 @@ void RouteHandlers::handle_success_insert(Response& res, const std::string& mess
         {"message", message}
     };
     res.set_content(response_json.dump(), "application/json");
-    res.status = 200; // HTTP 200 OK
+    res.status = StatusCode::OK_200; // HTTP 200 OK
 }
 
 void RouteHandlers::handle_error_insert(Response& res, const std::string& message, int status_code) {
@@ -191,6 +191,7 @@ sql::Connection* RouteHandlers::connectDB() {
     sql::Connection* con;
 
     try {
+        // Set the username, password, and dbname on RouteHandlers.h
         driver = sql::mysql::get_mysql_driver_instance();
         con = driver->connect("mysql://127.0.0.1:3306", SQLConsts::username, SQLConsts::password);
         con->setSchema(SQLConsts::dbName);

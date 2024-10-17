@@ -29,7 +29,7 @@
                 gap: 10px;
             }
             .signup-container {
-                max-width: 1400px;
+                max-width: 1300px;
                 width: 100%;
                 background-color: #ffffff;
                 padding: 2rem;
@@ -100,11 +100,19 @@
             .table thead th {
                 border-bottom: 2px solid #dee2e6;
             }
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+            .pagination .btn {
+                margin: 0 5px;
+            }
         </style>
     </head>
     <body>
     <div class="signup-container">
-        <h2 class="text-center">House Keeping Inventory</h2>
+        <h2 class="text-center" style="font-weight: bold; font-size: 50px">House Keeping Inventory</h2>
     
         <!-- <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-success">
@@ -125,7 +133,7 @@
         <?php endif; ?> -->
     
         <div class="button-container">
-            <button type="button" class="btn btn-success btn-lg" onclick="document.location='/add-product'">Add Product</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">Add Product</button>
     
             <div class="search-bar">
                 <input id="search-input" type="search" class="form-control" placeholder="Search for a product"/>
@@ -144,16 +152,25 @@
                         <th scope="col" class="active">ID</th>
                         <th scope="col" class="active">Item Description</th>
                         <th scope="col" class="active">Serial No.</th>
-                        <th scope="col" class="active">Units</th>
-                        <th scope="col" class="active">Located at</th>
-                        <th scope="col" class="active"></th>
-                        <th scope="col" class="active"></th>
+                        <th scope="col" class="active">Quantity</th>
+                        <th scope="col" class="active">Location</th>
+                        <th scope="col" class="active">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="rows">
 
                 </tbody>
             </table>  
+        </div>
+
+        <div class="pagination">
+ 
+            <a class="btn btn-primary">Previous</a>
+        
+            <a class="btn btn-secondary">1</a>
+            <a class="btn btn-secondary">2</a>
+        
+            <a class="btn btn-primary">Next</a>
         </div>
     </div>
     
@@ -166,6 +183,57 @@
                 <input type="hidden" id="deleteProductId" name="I_ID" value="">
                 <button type="submit" name="delete" class="btn btn-danger">Yes</button>
                 <button type="button" class="btn btn-light" onclick="closeModal()">No</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddProductModal()">&times;</span>
+            <h3>Add New Product</h3>
+            <form method="POST">
+                <input type="hidden" name="add_product" value="1">
+
+                <!-- Product Name Input -->
+                <div class="form-group">
+                    <label for="I_Product">Product Name</label>
+                    <input type="text" id="I_Product" name="I_Product" class="form-control" required>
+                </div>
+
+                <!-- Quantity Input -->
+                <div class="form-group">
+                    <label for="I_Quantity">Quantity</label>
+                    <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                </div>
+
+                <!-- Serial Number Input -->
+                <div class="form-group">
+                    <label for="I_SN">Serial Number</label>
+                    <input type="text" id="I_SN" name="I_SN" class="form-control">
+                </div>
+
+                <!-- Unit Input -->
+                <div class="form-group">
+                    <label for="I_Unit">Unit</label>
+                    <select id="I_Unit" name="I_Unit" class="form-control" required>
+                        <option value="" disabled selected>Select Unit</option>
+                        <option value="pieces">Pieces</option>
+                        <option value="kg">Kg</option>
+                        <option value="litre">Litre</option>
+                        <option value="meter">Meter</option>
+                        <option value="feet">Feet</option>
+                        <option value="inches">Inches</option>
+                    </select>
+                </div>
+
+                <!-- Location Input -->
+                <div class="form-group">
+                    <label for="I_Location">Location</label>
+                    <input type="text" id="I_Location" name="I_Location" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Add Product</button>
             </form>
         </div>
     </div>
@@ -244,6 +312,17 @@
 
     // Implement search functionality
     document.getElementById('search-button').onclick = function() {
+        performSearch();
+    };
+
+    document.getElementById('search-input').addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent form submission
+            performSearch(); // Trigger search function
+        }
+    });
+
+    function performSearch() {
         let input = document.getElementById('search-input').value.toLowerCase();
         let tableRows = document.querySelectorAll('.table tbody tr');
 
@@ -252,7 +331,24 @@
             let rowContainsInput = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(input));
             row.style.display = rowContainsInput ? '' : 'none';
         });
-    };
+    }
+
+    // open the modal
+    function openAddProductModal() {
+        document.getElementById('addProductModal').style.display = 'block';
+    }
+
+    // close the modal
+    function closeAddProductModal() {
+        document.getElementById('addProductModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('addProductModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
 
     function appendRow(id, productName, serialNum, quantity, unit, location){
         if (!serialNum){
@@ -268,8 +364,6 @@
             <td> ${location} </td>
             <td>
                 <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit}')">Edit</button>
-            </td>
-            <td>
                 <button type="button" class="btn btn-danger" onclick="openModal(${id})">Delete</button>
             </td>
         </tr>
