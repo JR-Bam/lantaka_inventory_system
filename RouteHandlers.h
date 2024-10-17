@@ -9,6 +9,12 @@
 using namespace httplib;
 using json = nlohmann::json;
 
+namespace SQLConsts {
+	const std::string username = "root";
+	const std::string password = "";
+	const std::string dbName = "db";
+}
+
 class RouteHandlers
 {
 private:

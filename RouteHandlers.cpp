@@ -53,6 +53,52 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
+void RouteHandlers::addEquipment(const Request& req, Response& res) {
+    json req_json;
+    try {
+        req_json = json::parse(req.body);
+
+        // Validate required fields
+        if (!req_json.contains("ID") || !req_json.contains("Product_Name") ||
+            !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
+            !req_json.contains("Unit") || !req_json.contains("Location") ||
+            !req_json.contains("Storage")) {
+            handle_error_insert(res, "Missing required fields", 400);
+            return;
+        }
+
+        // Connect to the database
+        sql::Connection* con = connectDB();
+        if (!con) {
+            handle_error_insert(res, "Database connection failed", 500);
+            return;
+        }
+
+
+        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO equipment (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+
+        pstmt->setInt(1, req_json["ID"].get<int>());
+        pstmt->setString(2, req_json["Product_Name"].get<std::string>());
+        pstmt->setString(3, req_json["Serial_Number"].get<std::string>());
+        pstmt->setInt(4, req_json["Quantity"].get<int>());
+        pstmt->setString(5, req_json["Unit"].get<std::string>());
+        pstmt->setString(6, req_json["Location"].get<std::string>());
+        pstmt->setString(7, req_json["Storage"].get<std::string>());
+
+        // Execute the statement
+        pstmt->executeUpdate();
+        handle_success_insert(res, "Equipment added successfully");
+
+        // Clean up
+        delete pstmt;
+        delete con;
+    }
+    catch (const std::exception& e) {
+        handle_error_insert(res, std::string("Error occurred: ") + e.what(), 500);
+    }
+}
+
 
 /*
     Right now, this REST API has its JSON responses structured in this way:
@@ -119,52 +165,6 @@ void RouteHandlers::handle_bad_request(Response& res, std::string message)
     res.status = 400;  // HTTP 400 Bad Request
 }
 
-void RouteHandlers::addEquipment(const Request& req, Response& res) {
-    json req_json;
-    try {
-        req_json = json::parse(req.body);
-
-        // Validate required fields
-        if (!req_json.contains("ID") || !req_json.contains("Product_Name") ||
-            !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
-            !req_json.contains("Unit") || !req_json.contains("Location") ||
-            !req_json.contains("Storage")) {
-            handle_error_insert(res, "Missing required fields", 400);
-            return;
-        }
-
-        // Connect to the database
-        sql::Connection* con = connectDB();
-        if (!con) {
-            handle_error_insert(res, "Database connection failed", 500);
-            return;
-        }
-
-
-        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO equipment (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
-
-       
-        pstmt->setInt(1, req_json["ID"].get<int>());
-        pstmt->setString(2, req_json["Product_Name"].get<std::string>());
-        pstmt->setString(3, req_json["Serial_Number"].get<std::string>());
-        pstmt->setInt(4, req_json["Quantity"].get<int>());
-        pstmt->setString(5, req_json["Unit"].get<std::string>());
-        pstmt->setString(6, req_json["Location"].get<std::string>());
-        pstmt->setString(7, req_json["Storage"].get<std::string>());
-
-        // Execute the statement
-        pstmt->executeUpdate();
-        handle_success_insert(res, "Equipment added successfully");
-
-        // Clean up
-        delete pstmt;
-        delete con;
-    }
-    catch (const std::exception& e) {
-        handle_error_insert(res, std::string("Error occurred: ") + e.what(), 500);
-    }
-}
-
 
 
 
@@ -192,8 +192,8 @@ sql::Connection* RouteHandlers::connectDB() {
 
     try {
         driver = sql::mysql::get_mysql_driver_instance();
-        con = driver->connect("tcp://127.0.0.1:3306", "your_username", "your_password");
-        con->setSchema("your_database_name");
+        con = driver->connect("mysql://127.0.0.1:3306", SQLConsts::username, SQLConsts::password);
+        con->setSchema(SQLConsts::dbName);
     }
     catch (sql::SQLException& e) {
         std::cerr << "Error connecting to the database: " << e.what() << std::endl;
