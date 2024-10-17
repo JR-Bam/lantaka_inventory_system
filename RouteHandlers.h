@@ -25,6 +25,7 @@ private:
 	
 	static void handle_success_insert(Response& res, const std::string& message);
 	static void handle_error_insert(Response& res, const std::string& message, int status_code);
+	static void handle_success_view(Response& res, const std::string& message, int status_code, json jsonArray);
 	static sql::Connection* connectDB();
 
 public:
@@ -32,6 +33,7 @@ public:
 	static void authSession(const Request& req, Response& res);
 
 	static void addEquipment(const Request& req, Response& res);
+	static void viewEquipment(const Request req, Response& res);
 };
 
 

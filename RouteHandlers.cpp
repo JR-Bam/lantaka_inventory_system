@@ -99,6 +99,39 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
     }
 }
 
+void RouteHandlers::viewEquipment(const Request req, Response& res)
+{
+    try {
+        sql::Connection* con = connectDB();
+        if (!con) {
+            handle_error_view(res, "Database connection failed", 500);
+            return;
+        }
+        sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM equipment");
+        sql::ResultSet* result(pstmt->executeQuery());
+
+        json jsonArray = json::array();
+
+        while (result->next()) {
+            json jsonRow;
+            jsonRow["ID"] = result->getInt("ID");
+            jsonRow["Product_Name"] = result->getString("Product_Name");
+            jsonRow["Serial_Number"] = result->getString("Serial_Number");
+            jsonRow["Quantity"] = result->getInt("Quantity");
+            jsonRow["Unit"] = result->getString("Unit");
+            jsonRow["Location"] = result->getString("Location");
+            jsonRow["Storage"] = result->getString("Storage");
+            jsonArray.push_back(jsonRow);
+        }
+        res.set_content(jsonArray.dump(1), "application/json");
+        handle_success_view(res, "success", 200, jsonArray);
+    }
+    catch(const std::exception& e){
+        handle_error_view(res,"query execution error",500);
+    }
+    
+}
+
 
 /*
     Right now, this REST API has its JSON responses structured in this way:
@@ -184,6 +217,26 @@ void RouteHandlers::handle_error_insert(Response& res, const std::string& messag
     };
     res.set_content(response_json.dump(), "application/json");
     res.status = status_code; // Set the provided status code
+}
+
+void RouteHandlers::handle_success_view(Response& res, const std::string& message, int status_code, json jsonArray)
+{
+    json response_json = {
+        {"status", "success"},
+        {"message", message}
+    };
+    res.set_content(response_json.dump(), "application/json");
+    res.status = status_code;
+}
+
+void RouteHandlers::handle_error_view(Response& res, const std::string& message, int status_code)
+{
+    json response_json = {
+        {"status", "error"},
+        {"message", message}
+    };
+    res.set_content(response_json.dump(), "application/json");
+    res.status = status_code;
 }
 
 sql::Connection* RouteHandlers::connectDB() {
