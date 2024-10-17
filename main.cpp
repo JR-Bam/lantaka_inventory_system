@@ -37,6 +37,7 @@ int main()
     svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
+    svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
     svr.Get("/hello-world", &hello);
     svr.Get("/shutdown", [&svr](const Request& req, Response& res) {
         res.set_content("Server is shutting down in 3 seconds...", "text/plain");
