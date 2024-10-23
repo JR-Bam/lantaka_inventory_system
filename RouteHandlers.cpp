@@ -63,26 +63,26 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
             !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
             !req_json.contains("Unit") || !req_json.contains("Location") ||
             !req_json.contains("Storage")) {
-            handle_error_insert(res, "Missing required fields", StatusCode::BadRequest_400);
+            handle_error_sql(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
 
         // Connect to the database
         sql::Connection* con = connectDB();
         if (!con) {
-            handle_error_insert(res, "Database connection failed", StatusCode::InternalServerError_500);
+            handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
             return;
         }
 
 
-        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO equipment (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 
         pstmt->setInt(1, req_json["ID"].get<int>());
         pstmt->setString(2, req_json["Product_Name"].get<std::string>());
         pstmt->setString(3, req_json["Serial_Number"].get<std::string>());
         pstmt->setInt(4, req_json["Quantity"].get<int>());
-        pstmt->setString(5, req_json["Unit"].get<std::string>());
+        pstmt->setString(5, req_json["Unit"].get<std::string>()); // TODO: Make this into UNIT_ID
         pstmt->setString(6, req_json["Location"].get<std::string>());
         pstmt->setString(7, req_json["Storage"].get<std::string>());
 
@@ -95,39 +95,39 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         delete con;
     }
     catch (const std::exception& e) {
-        handle_error_insert(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
+        handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
 
-void RouteHandlers::viewEquipment(const Request req, Response& res)
+void RouteHandlers::viewEquipment(const Request& req, Response& res)
 {
     try {
         sql::Connection* con = connectDB();
         if (!con) {
-            handle_error_view(res, "Database connection failed", 500);
+            handle_error_sql(res, "Database connection failed", 500);
             return;
         }
-        sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM equipment");
+        sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM inventory");
         sql::ResultSet* result(pstmt->executeQuery());
 
         json jsonArray = json::array();
 
         while (result->next()) {
             json jsonRow;
-            jsonRow["ID"] = result->getInt("ID");
-            jsonRow["Product_Name"] = result->getString("Product_Name");
-            jsonRow["Serial_Number"] = result->getString("Serial_Number");
-            jsonRow["Quantity"] = result->getInt("Quantity");
-            jsonRow["Unit"] = result->getString("Unit");
-            jsonRow["Location"] = result->getString("Location");
-            jsonRow["Storage"] = result->getString("Storage");
+            jsonRow["ID"]               = result->getInt(SQLColumn::EQ_ID);
+            jsonRow["Product_Name"]     = result->getString(SQLColumn::EQ_NAME);
+            jsonRow["Serial_Number"]    = result->getString(SQLColumn::EQ_SERIAL_NUM);
+            jsonRow["Quantity"]         = result->getInt(SQLColumn::EQ_QUANTITY);
+            jsonRow["Unit"]             = result->getInt(SQLColumn::EQ_UNIT_ID);
+            jsonRow["Location"]         = result->getString(SQLColumn::EQ_LOCATION);
+            jsonRow["Storage"]          = result->getString(SQLColumn::EQ_STORAGE);
             jsonArray.push_back(jsonRow);
         }
         res.set_content(jsonArray.dump(1), "application/json");
         handle_success_view(res, "success", 200, jsonArray);
     }
     catch(const std::exception& e){
-        handle_error_view(res,"query execution error",500);
+        handle_error_sql(res,std::string("query execution error: ") + e.what(), 500);
     }
     
 }
@@ -210,7 +210,7 @@ void RouteHandlers::handle_success_insert(Response& res, const std::string& mess
     res.status = StatusCode::OK_200; // HTTP 200 OK
 }
 
-void RouteHandlers::handle_error_insert(Response& res, const std::string& message, int status_code) {
+void RouteHandlers::handle_error_sql(Response& res, const std::string& message, int status_code) {
     json response_json = {
         {"status", "error"},
         {"message", message}
@@ -223,17 +223,8 @@ void RouteHandlers::handle_success_view(Response& res, const std::string& messag
 {
     json response_json = {
         {"status", "success"},
-        {"message", message}
-    };
-    res.set_content(response_json.dump(), "application/json");
-    res.status = status_code;
-}
-
-void RouteHandlers::handle_error_view(Response& res, const std::string& message, int status_code)
-{
-    json response_json = {
-        {"status", "error"},
-        {"message", message}
+        {"message", message},
+        {"equipment", jsonArray}
     };
     res.set_content(response_json.dump(), "application/json");
     res.status = status_code;
