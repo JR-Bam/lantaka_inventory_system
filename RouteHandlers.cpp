@@ -53,17 +53,24 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
-void RouteHandlers::addEquipment(const Request& req, Response& res) {
+void RouteHandlers::addEquipment(const Request& req, Response& res) { //working na yehey
     json req_json;
     try {
         req_json = json::parse(req.body);
 
         // Validate required fields
+<<<<<<< Updated upstream
         if (!req_json.contains("ID") || !req_json.contains("Product_Name") ||
             !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
             !req_json.contains("Unit") || !req_json.contains("Location") ||
             !req_json.contains("Storage")) {
             handle_error_insert(res, "Missing required fields", 400);
+=======
+        if (!req_json.contains("I_Product") || !req_json.contains("I_Quantity") ||
+            !req_json.contains("I_SN") || !req_json.contains("UNIT_ID") ||
+            !req_json.contains("I_Location") || !req_json.contains("E_Storage")) {
+            handle_error_sql(res, "Missing required fields", StatusCode::BadRequest_400);
+>>>>>>> Stashed changes
             return;
         }
 
@@ -74,7 +81,10 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
             return;
         }
 
+        // Prepare the SQL statement
+        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, E_Storage) VALUES (?, ?, ?, ?, ?, ?)");
 
+<<<<<<< Updated upstream
         sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO equipment (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 
@@ -85,6 +95,14 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         pstmt->setString(5, req_json["Unit"].get<std::string>());
         pstmt->setString(6, req_json["Location"].get<std::string>());
         pstmt->setString(7, req_json["Storage"].get<std::string>());
+=======
+        pstmt->setString(1, req_json["I_Product"].get<std::string>());
+        pstmt->setString(2, req_json["I_SN"].get<std::string>());
+        pstmt->setInt(3, req_json["I_Quantity"].get<int>());
+        pstmt->setInt(4, req_json["UNIT_ID"].get<int>()); 
+        pstmt->setString(5, req_json["I_Location"].get<std::string>());
+        pstmt->setString(6, req_json["E_Storage"].get<std::string>());
+>>>>>>> Stashed changes
 
         // Execute the statement
         pstmt->executeUpdate();
@@ -99,7 +117,12 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
     }
 }
 
+<<<<<<< Updated upstream
 void RouteHandlers::viewEquipment(const Request req, Response& res)
+=======
+
+void RouteHandlers::viewEquipment(const Request& req, Response& res)
+>>>>>>> Stashed changes
 {
     try {
         sql::Connection* con = connectDB();
