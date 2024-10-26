@@ -192,7 +192,9 @@
         <div class="modal-content">
             <span class="close" onclick="closeAddProductModal()">&times;</span>
             <h3>Add New Product</h3>
-            <form method="POST">
+
+            <form id="addProductForm">
+
                 <input type="hidden" name="add_product" value="1">
 
                 <!-- Product Name Input -->
@@ -233,6 +235,16 @@
                     <input type="text" id="I_Location" name="I_Location" class="form-control" required>
                 </div>
 
+
+                <div class="form-group"> <!-- added by zed-->
+                    <label for="E_Storage">Storage:</label>
+                    <select id="E_Storage" name="E_Storage" class="form-control" required>
+                        <option value="" disabled selected>Select Storage</option>
+                        <option value="Housekeeping">Housekeeping</option>
+                        <option value="Construction">Construction</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-success">Add Product</button>
             </form>
         </div>
@@ -245,17 +257,17 @@
             <h3>Edit Product</h3>
             <form method="post" action="">
                 <input type="hidden" id="editProductId" name="I_ID" value="">
-                
+
                 <div class="form-group">
                     <label for="editProductName">Product Name:</label>
                     <input type="text" class="form-control" id="editProductName" name="I_Product" value="" readonly>
                 </div>
-    
+
                 <div class="form-group">
                     <label for="editQuantity">Quantity:</label>
                     <input type="number" class="form-control" id="editQuantity" name="I_Quantity" value="" required>
                 </div>
-    
+
                 <div class="form-group">
                     <label for="editUnit">Unit:</label>
                     <select class="form-control" id="editUnit" name="I_Unit" required>
@@ -268,12 +280,12 @@
                         <option value="inches">Inches</option>
                     </select>
                 </div>
-    
+
                 <div class="form-group">
                     <label for="editLocation">Located at:</label>
                     <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
                 </div>
-    
+
                 <button type="submit" name="edit" class="btn btn-success">Save Changes</button> <!-- TODO: Add functionality -->
             </form>
         </div>
@@ -310,10 +322,61 @@
         document.getElementById('editModal').style.display = 'none';
     }
 
+    // For communicating with backend for adding equipment (added by zed)
+    document.getElementById('addProductModal').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const unitMapping = { // Since UNIT_ID is int in the DB we map it to its corresponding int
+            "pieces": 1,
+            "kg": 2,
+            "litre": 3,
+            "meter": 4,
+            "feet": 5,
+            "inches": 6
+        };
+
+        const selectedUnit = document.getElementById('I_Unit').value;
+        const unitId = unitMapping[selectedUnit];
+
+        const productData = {
+            I_Product: document.getElementById('I_Product').value,
+            I_SN: document.getElementById('I_SN').value,
+            I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
+            UNIT_ID: unitId,
+            I_Location: document.getElementById('I_Location').value,
+            E_Storage: document.getElementById('E_Storage').value
+        };
+
+        fetch('/api/equipment/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
+            },
+            body: JSON.stringify(productData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Product added successfully");
+                    closeAddProductModal();
+                    location.reload();
+                } else {
+                    alert("Error adding product: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while adding the product.");
+            });
+    });
+
+
     // open the modal
     function openAddProductModal() {
         document.getElementById('addProductModal').style.display = 'block';
     }
+
 
     // close the modal
     function closeAddProductModal() {

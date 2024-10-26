@@ -53,16 +53,16 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
-void RouteHandlers::addEquipment(const Request& req, Response& res) {
+void RouteHandlers::addEquipment(const Request& req, Response& res) { //working na yehey
     json req_json;
     try {
         req_json = json::parse(req.body);
 
         // Validate required fields
-        if (!req_json.contains("ID") || !req_json.contains("Product_Name") ||
-            !req_json.contains("Serial_Number") || !req_json.contains("Quantity") ||
-            !req_json.contains("Unit") || !req_json.contains("Location") ||
-            !req_json.contains("Storage")) {
+
+        if (!req_json.contains("I_Product") || !req_json.contains("I_Quantity") ||
+            !req_json.contains("I_SN") || !req_json.contains("UNIT_ID") ||
+            !req_json.contains("I_Location") || !req_json.contains("E_Storage")) {
             handle_error_sql(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
@@ -74,17 +74,18 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
             return;
         }
 
+        // Prepare the SQL statement
+        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, E_Storage) VALUES (?, ?, ?, ?, ?, ?)");
 
-        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (ID, Product_Name, Serial_Number, Quantity, Unit, Location, Storage) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
+        pstmt->setInt(1, req_json["I_ID"].get<int>());
+        pstmt->setString(1, req_json["I_Product"].get<std::string>());
+        pstmt->setString(2, req_json["I_SN"].get<std::string>());
+        pstmt->setInt(3, req_json["I_Quantity"].get<int>());
+        pstmt->setInt(4, req_json["UNIT_ID"].get<int>()); 
+        pstmt->setString(5, req_json["I_Location"].get<std::string>());
+        pstmt->setString(6, req_json["E_Storage"].get<std::string>());
 
-        pstmt->setInt(1, req_json["ID"].get<int>());
-        pstmt->setString(2, req_json["Product_Name"].get<std::string>());
-        pstmt->setString(3, req_json["Serial_Number"].get<std::string>());
-        pstmt->setInt(4, req_json["Quantity"].get<int>());
-        pstmt->setString(5, req_json["Unit"].get<std::string>()); // TODO: Make this into UNIT_ID
-        pstmt->setString(6, req_json["Location"].get<std::string>());
-        pstmt->setString(7, req_json["Storage"].get<std::string>());
 
         // Execute the statement
         pstmt->executeUpdate();
@@ -98,6 +99,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
+
 
 void RouteHandlers::viewEquipment(const Request& req, Response& res)
 {
@@ -114,6 +116,7 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
 
         while (result->next()) {
             json jsonRow;
+
             jsonRow["ID"]               = result->getInt(SQLColumn::EQ_ID);
             jsonRow["Product_Name"]     = result->getString(SQLColumn::EQ_NAME);
             jsonRow["Serial_Number"]    = result->getString(SQLColumn::EQ_SERIAL_NUM);
