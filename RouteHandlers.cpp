@@ -78,7 +78,6 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) { //working 
         sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, E_Storage) VALUES (?, ?, ?, ?, ?, ?)");
 
 
-        pstmt->setInt(1, req_json["I_ID"].get<int>());
         pstmt->setString(1, req_json["I_Product"].get<std::string>());
         pstmt->setString(2, req_json["I_SN"].get<std::string>());
         pstmt->setInt(3, req_json["I_Quantity"].get<int>());
