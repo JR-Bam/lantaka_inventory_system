@@ -118,9 +118,26 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["Product_Name"]     = result->getString(SQLColumn::EQ_NAME);
             jsonRow["Serial_Number"]    = result->getString(SQLColumn::EQ_SERIAL_NUM);
             jsonRow["Quantity"]         = result->getInt(SQLColumn::EQ_QUANTITY);
-            jsonRow["Unit"]             = result->getInt(SQLColumn::EQ_UNIT_ID);
             jsonRow["Location"]         = result->getString(SQLColumn::EQ_LOCATION);
             jsonRow["Storage"]          = result->getString(SQLColumn::EQ_STORAGE);
+
+            int unit_id = result->getInt(SQLColumn::EQ_UNIT_ID);
+            jsonRow["Unit"]["id"]       = unit_id;
+            if (unit_id != 0){
+                sql::PreparedStatement* unit_query = con->prepareStatement("SELECT * FROM unit WHERE UN_ID = ?");
+                unit_query->setInt(1, unit_id);
+
+                sql::ResultSet* unit_query_result = unit_query->executeQuery();
+                unit_query_result->next();
+
+                jsonRow["Unit"]["name"] = unit_query_result->getString("UN_Name");
+
+                delete unit_query;
+                delete unit_query_result;
+            }
+            else {
+                jsonRow["Unit"]["name"] = nullptr;
+            }
             jsonArray.push_back(jsonRow);
         }
         res.set_content(jsonArray.dump(1), "application/json");
