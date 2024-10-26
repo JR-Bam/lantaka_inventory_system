@@ -28,7 +28,7 @@ int main()
     Server svr;
 
     // For HTML Files
-    svr.set_mount_point("/", "./public");
+    svr.set_mount_point("/", "./public/login");
     svr.set_mount_point("/home", "./public/home");
     // For the images
     svr.set_mount_point("/images", "./assets");

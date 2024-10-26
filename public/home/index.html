@@ -29,7 +29,7 @@
                 gap: 10px;
             }
             .signup-container {
-                max-width: 1400px;
+                max-width: 1300px;
                 width: 100%;
                 background-color: #ffffff;
                 padding: 2rem;
@@ -100,11 +100,19 @@
             .table thead th {
                 border-bottom: 2px solid #dee2e6;
             }
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+            .pagination .btn {
+                margin: 0 5px;
+            }
         </style>
     </head>
     <body>
     <div class="signup-container">
-        <h2 class="text-center">House Keeping Inventory</h2>
+        <h2 class="text-center" style="font-weight: bold; font-size: 50px">House Keeping Inventory</h2>
     
         <!-- <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-success">
@@ -123,9 +131,11 @@
                 ?>
             </div>
         <?php endif; ?> -->
+
+        <div id="error_div"></div>
     
         <div class="button-container">
-            <button type="button" class="btn btn-success btn-lg" onclick="document.location='/add-product'">Add Product</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">Add Product</button>
     
             <div class="search-bar">
                 <input id="search-input" type="search" class="form-control" placeholder="Search for a product"/>
@@ -144,16 +154,23 @@
                         <th scope="col" class="active">ID</th>
                         <th scope="col" class="active">Item Description</th>
                         <th scope="col" class="active">Serial No.</th>
-                        <th scope="col" class="active">Units</th>
-                        <th scope="col" class="active">Located at</th>
-                        <th scope="col" class="active"></th>
-                        <th scope="col" class="active"></th>
+                        <th scope="col" class="active">Quantity</th>
+                        <th scope="col" class="active">Location</th>
+                        <th scope="col" class="active">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="rows">
 
                 </tbody>
             </table>  
+        </div>
+
+        <div id="paginate_nav" class="pagination">
+            <a id="prev" class="btn btn-secondary" onclick="onPrev()">Previous</a>
+    
+            <div id="paginate_nums"></div>
+        
+            <a id="next" class="btn btn-primary" onclick="onNext()">Next</a>
         </div>
     </div>
     
@@ -169,15 +186,15 @@
             </form>
         </div>
     </div>
-<<<<<<< Updated upstream
-=======
 
     <!-- Add Product Modal -->
     <div id="addProductModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddProductModal()">&times;</span>
             <h3>Add New Product</h3>
+
             <form id="addProductForm">
+
                 <input type="hidden" name="add_product" value="1">
 
                 <!-- Product Name Input -->
@@ -218,6 +235,7 @@
                     <input type="text" id="I_Location" name="I_Location" class="form-control" required>
                 </div>
 
+
                 <div class="form-group"> <!-- added by zed-->
                     <label for="E_Storage">Storage:</label>
                     <select id="E_Storage" name="E_Storage" class="form-control" required>
@@ -231,7 +249,6 @@
             </form>
         </div>
     </div>
->>>>>>> Stashed changes
     
     <!-- Edit Modal -->
     <div id="editModal" class="modal">
@@ -305,19 +322,6 @@
         document.getElementById('editModal').style.display = 'none';
     }
 
-    // Implement search functionality
-    document.getElementById('search-button').onclick = function() {
-<<<<<<< Updated upstream
-=======
-        performSearch();
-    };
-
-    document.getElementById('search-input').addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent form submission
-            performSearch(); // Trigger search function
-        }
-    });
     // For communicating with backend for adding equipment (added by zed)
     document.getElementById('addProductModal').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the default form submission
@@ -367,63 +371,63 @@
             });
     });
 
-    function performSearch() {
->>>>>>> Stashed changes
-        let input = document.getElementById('search-input').value.toLowerCase();
-        let tableRows = document.querySelectorAll('.table tbody tr');
 
-        tableRows.forEach(row => {
-            let cells = row.getElementsByTagName('td');
-            let rowContainsInput = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(input));
-            row.style.display = rowContainsInput ? '' : 'none';
-        });
-    };
+    // open the modal
+    function openAddProductModal() {
+        document.getElementById('addProductModal').style.display = 'block';
+    }
 
-    function appendRow(id, productName, serialNum, quantity, unit, location){
-        if (!serialNum){
-            serialNum = "N/A";
+
+    // close the modal
+    function closeAddProductModal() {
+        document.getElementById('addProductModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('addProductModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
         }
+    }
 
+    function alertCard(message){
         return `
-        <tr>
-            <td> ${id} </td> 
-            <td> ${productName} </td>
-            <td> ${serialNum} </td>
-            <td> ${quantity} ${unit} </td>
-            <td> ${location} </td>
-            <td>
-                <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit}')">Edit</button>
-            </td>
-            <td>
-                <button type="button" class="btn btn-danger" onclick="openModal(${id})">Delete</button>
-            </td>
-        </tr>
-        `;
+            <div class="alert alert-danger">
+                ${message}
+            </div>
+        `
     }
 
-    function populateTable(){
+
+    document.addEventListener("DOMContentLoaded", (event) => {
         const table = document.getElementById("rows");
-        table.innerHTML += appendRow(1, "Pillow Case", 0, 274, "pieces", "Sunken");
-        table.innerHTML += appendRow(2, "Old Assorted Foam Cover", 0, 164, "", "Sunken");
-        table.innerHTML += appendRow(3, "Round Table Cloth Big Red", 0, 6, "", "Sunken");
-        table.innerHTML += appendRow(4, "Round Table Cloth Cream", 0, 3, "", "Sunken");
-        table.innerHTML += appendRow(5, "Table Runner Yellow", 0, 19, "", "Sunken");
-        table.innerHTML += appendRow(6, "Table Runner Brown", 0, 37, "", "Sunken");
-        table.innerHTML += appendRow(7, "Table Runner Light Blue", 0, 12, "", "Sunken");
-        table.innerHTML += appendRow(8, "Table Runner Silver", 0, 39, "", "Sunken");
-        table.innerHTML += appendRow(9, "Table Runner Blue", 0, 8, "", "Sunken");
-        table.innerHTML += appendRow(10, "Table Runner Violet", 0, 24, "", "Sunken");
-        table.innerHTML += appendRow(11, "Old Woolen", 0, 85, "", "Sunken");
-        table.innerHTML += appendRow(12, "Yellow Woolen", 0, 50, "", "Sunken");
-        table.innerHTML += appendRow(13, "Bed Sheet", 0, 346, "", "Sunken");
-        table.innerHTML += appendRow(14, "Towel", 0, 175, "", "Sunken");
-        table.innerHTML += appendRow(15, "Bath Mat", 0, 20, "", "Sunken");
-        table.innerHTML += appendRow(16, "Bath Rug", 0, 30, "", "Sunken");
-        table.innerHTML += appendRow(17, "Pillow Case", 0, 164, "", "Sunken");
-        table.innerHTML += appendRow(18, "Chair Cover Red", 0, 111, "", "Sunken");
-        table.innerHTML += appendRow(19, "Chair Cover Brown", 0, 144, "", "Sunken");
+        const error_div = document.getElementById("error_div");
 
-    }
+        fetch('http://localhost:8080/api/equipment/view', {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok){
+                error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
+            }
+            return response.json();
+        })
+        .then(data =>{
+            if (data.status == "success"){
+                for (let equipment of data.equipment) {
+                    appendEquipment(equipment);
+                }
+                updateEquipmentVars();
+                paginate(getEquipmentArray());
+            } else {
+                throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
+            }
+        })
+        .catch(error => {
+            error_div.innerHTML = alertCard("Error: " + error);
+        });
+    });
+
 
     function logout(){
         localStorage.removeItem("Lantaka-IMS-Sess-Token");
@@ -452,7 +456,6 @@
         })
         .then(data => {
             console.log(data);
-            populateTable();
             document.body.classList.remove("d-none");
         })
         .catch(error => {
@@ -462,6 +465,8 @@
     }
 
 </script>
+
+<script src="http://localhost:8080/home/search_and_paginate.js"></script>
 
 </body>
 </html>
