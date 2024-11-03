@@ -87,18 +87,18 @@ function onNext(){
 function checkButtons(){
     if (currentPage == 1) {
         prev_btn.classList.remove("btn-primary");
-        prev_btn.classList.add("btn-secondary", "disabled");
+        prev_btn.classList.add("d-none", "disabled");
     } else {
         prev_btn.classList.add("btn-primary");
-        prev_btn.classList.remove("btn-secondary", "disabled");
+        prev_btn.classList.remove("d-none", "disabled");
     }
 
     if (currentPage == maxPages) {
         next_btn.classList.remove("btn-primary");
-        next_btn.classList.add("btn-secondary", "disabled");
+        next_btn.classList.add("d-none", "disabled");
     } else {
         next_btn.classList.add("btn-primary");
-        next_btn.classList.remove("btn-secondary", "disabled");
+        next_btn.classList.remove("d-none", "disabled");
     }
 }
 
@@ -109,14 +109,13 @@ function appendRow(id, productName, serialNum, quantity, unit, location){
 
     return `
     <tr>
-        <td> ${id} </td> 
         <td> ${productName} </td>
         <td> ${serialNum} </td>
         <td> ${quantity} ${unit} </td>
         <td> ${location} </td>
         <td>
-            <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit}')">Edit</button>
-            <button type="button" class="btn btn-danger" onclick="openModal(${id})">Delete</button>
+            <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit}')"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
+            <button type="button" class="btn btn-danger" onclick="openModal(${id})"><i class="fa-solid fa-trash"></i></button>
         </td>
     </tr>
     `;
