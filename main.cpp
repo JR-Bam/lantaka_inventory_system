@@ -35,6 +35,7 @@ int main()
 
     // Endpoints
     svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
+    svr.Post("/api/equipment/edit", &RouteHandlers::editEquipment);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
