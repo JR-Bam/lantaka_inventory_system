@@ -114,7 +114,7 @@ function appendRow(id, productName, serialNum, quantity, unit, location){
         <td> ${quantity} ${unit} </td>
         <td> ${location} </td>
         <td>
-            <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit}')"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
+            <button type="button" class="btn btn-primary" onclick="openEditModal(${id}, '${productName}', '${quantity}', '${location}', '${unit.toLowerCase()}', '${serialNum}')"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
             <button type="button" class="btn btn-danger" onclick="openModal(${id})"><i class="fa-solid fa-trash"></i></button>
         </td>
     </tr>

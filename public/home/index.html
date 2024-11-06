@@ -39,9 +39,13 @@
         <?php endif; ?> -->
 
         <div id="error_div"></div>
+        <div id="success_div"></div>
     
         <div class="button-container">
-            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">Add Product</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">
+                <i class="fa-regular fa-square-plus pr-2"></i>
+                Add Product
+            </button>
     
             <div class="search-bar">
                 <input id="search-input" type="search" class="form-control" placeholder="Search for a product"/>
@@ -135,7 +139,6 @@
                 </div>
 
                 
-
                 <!-- Location Input -->
                 <div class="form-group">
                     <label for="I_Location">Location</label>
@@ -162,7 +165,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
             <h3>Edit Product</h3>
-            <form method="post" action="">
+            <form id="editSubmit">
                 <input type="hidden" id="editProductId" name="I_ID" value="">
 
                 <div class="form-group">
@@ -170,22 +173,31 @@
                     <input type="text" class="form-control" id="editProductName" name="I_Product" value="" readonly>
                 </div>
 
-                <div class="form-group">
-                    <label for="editQuantity">Quantity:</label>
-                    <input type="number" class="form-control" id="editQuantity" name="I_Quantity" value="" required>
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <!-- Quantity Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Quantity">Quantity</label>
+                        <input type="number" id="editQuantity" name="I_Quantity" class="form-control" required>
+                    </div>
+
+                    <!-- Unit Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Unit">Unit</label>
+                        <select id="editQuantityUnit" name="I_Unit" class="form-control" required>
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="kg">Kg</option>
+                            <option value="litre">Litre</option>
+                            <option value="meter">Meter</option>
+                            <option value="feet">Feet</option>
+                            <option value="inches">Inches</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="editUnit">Unit:</label>
-                    <select class="form-control" id="editUnit" name="I_Unit" required>
-                        <option value="" disabled>Select Unit</option>
-                        <option value="pieces">Pieces</option>
-                        <option value="kg">Kg</option>
-                        <option value="litre">Litre</option>
-                        <option value="meter">Meter</option>
-                        <option value="feet">Feet</option>
-                        <option value="inches">Inches</option>
-                    </select>
+                    <label for="editSerialNum">Serial Number:</label>
+                    <input type="text" class="form-control" id="editSerialNum" name="I_SN" value="" required>
                 </div>
 
                 <div class="form-group">
@@ -193,113 +205,41 @@
                     <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
                 </div>
 
-                <button type="submit" name="edit" class="btn btn-success">Save Changes</button> <!-- TODO: Add functionality -->
+                <button type="submit" class="btn btn-success">Save Changes</button> <!-- TODO: Add functionality -->
             </form>
         </div>
     </div>
 
 <script>
-    function openModal(productId) {
-        document.getElementById('deleteModal').style.display = 'block';
-        document.getElementById('deleteProductId').value = productId;
-    }
+    const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
+        "pieces": 1,
+        "kg": 2,
+        "litre": 3,
+        "meter": 4,
+        "feet": 5,
+        "inches": 6
+    };
 
-    function closeModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
-
-    function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit) {
-        document.getElementById('editModal').style.display = 'block';
-        document.getElementById('editProductId').value = productId;
-        document.getElementById('editProductName').value = productName;
-        document.getElementById('editQuantity').value = productQuantity;
-        document.getElementById('editLocation').value = productLocation;
-        
-        // Set the unit dropdown
-        const unitDropdown = document.getElementById('editUnit');
-        for (let option of unitDropdown.options) {
-            if (option.value === productQuantityUnit) {
-                option.selected = true;
-                break;
-            }
-        }
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
-    // For communicating with backend for adding equipment (added by zed)
-    document.getElementById('addProductModal').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const unitMapping = { // Since UNIT_ID is int in the DB we map it to its corresponding int
-            "pieces": 1,
-            "kg": 2,
-            "litre": 3,
-            "meter": 4,
-            "feet": 5,
-            "inches": 6
-        };
-
-        const selectedUnit = document.getElementById('I_Unit').value;
-        const unitId = unitMapping[selectedUnit];
-
-        const productData = {
-            I_Product: document.getElementById('I_Product').value,
-            I_SN: document.getElementById('I_SN').value,
-            I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
-            UNIT_ID: unitId,
-            I_Location: document.getElementById('I_Location').value,
-            E_Storage: document.getElementById('E_Storage').value
-        };
-
-        fetch('/api/equipment/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
-            },
-            body: JSON.stringify(productData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("Product added successfully");
-                    closeAddProductModal();
-                    location.reload();
-                } else {
-                    alert("Error adding product: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while adding the product.");
-            });
-    });
-
-
-    // open the modal
-    function openAddProductModal() {
-        document.getElementById('addProductModal').style.display = 'block';
-    }
-
-
-    // close the modal
-    function closeAddProductModal() {
-        document.getElementById('addProductModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('addProductModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    }
+    var selectedEquipment = {
+        "I_ID": null,
+        "I_Product": null,
+        "I_SN": null,
+        "I_Quantity": null,
+        "UNIT_ID": null,
+        "I_Location": null
+    };
 
     function alertCard(message){
         return `
             <div class="alert alert-danger">
+                ${message}
+            </div>
+        `
+    }
+
+    function successCard(message){
+        return `
+            <div class="alert alert-success">
                 ${message}
             </div>
         `
@@ -374,6 +314,9 @@
 </script>
 
 <script src="/home/search_and_paginate.js"></script>
+<script src="/home/modals.js"></script>
+<script src="/home/addProduct.js"></script>
+<script src="/home/editProduct.js"></script>
 
 </body>
 </html>
