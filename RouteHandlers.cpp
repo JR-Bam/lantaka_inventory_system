@@ -1,5 +1,6 @@
 #include "RouteHandlers.h"
 #include "jwt_handler.h"
+#include <vector>
 
 static const std::string dummyUsername = "admin";
 static const std::string dummyPassword = "password";
@@ -88,7 +89,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) { //working 
 
         // Execute the statement
         pstmt->executeUpdate();
-        handle_success_insert(res, "Equipment added successfully");
+        handle_success_api(res, "Equipment added successfully");
 
         // Clean up
         delete pstmt;
@@ -149,6 +150,70 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
         handle_error_sql(res,std::string("query execution error: ") + e.what(), 500);
     }
     
+}
+
+/*
+* Edit JSON FOrmat
+{
+  "EquipmentID": 21,
+  "Updates": [
+        {"<Column_Name>": <Value>},
+        {"<Column_Name>": <Value>}
+    ]
+}
+*/
+
+void RouteHandlers::editEquipment(const Request& req, Response& res)
+{
+    try
+    {
+        json req_json = json::parse(req.body);
+
+        if (!req_json.contains("EquipmentID") || !req_json.contains("Updates")) {
+            handle_error_sql(res, "Missing required fields", StatusCode::BadRequest_400);
+            return;
+        }
+
+        int equipmentID = req_json["EquipmentID"];
+        json updateFields = req_json["Updates"];
+
+        std::string Query = "UPDATE inventory SET ";
+        std::vector<std::string> values;
+
+        for (json& field : updateFields){
+            for (auto it = field.begin(); it != field.end(); it++) {
+                Query += std::string(it.key() + " = ?, ");
+                values.push_back(it.value().dump());
+            }
+        }
+
+        Query[Query.length() - 2] = ' '; // Remove extra comma
+        Query += " WHERE I_ID = ?";
+
+        sql::Connection* con = connectDB();
+        if (!con) {
+            handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
+            return;
+        }
+
+        sql::PreparedStatement* pstmt(con->prepareStatement(Query));
+
+        for (int i = 0; i < values.size(); i++) {
+            pstmt->setString(i + 1, values[i]);
+        }
+        pstmt->setInt(values.size() + 1, equipmentID);
+
+        pstmt->executeUpdate();
+
+        delete con;
+        delete pstmt;
+
+        handle_success_api(res, "Equipment editted successfully.");
+    }
+    catch (const std::exception& e)
+    {
+        handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
+    }
 }
 
 
@@ -220,7 +285,7 @@ void RouteHandlers::handle_bad_request(Response& res, std::string message)
 
 
 
-void RouteHandlers::handle_success_insert(Response& res, const std::string& message) {
+void RouteHandlers::handle_success_api(Response& res, const std::string& message) {
     json response_json = {
         {"status", "success"},
         {"message", message}

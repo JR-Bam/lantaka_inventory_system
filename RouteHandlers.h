@@ -33,7 +33,7 @@ private:
 	static void handle_unauthorized(Response& res, std::string message);
 	static void handle_bad_request(Response& res, std::string message);
 	
-	static void handle_success_insert(Response& res, const std::string& message);
+	static void handle_success_api(Response& res, const std::string& message);
 	static void handle_error_sql(Response& res, const std::string& message, int status_code);
 	static void handle_success_view(Response& res, const std::string& message, int status_code, json jsonArray);
 	static sql::Connection* connectDB();
@@ -44,6 +44,7 @@ public:
 
 	static void addEquipment(const Request& req, Response& res);
 	static void viewEquipment(const Request& req, Response& res);
+	static void editEquipment(const Request& req, Response& res);
 };
 
 
