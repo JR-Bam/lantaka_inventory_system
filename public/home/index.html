@@ -211,112 +211,478 @@
     </div>
 
 <script>
-    const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
-        "pieces": 1,
-        "kg": 2,
-        "litre": 3,
-        "meter": 4,
-        "feet": 5,
-        "inches": 6
-    };
+const table = document.getElementById("rows");
+const error_div = document.getElementById("error_div");
+const success_div = document.getElementById("success_div");
 
-    var selectedEquipment = {
-        "I_ID": null,
-        "I_Product": null,
-        "I_SN": null,
-        "I_Quantity": null,
-        "UNIT_ID": null,
-        "I_Location": null
-    };
+const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
+    "pieces": 1,
+    "kg": 2,
+    "litre": 3,
+    "meter": 4,
+    "feet": 5,
+    "inches": 6
+};
 
-    function alertCard(message){
-        return `
-            <div class="alert alert-danger">
-                ${message}
-            </div>
-        `
-    }
+var selectedEquipment = {
+    "I_ID": null,
+    "I_Product": null,
+    "I_SN": null,
+    "I_Quantity": null,
+    "UNIT_ID": null,
+    "I_Location": null
+};
 
-    function successCard(message){
-        return `
-            <div class="alert alert-success">
-                ${message}
-            </div>
-        `
-    }
+function alertCard(message){
+    return `
+        <div class="alert alert-danger">
+            ${message}
+            <button type="button" class="close" aria-label="Close" onclick="error_div.innerHTML = null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `
+}
+
+function successCard(message){
+    return `
+        <div class="alert alert-success">
+            ${message}
+            <button type="button" class="close" aria-label="Close" onclick="success_div.innerHTML = null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `
+}
+document.addEventListener("DOMContentLoaded", (event) => {
+    retrieveEquipment();
+});
 
 
-    document.addEventListener("DOMContentLoaded", (event) => {
-        const table = document.getElementById("rows");
-        const error_div = document.getElementById("error_div");
+function logout(){
+    localStorage.removeItem("Lantaka-IMS-Sess-Token");
+    // alert("removed");
+    document.location.href = '/';
+}
 
-        fetch('/api/equipment/view', {
-            method: 'GET'
-        })
-        .then(response => {
-            if (!response.ok){
-                error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
-            }
-            return response.json();
-        })
-        .then(data =>{
-            if (data.status == "success"){
-                for (let equipment of data.equipment) {
-                    appendEquipment(equipment);
-                }
-                updateEquipmentVars();
-                paginate(getEquipmentArray());
-            } else {
-                throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
-            }
-        })
-        .catch(error => {
-            error_div.innerHTML = alertCard("Error: " + error);
-        });
+
+const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
+if (!token){
+    window.location.href = "/?status=Please Log In First";
+} else {
+    fetch('/api/validate-token', {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        if (!response.ok){
+            localStorage.removeItem("Lantaka-IMS-Sess-Token");
+            window.location.href = "/?status=Session Expired. Login Again.";
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        document.body.classList.remove("d-none");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
     });
+}
 
 
-    function logout(){
-        localStorage.removeItem("Lantaka-IMS-Sess-Token");
-        // alert("removed");
-        document.location.href = '/';
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+function openModal(productId) {
+    document.getElementById('deleteModal').style.display = 'block';
+    document.getElementById('deleteProductId').value = productId;
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM){
+    selectedEquipment["I_ID"] = ID;
+    selectedEquipment["I_Product"] = NAME;
+    selectedEquipment["I_SN"] = SERIALNUM;
+    selectedEquipment["I_Quantity"] = QUANTITY;
+    selectedEquipment["UNIT_ID"] = UNIT.toLowerCase();
+    selectedEquipment["I_Location"] = LOCATION;
+}
+
+function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum) {
+    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum);
+
+    document.getElementById('editModal').style.display = 'block';
+    document.getElementById('editProductId').value = productId;
+    document.getElementById('editProductName').value = productName;
+    document.getElementById('editQuantity').value = productQuantity;
+    document.getElementById('editLocation').value = productLocation;
+    document.getElementById('editSerialNum').value = serialNum;
+    document.getElementById('editQuantityUnit').value = productQuantityUnit;
+    
+    // Set the unit dropdown
+    const unitDropdown = document.getElementById('editUnit');
+    for (let option of unitDropdown.options) {
+        if (option.value === productQuantityUnit) {
+            option.selected = true;
+            break;
+        }
     }
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// open the modal
+function openAddProductModal() {
+    document.getElementById('addProductModal').style.display = 'block';
+}
 
 
-    const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
-    if (!token){
-        window.location.href = "/?status=Please Log In First";
-    } else {
-        fetch('/api/validate-token', {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => {
-            if (!response.ok){
-                localStorage.removeItem("Lantaka-IMS-Sess-Token");
-                window.location.href = "/?status=Session Expired. Login Again.";
-            }
-            return response.json();
-        })
+// close the modal
+function closeAddProductModal() {
+    document.getElementById('addProductModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('addProductModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+// For communicating with backend for adding equipment (added by zed)
+document.getElementById('addProductModal').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const selectedUnit = document.getElementById('I_Unit').value;
+    const unitId = unitMapping[selectedUnit];
+
+    const productData = {
+        I_Product: document.getElementById('I_Product').value,
+        I_SN: document.getElementById('I_SN').value,
+        I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
+        UNIT_ID: unitId,
+        I_Location: document.getElementById('I_Location').value,
+        E_Storage: document.getElementById('E_Storage').value
+    };
+
+    console.log(productData);
+
+    fetch('/api/equipment/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
+        },
+        body: JSON.stringify(productData)
+    })
+        .then(response => response.json())
         .then(data => {
-            console.log(data);
-            document.body.classList.remove("d-none");
+            if (data.status === "success") {
+                success_div.innerHTML = successCard("Product added successfully");
+                closeAddProductModal();
+                retrieveEquipment();
+            } else {
+                error_div.innerHTML = alertCard("Error adding product: " + data.message);
+            }
         })
         .catch(error => {
             console.error("Error:", error);
-            window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
+            error_div.innerHTML = alertCard("An error occurred while adding the product.");
         });
+});
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+document.getElementById('editModal').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const changedEquipmentID = document.getElementById("editProductId").value;
+
+    const changesMade = {
+        "I_Product": (selectedEquipment["I_Product"] === document.getElementById("editProductName").value)? null : document.getElementById("editProductName").value,
+        "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
+        "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
+        "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
+        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value
+    };
+
+    console.log(changesMade);
+
+    // return;
+
+    const requestBody = { 
+        "EquipmentID": parseInt(changedEquipmentID),
+        "Updates": []
+    };
+
+    var nullCount = 0;
+
+    // Append each changed data to the Updates array
+    Object.entries(changesMade).forEach(([key, value]) => {
+        if (value != null) {
+            requestBody["Updates"].push({[key]: value});
+        } else {
+            nullCount += 1;
+        }
+    });
+
+    console.log(JSON.stringify(requestBody));
+
+    if (nullCount == 5){
+        closeEditModal();
+        return;
     }
 
-</script>
+    // Make a request to the server
+    fetch('/api/equipment/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == "success"){
+                retrieveEquipment();
+                success_div.innerHTML = successCard(`Successfully edited equipment: ${selectedEquipment["I_Product"]}`);
+            } else {
+                error_div.innerHTML = alertCard("Something wrong happened when trying to edit the product.");
+            }
+            closeEditModal();
+        })
+        .catch(error => {
+            closeEditModal();
+            error_div.innerHTML = alertCard("Error: " + error);
+        });
+});
 
-<script src="/home/search_and_paginate.js"></script>
-<script src="/home/modals.js"></script>
-<script src="/home/addProduct.js"></script>
-<script src="/home/editProduct.js"></script>
+
+// Sample Format of SelectedEquipment
+// Object { I_ID: 1, I_Product: "Pillow Case", I_SN: "N/A", I_Quantity: "274", UNIT_ID: "pieces", I_Location: "Sunken" }
+// ​
+// I_ID: 1
+// ​
+// I_Location: "Sunken"
+// ​
+// I_Product: "Pillow Case"
+// ​
+// I_Quantity: "274"
+// ​
+// I_SN: "N/A"
+// ​
+// UNIT_ID: "pieces"  
+// * Note changedMade has this turned into the respective ID and will be the one to be passed instead of the name.
+// ​
+// <prototype>: Object { … }
+// editProduct.js:6:13
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+document.getElementById('deleteModal').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const productID = parseInt(document.getElementById('deleteProductId').value);
+    fetch(`/api/equipment/delete/${productID}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == "success"){
+            retrieveEquipment();
+            success_div.innerHTML = successCard(`Successfully deleted product`); // TODO: Show the name of deleted product
+        } else {
+            error_div.innerHTML = alertCard("Something wrong happened when trying to delete the product.");
+        }
+        closeModal();
+    })
+    .catch(error => {
+        closeModal();
+        error_div.innerHTML = alertCard("Error: " + error);
+    });
+});
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+// Implement search functionality
+document.getElementById('search-button').onclick = function() {
+    performSearch();
+};
+
+document.getElementById('search-input').addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission
+        performSearch(); // Trigger search function
+    }
+});
+
+function performSearch() {
+    var input = document.getElementById('search-input').value.toLowerCase();
+    if (input) {
+        currentEquipments = getEquipmentArray().filter(item => 
+            Object.values(item).some(value => value.toString().toLowerCase().includes(input))
+        );
+    } else {
+        currentEquipments = Equipments;
+    }
+    updateEquipmentVars();
+    changePage(1);
+}
+
+const limit = 10;
+var maxPages = 1;
+var currentPage = 1;
+var Equipments = [];
+
+var currentEquipments = Equipments;
+
+const paginate_nums_div = document.getElementById('paginate_nums');
+const next_btn = document.getElementById('next');
+const prev_btn = document.getElementById('prev');
+
+
+function appendEquipment(equipment){
+    Equipments.push(equipment);
+}
+
+function updateEquipmentVars(){
+    maxPages = Math.ceil(getEquipmentArray().length / limit)
+    paginate_nums_div.innerHTML = "";
+    for (let num = 1; num <= maxPages; num++) {
+        paginate_nums_div.innerHTML += `<a onclick="changePage(${num})" class="btn btn-primary paginate-nums">${num}</a>`;
+    }
+
+    checkButtons();
+}
+
+function changePage(page){
+    currentPage = page;
+    checkButtons();
+    paginate(getEquipmentArray());
+}
+
+function getEquipmentArray(){
+    return currentEquipments;
+}
+
+function paginate(array){
+    const startIndex = (currentPage - 1) * limit;
+    table.innerHTML = "";
+    for (let equipment of array.slice(startIndex, startIndex + limit)){
+        table.innerHTML += appendRow(
+            equipment.ID, 
+            equipment.Product_Name,
+            (equipment.Serial_Number == 0)? "N/A" : equipment.Serial_Number,
+            equipment.Quantity,
+            equipment.Unit.name ?? "",
+            equipment.Location
+        )
+    }
+}
+
+function onPrev(){
+    if (currentPage > 1) changePage(currentPage - 1);
+}
+
+function onNext(){
+    if (currentPage < maxPages) changePage(currentPage + 1);
+}
+
+function checkButtons(){
+    if (currentPage == 1) {
+        prev_btn.classList.remove("btn-primary");
+        prev_btn.classList.add("d-none", "disabled");
+    } else {
+        prev_btn.classList.add("btn-primary");
+        prev_btn.classList.remove("d-none", "disabled");
+    }
+
+    if (currentPage == maxPages) {
+        next_btn.classList.remove("btn-primary");
+        next_btn.classList.add("d-none", "disabled");
+    } else {
+        next_btn.classList.add("btn-primary");
+        next_btn.classList.remove("d-none", "disabled");
+    }
+}
+
+function appendRow(id, productName, serialNum, quantity, unit, location){
+    if (!serialNum){
+        serialNum = "N/A";
+    }
+
+    return `
+    <tr>
+        <td> ${productName} </td>
+        <td> ${serialNum} </td>
+        <td> ${quantity} ${unit} </td>
+        <td> ${location} </td>
+        <td>
+            <button type="button" class="btn btn-primary"
+                onclick="openEditModal(${id}, '${productName.replace(/'/g, "\\'")}', ${quantity}, '${location}', '${unit.toLowerCase()}', '${serialNum.replace(/'/g, "\\'")}')">
+                <i class="fa-regular fa-pen-to-square"></i> 
+                Edit
+            </button>
+            <button type="button" class="btn btn-danger" onclick="openModal(${id})"><i class="fa-solid fa-trash"></i></button>
+        </td>
+    </tr>
+    `;
+}
+
+function retrieveEquipment() {
+    fetch('/api/equipment/view', {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok){
+            error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
+        }
+        return response.json();
+    })
+    .then(data =>{
+        if (data.status == "success"){
+            Equipments = [];
+            currentEquipments = Equipments;
+            for (let equipment of data.equipment) {
+                appendEquipment(equipment);
+            }
+            updateEquipmentVars();
+            paginate(getEquipmentArray());
+        } else {
+            throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
+        }
+    })
+    .catch(error => {
+        error_div.innerHTML = alertCard("Error: " + error);
+    });
+}
+</script>
 
 </body>
 </html>

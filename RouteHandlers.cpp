@@ -183,11 +183,19 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
         for (json& field : updateFields){
             for (auto it = field.begin(); it != field.end(); it++) {
                 Query += std::string(it.key() + " = ?, ");
-                values.push_back(it.value().dump());
+
+                std::string value = it.value().dump();
+                int lastIndex = value.length() - 1;
+                if (value[0] == '\"' && value[lastIndex] == '\"') { // If value has two double quotes
+                    value.erase(lastIndex, 1);
+                    value.erase(0, 1);
+                }
+
+                values.push_back(value);
             }
         }
 
-        Query[Query.length() - 2] = ' '; // Remove extra comma
+        Query.erase(Query.length() - 2, 1); // Remove extra comma
         Query += " WHERE I_ID = ?";
 
         sql::Connection* con = connectDB();
@@ -213,6 +221,31 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
     catch (const std::exception& e)
     {
         handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
+    }
+}
+
+void RouteHandlers::removeEquipment(const Request& req, Response& res)
+{
+    try {
+        int equipmentID = std::stoi(req.matches[1].str());
+        sql::Connection* con = connectDB();
+
+        if (!con) {
+            handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
+            return;
+        }
+
+        sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM inventory WHERE " + SQLColumn::EQ_ID + " = ?");
+        pstmt->setInt(1, equipmentID);
+        pstmt->executeUpdate();
+
+        delete pstmt;
+        delete con;
+
+        handle_success_api(res, "Equipment deleted successfully.");
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::BadRequest_400);
     }
 }
 
