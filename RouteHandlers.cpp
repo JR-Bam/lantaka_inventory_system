@@ -183,11 +183,19 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
         for (json& field : updateFields){
             for (auto it = field.begin(); it != field.end(); it++) {
                 Query += std::string(it.key() + " = ?, ");
-                values.push_back(it.value().dump());
+
+                std::string value = it.value().dump();
+                int lastIndex = value.length() - 1;
+                if (value[0] == '\"' && value[lastIndex] == '\"') { // If value has two double quotes
+                    value.erase(lastIndex, 1);
+                    value.erase(0, 1);
+                }
+
+                values.push_back(value);
             }
         }
 
-        Query[Query.length() - 2] = ' '; // Remove extra comma
+        Query.erase(Query.length() - 2, 1); // Remove extra comma
         Query += " WHERE I_ID = ?";
 
         sql::Connection* con = connectDB();
