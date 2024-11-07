@@ -45,6 +45,7 @@ public:
 	static void addEquipment(const Request& req, Response& res);
 	static void viewEquipment(const Request& req, Response& res);
 	static void editEquipment(const Request& req, Response& res);
+	static void removeEquipment(const Request& req, Response& res);
 };
 
 

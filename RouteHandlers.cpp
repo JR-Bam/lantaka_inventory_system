@@ -224,6 +224,31 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
     }
 }
 
+void RouteHandlers::removeEquipment(const Request& req, Response& res)
+{
+    try {
+        int equipmentID = std::stoi(req.matches[1].str());
+        sql::Connection* con = connectDB();
+
+        if (!con) {
+            handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
+            return;
+        }
+
+        sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM inventory WHERE " + SQLColumn::EQ_ID + " = ?");
+        pstmt->setInt(1, equipmentID);
+        pstmt->executeUpdate();
+
+        delete pstmt;
+        delete con;
+
+        handle_success_api(res, "Equipment deleted successfully.");
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        handle_error_sql(res, std::string("Error occurred: ") + e.what(), StatusCode::BadRequest_400);
+    }
+}
+
 
 /*
     Right now, this REST API has its JSON responses structured in this way:

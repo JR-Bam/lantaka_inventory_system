@@ -502,6 +502,34 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
 
 
 
+document.getElementById('deleteModal').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const productID = parseInt(document.getElementById('deleteProductId').value);
+    fetch(`/api/equipment/delete/${productID}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == "success"){
+            retrieveEquipment();
+            success_div.innerHTML = successCard(`Successfully deleted product`); // TODO: Show the name of deleted product
+        } else {
+            error_div.innerHTML = alertCard("Something wrong happened when trying to delete the product.");
+        }
+        closeModal();
+    })
+    .catch(error => {
+        closeModal();
+        error_div.innerHTML = alertCard("Error: " + error);
+    });
+});
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
 // Implement search functionality
 document.getElementById('search-button').onclick = function() {
     performSearch();

@@ -11,11 +11,7 @@
 #include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
 #include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
 
-void hello(const Request& req, Response& res) {
-    res.set_content("Hello, World!", "text/plain");
-}
-
-void shutdown_server(Server& svr) {
+static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
     std::this_thread::sleep_for(std::chrono::seconds(3));
     svr.stop();
@@ -34,12 +30,13 @@ int main()
     svr.set_mount_point("/images", "./assets");
 
     // Endpoints
+    svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
     svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
     svr.Post("/api/equipment/edit", &RouteHandlers::editEquipment);
+    svr.Delete(R"(/api/equipment/delete/(\d+))", &RouteHandlers::removeEquipment);
+
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
-    svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
-    svr.Get("/hello-world", &hello);
     svr.Get("/shutdown", [&svr](const Request& req, Response& res) {
         res.set_content("Server is shutting down in 3 seconds...", "text/plain");
         // Start the shutdown in a detached thread to avoid blocking the response
