@@ -89,7 +89,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) { //working 
 
         // Execute the statement
         pstmt->executeUpdate();
-        handle_success_insert(res, "Equipment added successfully");
+        handle_success_api(res, "Equipment added successfully");
 
         // Clean up
         delete pstmt;
@@ -318,7 +318,7 @@ void RouteHandlers::handle_bad_request(Response& res, std::string message)
 
 
 
-void RouteHandlers::handle_success_insert(Response& res, const std::string& message) {
+void RouteHandlers::handle_success_api(Response& res, const std::string& message) {
     json response_json = {
         {"status", "success"},
         {"message", message}
