@@ -101,7 +101,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -132,16 +132,18 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="jwt_handler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MySQL_handler.cpp" />
     <ClCompile Include="RouteHandlers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jwt_handler.h" />
+    <ClInclude Include="MySQL_handler.h" />
     <ClInclude Include="RouteHandlers.h" />
   </ItemGroup>
   <ItemGroup>

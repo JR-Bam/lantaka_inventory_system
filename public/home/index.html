@@ -462,8 +462,50 @@
             console.error("Error:", error);
             window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
         });
-    }
 
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+document.getElementById('editModal').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const changedEquipmentID = document.getElementById("editProductId").value;
+
+    const changesMade = {
+        "I_Product": (selectedEquipment["I_Product"] === document.getElementById("editProductName").value)? null : document.getElementById("editProductName").value,
+        "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
+        "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
+        "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
+        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value
+    };
+
+    console.log(changesMade);
+
+    const requestBody = { 
+        "EquipmentID": parseInt(changedEquipmentID),
+        "Updates": []
+    };
+
+    var nullCount = 0;
+
+    // Append each changed data to the Updates array
+    Object.entries(changesMade).forEach(([key, value]) => {
+        if (value != null) {
+            requestBody["Updates"].push({[key]: value});
+        } else {
+            nullCount += 1;
+        }
+    });
+
+    console.log(JSON.stringify(requestBody));
+
+    if (nullCount == 5){
+        closeEditModal();
+        return;
+    }
+});
 </script>
 
 <script src="http://localhost:8080/home/search_and_paginate.js"></script>

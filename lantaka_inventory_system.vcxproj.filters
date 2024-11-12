@@ -24,12 +24,18 @@
     <ClCompile Include="RouteHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MySQL_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jwt_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RouteHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MySQL_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

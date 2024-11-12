@@ -10,6 +10,7 @@
 #include <iostream>
 #include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
 #include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
+#include "bcrypt/BCrypt.hpp"
 
 void hello(const Request& req, Response& res) {
     res.set_content("Hello, World!", "text/plain");
@@ -26,6 +27,8 @@ void shutdown_server(Server& svr) {
 int main()
 {
     Server svr;
+
+    // std::cout << BCrypt::generateHash("password") << std::endl;
 
     // For HTML Files
     svr.set_mount_point("/", "./public/login");
