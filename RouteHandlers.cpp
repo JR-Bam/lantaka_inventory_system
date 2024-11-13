@@ -181,9 +181,14 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
         json updateFields = req_json["Updates"];
 
         std::vector<std::pair<std::string, std::string>> params;
-        for (json& field : updateFields){ // Gets every key-value pair from the array within the updateFields
+        for (json& field : updateFields){                               // Gets every key-value pair from the array within the updateFields
             for (auto it = field.begin(); it != field.end(); it++) {
-                params.push_back(std::make_pair(it.key(), it.value().dump()));
+                std::string value = it.value().dump();
+                if (value.front() == '\"' && value.back() == '\"') {    // Erases the quotation marks brought forth by funky json parsing
+                    value.erase(0, 1);
+                    value.pop_back();
+                }
+                params.push_back(std::make_pair(it.key(), value));
             }
         }
 
