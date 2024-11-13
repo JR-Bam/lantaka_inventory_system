@@ -70,14 +70,14 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
         Schema IMS = instance().session.getSchema(SQLConsts::dbName);
         Table inventory = IMS.getTable("inventory");
 
-        TableUpdate update = inventory.update();        // Not yet finished
+        TableUpdate update = inventory.update();        // Initialize update query statement
         for (const auto& pair : params) {               // sets the parameters
             update.set(pair.first, pair.second);
         }
         Result queryResult = update
             .where("I_ID = :id")                        // sets the id of the equipment to be editted
-            .bind("id", id)
-            .execute();
+            .bind("id", id)                             // bind values
+            .execute();                                 // finally execute update query statement
 
         if (queryResult.getAffectedItemsCount() > 0)
             return MySQLResult::Success;

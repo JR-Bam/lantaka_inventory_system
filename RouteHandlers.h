@@ -19,14 +19,13 @@ private:
 	static void handle_success_view(Response& res, const std::string& message, json jsonArray);
 
 public:
-	// Reworked
-	static void verifyAccount(const Request& req, Response& res);
+
+	static void verifyAccount(const Request& req, Response& res); // Reworked
 	static void authSession(const Request& req, Response& res);
 
 	static void addEquipment(const Request& req, Response& res);
 	static void viewEquipment(const Request& req, Response& res);
-	// Reworked
-	static void editEquipment(const Request& req, Response& res);
+	static void editEquipment(const Request& req, Response& res); // Reworked
 	static void removeEquipment(const Request& req, Response& res);
 };
 
