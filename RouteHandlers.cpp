@@ -1,10 +1,7 @@
 #include "RouteHandlers.h"
 #include "jwt_handler.h"
-#include "MySQL_handler.h"
+#include "MySQLManager.h"
 #include <vector>
-
-static const std::string dummyUsername = "admin";
-static const std::string dummyPassword = "password";
 
 void RouteHandlers::verifyAccount(const Request& req, Response& res)
 {
@@ -13,13 +10,17 @@ void RouteHandlers::verifyAccount(const Request& req, Response& res)
         std::string username = req_json.at("username");
         std::string password = req_json.at("password");
 
-        // In a real life context the password should be hashed/encypted before being sent here
-        // "But this is already a real life context" I do not care
-        if (username == dummyUsername && password == dummyPassword) {
-            handle_success_verifyAcc(res, username);
-        } else {
-            handle_unauthorized(res, "Username or Password is Wrong");
+        switch (MySQLManager::isValidCredentials(username, password)) {
+            case LoginResult::Success:
+                handle_success_verifyAcc(res, username);
+                break;
+            case LoginResult::BadCredentials:
+                handle_unauthorized(res, "Username or Password is Wrong");
+                break;
+            case LoginResult::InternalServerError:
+                handle_bad_request(res, "Username and/or password were not provided");
         }
+
     } catch (const std::exception&) {
         handle_bad_request(res, "Username and/or password were not provided");
     }
@@ -70,7 +71,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) { //working 
         }
 
         // Connect to the database
-        sql::Connection* con = MySQL_handler::connectDB();
+        sql::Connection* con = MySQLManager::connectDB();
         if (!con) {
             handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
             return;
@@ -105,7 +106,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) { //working 
 void RouteHandlers::viewEquipment(const Request& req, Response& res)
 {
     try {
-        sql::Connection* con = MySQL_handler::connectDB();
+        sql::Connection* con = MySQLManager::connectDB();
         if (!con) {
             handle_error_sql(res, "Database connection failed", 500);
             return;
@@ -153,19 +154,20 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
     
 }
 
-/*
-* Edit JSON FOrmat
-{
-  "EquipmentID": 21,
-  "Updates": [
-        {"<Column_Name>": <Value>},
-        {"<Column_Name>": <Value>}
-    ]
-}
-*/
+
 
 void RouteHandlers::editEquipment(const Request& req, Response& res)
 {
+    /*
+    * Edit JSON FOrmat
+    {
+      "EquipmentID": 21,
+      "Updates": [
+            {"<Column_Name>": <Value>},
+            {"<Column_Name>": <Value>}
+        ]
+    }
+    */
     try
     {
         json req_json = json::parse(req.body);
@@ -199,7 +201,7 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
         Query.erase(Query.length() - 2, 1); // Remove extra comma
         Query += " WHERE I_ID = ?";
 
-        sql::Connection* con = MySQL_handler::connectDB();
+        sql::Connection* con = MySQLManager::connectDB();
         if (!con) {
             handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);
             return;
@@ -229,7 +231,7 @@ void RouteHandlers::removeEquipment(const Request& req, Response& res)
 {
     try {
         int equipmentID = std::stoi(req.matches[1].str());
-        sql::Connection* con = MySQL_handler::connectDB();
+        sql::Connection* con = MySQLManager::connectDB();
 
         if (!con) {
             handle_error_sql(res, "Database connection failed", StatusCode::InternalServerError_500);

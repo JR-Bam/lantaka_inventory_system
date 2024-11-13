@@ -1,16 +1,11 @@
 // lantaka_inventory_system.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // !!!!!! Run in Release MODE !!!!!!
 
-// P.S. Ako nalang in charge sa jwt_handler shizz kay masakit sa ulo e explain
-
 #include "RouteHandlers.h"
 
 #include <thread>
 #include <chrono>
 #include <iostream>
-#include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
-#include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
-#include "bcrypt/BCrypt.hpp"
 
 static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
@@ -23,8 +18,6 @@ static void shutdown_server(Server& svr) {
 int main()
 {
     Server svr;
-
-    // std::cout << BCrypt::generateHash("password") << std::endl;
 
     // For HTML Files
     svr.set_mount_point("/", "./public/login");
