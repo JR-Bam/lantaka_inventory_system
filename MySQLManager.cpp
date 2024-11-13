@@ -32,7 +32,7 @@ mysqlx::Schema* MySQLManager::getDatabase(const std::string& name)
     }
 }
 
-LoginResult MySQLManager::isValidCredentials(const std::string& username, const std::string& password)
+MySQLResult MySQLManager::validateCredentials(const std::string& username, const std::string& password)
 {
     using namespace mysqlx;
     try {
@@ -46,19 +46,46 @@ LoginResult MySQLManager::isValidCredentials(const std::string& username, const 
             .execute();
         
         if (matchedUsers.count() == 0) // If no usernames match
-            return LoginResult::BadCredentials;
+            return MySQLResult::BadCredentials;
         
         for (const Row& user : matchedUsers) {
             std::string passwordHash = user[1].get<std::string>();
             if (BCrypt::validatePassword(password, passwordHash)) {
-                return LoginResult::Success;
+                return MySQLResult::Success;
             }
         }
 
-        return LoginResult::BadCredentials;
+        return MySQLResult::BadCredentials;
     }
     catch (mysqlx::Error& e) {
         std::cerr << "MySQLX Error: " << e.what() << std::endl;
-        return LoginResult::InternalServerError;
+        return MySQLResult::InternalServerError;
+    }
+}
+
+MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params)
+{
+    using namespace mysqlx;
+    try {
+        Schema IMS = instance().session.getSchema(SQLConsts::dbName);
+        Table inventory = IMS.getTable("inventory");
+
+        TableUpdate update = inventory.update();        // Not yet finished
+        for (const auto& pair : params) {               // sets the parameters
+            update.set(pair.first, pair.second);
+        }
+        Result queryResult = update
+            .where("I_ID = :id")                        // sets the id of the equipment to be editted
+            .bind("id", id)
+            .execute();
+
+        if (queryResult.getAffectedItemsCount() > 0)
+            return MySQLResult::Success;
+        else
+            return MySQLResult::NotFound;
+    }
+    catch (mysqlx::Error& e) {
+        std::cerr << "MySQLX Error: " << e.what() << std::endl;
+        return MySQLResult::InternalServerError;
     }
 }
