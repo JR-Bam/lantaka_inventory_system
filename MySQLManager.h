@@ -86,5 +86,6 @@ public:
 	// - MySQLResult::NotFound: Returned if no rows were affected, indicating the specified ID does not exist.
 	// - MySQLResult::InternalServerError: Returned if a mysqlx::Error is caught during execution.
 	static MySQLResult updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params);
+	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage);
 };
 

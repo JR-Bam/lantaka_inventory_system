@@ -56,48 +56,40 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
-void RouteHandlers::addEquipment(const Request& req, Response& res) { //working na yehey
-    json req_json;
-    try {
-        req_json = json::parse(req.body);
+void RouteHandlers::addEquipment(const Request& req, Response& res) {
+    try
+    {
+        json req_json = json::parse(req.body);
 
         // Validate required fields
-
-        if (!req_json.contains("I_Product") || !req_json.contains("I_Quantity") ||
-            !req_json.contains("I_SN") || !req_json.contains("UNIT_ID") ||
+        if (!req_json.contains("I_Product") || !req_json.contains("I_SN") ||
+            !req_json.contains("I_Quantity") || !req_json.contains("UNIT_ID") ||
             !req_json.contains("I_Location") || !req_json.contains("E_Storage")) {
             handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
 
-        // Connect to the database
-        sql::Connection* con = MySQLManager::connectDB();
-        if (!con) {
-            handle_error_api(res, "Database connection failed", StatusCode::InternalServerError_500);
-            return;
+        // Extract fields from JSON
+        std::string product = req_json["I_Product"];
+        std::string serial_num = req_json["I_SN"];
+        int quantity = req_json["I_Quantity"];
+        int unit_id = req_json["UNIT_ID"];
+        std::string location = req_json["I_Location"];
+        std::string storage = req_json["E_Storage"];
+
+
+        // Call the MySQLManager's addEquipment method
+        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage)) {
+        case MySQLResult::Success:
+            handle_success_api(res, "Equipment added successfully.");
+            break;
+        case MySQLResult::InternalServerError:
+            handle_error_api(res, "Internal server error occurred.", StatusCode::InternalServerError_500);
+            break;
         }
-
-        // Prepare the SQL statement
-        sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO inventory (I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, E_Storage) VALUES (?, ?, ?, ?, ?, ?)");
-
-
-        pstmt->setString(1, req_json["I_Product"].get<std::string>());
-        pstmt->setString(2, req_json["I_SN"].get<std::string>());
-        pstmt->setInt(3, req_json["I_Quantity"].get<int>());
-        pstmt->setInt(4, req_json["UNIT_ID"].get<int>()); 
-        pstmt->setString(5, req_json["I_Location"].get<std::string>());
-        pstmt->setString(6, req_json["E_Storage"].get<std::string>());
-
-
-        // Execute the statement
-        pstmt->executeUpdate();
-        handle_success_api(res, "Equipment added successfully");
-
-        // Clean up
-        delete pstmt;
-        delete con;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
