@@ -6,113 +6,19 @@
         <title>Inventory</title>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <style>
-            body {
-                background: url('/images/bg_pic.png') no-repeat center center fixed;
-                background-size: cover;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                margin: 0;
-                padding: 20px;
-            }
-            .button-container {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            }
-            .search-bar {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            .signup-container {
-                max-width: 1300px;
-                width: 100%;
-                background-color: #ffffff;
-                padding: 2rem;
-                border-radius: 0.5rem;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-                display: flex;
-                flex-direction: column;
-            }
-            .signup-container h2 {
-                margin-bottom: 1.5rem;
-            }
-            .active {
-                background-color: #087cfc;
-                color: white;
-            }
-            .modal {
-                display: none; 
-                position: fixed; 
-                z-index: 1; 
-                padding-top: 100px; 
-                left: 0;
-                top: 0;
-                width: 100%; 
-                height: 100%; 
-                background-color: rgba(0,0,0,0.4); 
-            }
-            .modal-content {
-                position: relative; 
-                background-color: #f5f5f5;
-                margin: auto;
-                padding: 20px;
-                border: 1px solid #888;
-                width: 80%;
-                max-width: 500px;
-                text-align: center;
-            }
-    
-            .close {
-                position: absolute;
-                top: 10px; 
-                right: 15px;
-                color: black;
-                font-size: 24px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-    
-            .close:hover,
-            .close:focus {
-                color: black; 
-                text-decoration: none;
-            }
-    
-            .table-container {
-                overflow-x: auto;
-            }
-            .table {
-                border-collapse: separate;
-                border-spacing: 0;
-            }
-            .table th,
-            .table td {
-                border: 1px solid #dee2e6;
-                vertical-align: middle;
-                text-align: center;
-                padding: 0.75rem;
-            }
-            .table thead th {
-                border-bottom: 2px solid #dee2e6;
-            }
-            .pagination {
-                display: flex;
-                justify-content: center;
-                margin-top: 20px;
-            }
-            .pagination .btn {
-                margin: 0 5px;
-            }
-        </style>
+        <link rel="stylesheet" href="home/style.css">
+        <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     </head>
     <body>
+        <div class="logout tooltip-container">
+            <button type="button" class="btn btn-danger btn-lg" onclick="logout()" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">
+                <img src="/images/logout.svg" alt="Logout" style="padding-left: 3px; padding-bottom: 3px; width: 25px; height: 30px; filter: invert(100%);">
+            </button>
+            <div class="tooltip">Logout</div>
+        </div>
     <div class="signup-container">
-        <h2 class="text-center" style="font-weight: bold; font-size: 50px">House Keeping Inventory</h2>
+        <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 50px">House Keeping Inventory</h2>
     
         <!-- <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-success">
@@ -133,9 +39,13 @@
         <?php endif; ?> -->
 
         <div id="error_div"></div>
+        <div id="success_div"></div>
     
         <div class="button-container">
-            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">Add Product</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="openAddProductModal()">
+                <i class="fa-regular fa-square-plus pr-2"></i>
+                Add Product
+            </button>
     
             <div class="search-bar">
                 <input id="search-input" type="search" class="form-control" placeholder="Search for a product"/>
@@ -144,14 +54,12 @@
                 </button>
             </div>
     
-            <button type="button" class="btn btn-danger btn-lg" onclick="logout()">Logout</button>      
         </div>
     
         <div class="table-container">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col" class="active">ID</th>
                         <th scope="col" class="active">Item Description</th>
                         <th scope="col" class="active">Serial No.</th>
                         <th scope="col" class="active">Quantity</th>
@@ -159,14 +67,13 @@
                         <th scope="col" class="active">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="rows">
 
-                </tbody>
+                <tbody id="rows"></tbody>
             </table>  
         </div>
 
         <div id="paginate_nav" class="pagination">
-            <a id="prev" class="btn btn-secondary" onclick="onPrev()">Previous</a>
+            <a id="prev" class="btn btn-primary" onclick="onPrev()">Previous</a>
     
             <div id="paginate_nums"></div>
         
@@ -203,10 +110,26 @@
                     <input type="text" id="I_Product" name="I_Product" class="form-control" required>
                 </div>
 
-                <!-- Quantity Input -->
-                <div class="form-group">
-                    <label for="I_Quantity">Quantity</label>
-                    <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <!-- Quantity Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Quantity">Quantity</label>
+                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                    </div>
+
+                    <!-- Unit Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Unit">Unit</label>
+                        <select id="I_Unit" name="I_Unit" class="form-control" required>
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="kg">Kg</option>
+                            <option value="litre">Litre</option>
+                            <option value="meter">Meter</option>
+                            <option value="feet">Feet</option>
+                            <option value="inches">Inches</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Serial Number Input -->
@@ -215,20 +138,7 @@
                     <input type="text" id="I_SN" name="I_SN" class="form-control">
                 </div>
 
-                <!-- Unit Input -->
-                <div class="form-group">
-                    <label for="I_Unit">Unit</label>
-                    <select id="I_Unit" name="I_Unit" class="form-control" required>
-                        <option value="" disabled selected>Select Unit</option>
-                        <option value="pieces">Pieces</option>
-                        <option value="kg">Kg</option>
-                        <option value="litre">Litre</option>
-                        <option value="meter">Meter</option>
-                        <option value="feet">Feet</option>
-                        <option value="inches">Inches</option>
-                    </select>
-                </div>
-
+                
                 <!-- Location Input -->
                 <div class="form-group">
                     <label for="I_Location">Location</label>
@@ -255,7 +165,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
             <h3>Edit Product</h3>
-            <form method="post" action="">
+            <form id="editSubmit">
                 <input type="hidden" id="editProductId" name="I_ID" value="">
 
                 <div class="form-group">
@@ -263,22 +173,31 @@
                     <input type="text" class="form-control" id="editProductName" name="I_Product" value="" readonly>
                 </div>
 
-                <div class="form-group">
-                    <label for="editQuantity">Quantity:</label>
-                    <input type="number" class="form-control" id="editQuantity" name="I_Quantity" value="" required>
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <!-- Quantity Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Quantity">Quantity</label>
+                        <input type="number" id="editQuantity" name="I_Quantity" class="form-control" required>
+                    </div>
+
+                    <!-- Unit Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Unit">Unit</label>
+                        <select id="editQuantityUnit" name="I_Unit" class="form-control" required>
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="kg">Kg</option>
+                            <option value="litre">Litre</option>
+                            <option value="meter">Meter</option>
+                            <option value="feet">Feet</option>
+                            <option value="inches">Inches</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="editUnit">Unit:</label>
-                    <select class="form-control" id="editUnit" name="I_Unit" required>
-                        <option value="" disabled>Select Unit</option>
-                        <option value="pieces">Pieces</option>
-                        <option value="kg">Kg</option>
-                        <option value="litre">Litre</option>
-                        <option value="meter">Meter</option>
-                        <option value="feet">Feet</option>
-                        <option value="inches">Inches</option>
-                    </select>
+                    <label for="editSerialNum">Serial Number:</label>
+                    <input type="text" class="form-control" id="editSerialNum" name="I_SN" value="" required>
                 </div>
 
                 <div class="form-group">
@@ -286,182 +205,207 @@
                     <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
                 </div>
 
-                <button type="submit" name="edit" class="btn btn-success">Save Changes</button> <!-- TODO: Add functionality -->
+                <button type="submit" class="btn btn-success">Save Changes</button> <!-- TODO: Add functionality -->
             </form>
         </div>
     </div>
 
 <script>
-    function openModal(productId) {
-        document.getElementById('deleteModal').style.display = 'block';
-        document.getElementById('deleteProductId').value = productId;
-    }
+const table = document.getElementById("rows");
+const error_div = document.getElementById("error_div");
+const success_div = document.getElementById("success_div");
 
-    function closeModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
+const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
+    "pieces": 1,
+    "kg": 2,
+    "litre": 3,
+    "meter": 4,
+    "feet": 5,
+    "inches": 6
+};
 
-    function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit) {
-        document.getElementById('editModal').style.display = 'block';
-        document.getElementById('editProductId').value = productId;
-        document.getElementById('editProductName').value = productName;
-        document.getElementById('editQuantity').value = productQuantity;
-        document.getElementById('editLocation').value = productLocation;
-        
-        // Set the unit dropdown
-        const unitDropdown = document.getElementById('editUnit');
-        for (let option of unitDropdown.options) {
-            if (option.value === productQuantityUnit) {
-                option.selected = true;
-                break;
-            }
+var selectedEquipment = {
+    "I_ID": null,
+    "I_Product": null,
+    "I_SN": null,
+    "I_Quantity": null,
+    "UNIT_ID": null,
+    "I_Location": null
+};
+
+function alertCard(message){
+    return `
+        <div class="alert alert-danger">
+            ${message}
+            <button type="button" class="close" aria-label="Close" onclick="error_div.innerHTML = null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `
+}
+
+function successCard(message){
+    return `
+        <div class="alert alert-success">
+            ${message}
+            <button type="button" class="close" aria-label="Close" onclick="success_div.innerHTML = null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `
+}
+document.addEventListener("DOMContentLoaded", (event) => {
+    retrieveEquipment();
+});
+
+
+function logout(){
+    localStorage.removeItem("Lantaka-IMS-Sess-Token");
+    // alert("removed");
+    document.location.href = '/';
+}
+
+
+const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
+if (!token){
+    window.location.href = "/?status=Please Log In First";
+} else {
+    fetch('/api/validate-token', {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        if (!response.ok){
+            localStorage.removeItem("Lantaka-IMS-Sess-Token");
+            window.location.href = "/?status=Session Expired. Login Again.";
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        document.body.classList.remove("d-none");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
+    });
+}
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+function openModal(productId) {
+    document.getElementById('deleteModal').style.display = 'block';
+    document.getElementById('deleteProductId').value = productId;
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM){
+    selectedEquipment["I_ID"] = ID;
+    selectedEquipment["I_Product"] = NAME;
+    selectedEquipment["I_SN"] = SERIALNUM;
+    selectedEquipment["I_Quantity"] = QUANTITY;
+    selectedEquipment["UNIT_ID"] = UNIT.toLowerCase();
+    selectedEquipment["I_Location"] = LOCATION;
+}
+
+function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum) {
+    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum);
+
+    document.getElementById('editModal').style.display = 'block';
+    document.getElementById('editProductId').value = productId;
+    document.getElementById('editProductName').value = productName;
+    document.getElementById('editQuantity').value = productQuantity;
+    document.getElementById('editLocation').value = productLocation;
+    document.getElementById('editSerialNum').value = serialNum;
+    document.getElementById('editQuantityUnit').value = productQuantityUnit;
+    
+    // Set the unit dropdown
+    const unitDropdown = document.getElementById('editUnit');
+    for (let option of unitDropdown.options) {
+        if (option.value === productQuantityUnit) {
+            option.selected = true;
+            break;
         }
     }
+}
 
-    function closeEditModal() {
-        document.getElementById('editModal').style.display = 'none';
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// open the modal
+function openAddProductModal() {
+    document.getElementById('addProductModal').style.display = 'block';
+}
+
+
+// close the modal
+function closeAddProductModal() {
+    document.getElementById('addProductModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('addProductModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
     }
-
-    // For communicating with backend for adding equipment (added by zed)
-    document.getElementById('addProductModal').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const unitMapping = { // Since UNIT_ID is int in the DB we map it to its corresponding int
-            "pieces": 1,
-            "kg": 2,
-            "litre": 3,
-            "meter": 4,
-            "feet": 5,
-            "inches": 6
-        };
-
-        const selectedUnit = document.getElementById('I_Unit').value;
-        const unitId = unitMapping[selectedUnit];
-
-        const productData = {
-            I_Product: document.getElementById('I_Product').value,
-            I_SN: document.getElementById('I_SN').value,
-            I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
-            UNIT_ID: unitId,
-            I_Location: document.getElementById('I_Location').value,
-            E_Storage: document.getElementById('E_Storage').value
-        };
-
-        fetch('/api/equipment/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
-            },
-            body: JSON.stringify(productData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("Product added successfully");
-                    closeAddProductModal();
-                    location.reload();
-                } else {
-                    alert("Error adding product: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while adding the product.");
-            });
-    });
+}
 
 
-    // open the modal
-    function openAddProductModal() {
-        document.getElementById('addProductModal').style.display = 'block';
-    }
+// -------------------------------------------------------------------------------------------------- //
 
 
-    // close the modal
-    function closeAddProductModal() {
-        document.getElementById('addProductModal').style.display = 'none';
-    }
+// For communicating with backend for adding equipment (added by zed)
+document.getElementById('addProductModal').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
 
-    window.onclick = function(event) {
-        const modal = document.getElementById('addProductModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    }
+    const selectedUnit = document.getElementById('I_Unit').value;
+    const unitId = unitMapping[selectedUnit];
 
-    function alertCard(message){
-        return `
-            <div class="alert alert-danger">
-                ${message}
-            </div>
-        `
-    }
+    const productData = {
+        I_Product: document.getElementById('I_Product').value,
+        I_SN: document.getElementById('I_SN').value,
+        I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
+        UNIT_ID: unitId,
+        I_Location: document.getElementById('I_Location').value,
+        E_Storage: document.getElementById('E_Storage').value
+    };
 
+    console.log(productData);
 
-    document.addEventListener("DOMContentLoaded", (event) => {
-        const table = document.getElementById("rows");
-        const error_div = document.getElementById("error_div");
-
-        fetch('http://localhost:8080/api/equipment/view', {
-            method: 'GET'
-        })
-        .then(response => {
-            if (!response.ok){
-                error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
-            }
-            return response.json();
-        })
-        .then(data =>{
-            if (data.status == "success"){
-                for (let equipment of data.equipment) {
-                    appendEquipment(equipment);
-                }
-                updateEquipmentVars();
-                paginate(getEquipmentArray());
-            } else {
-                throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
-            }
-        })
-        .catch(error => {
-            error_div.innerHTML = alertCard("Error: " + error);
-        });
-    });
-
-
-    function logout(){
-        localStorage.removeItem("Lantaka-IMS-Sess-Token");
-        // alert("removed");
-        document.location.href = '/';
-    }
-
-
-    const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
-    if (!token){
-        window.location.href = "/?status=Please Log In First";
-    } else {
-        fetch('/api/validate-token', {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => {
-            if (!response.ok){
-                localStorage.removeItem("Lantaka-IMS-Sess-Token");
-                window.location.href = "/?status=Session Expired. Login Again.";
-            }
-            return response.json();
-        })
+    fetch('/api/equipment/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
+        },
+        body: JSON.stringify(productData)
+    })
+        .then(response => response.json())
         .then(data => {
-            console.log(data);
-            document.body.classList.remove("d-none");
+            if (data.status === "success") {
+                success_div.innerHTML = successCard("Product added successfully");
+                closeAddProductModal();
+                retrieveEquipment();
+            } else {
+                error_div.innerHTML = alertCard("Error adding product: " + data.message);
+            }
         })
         .catch(error => {
             console.error("Error:", error);
-            window.location.href = "/?status=INTERNAL_SERVER_ERROR";  // Redirect in case of an error
+            error_div.innerHTML = alertCard("An error occurred while adding the product.");
         });
+});
 
 
 // -------------------------------------------------------------------------------------------------- //
@@ -482,6 +426,8 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
     };
 
     console.log(changesMade);
+
+    // return;
 
     const requestBody = { 
         "EquipmentID": parseInt(changedEquipmentID),
@@ -505,10 +451,238 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         closeEditModal();
         return;
     }
-});
-</script>
 
-<script src="http://localhost:8080/home/search_and_paginate.js"></script>
+    // Make a request to the server
+    fetch('/api/equipment/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == "success"){
+                retrieveEquipment();
+                success_div.innerHTML = successCard(`Successfully edited equipment: ${selectedEquipment["I_Product"]}`);
+            } else {
+                error_div.innerHTML = alertCard("Something wrong happened when trying to edit the product.");
+            }
+            closeEditModal();
+        })
+        .catch(error => {
+            closeEditModal();
+            error_div.innerHTML = alertCard("Error: " + error);
+        });
+});
+
+
+// Sample Format of SelectedEquipment
+// Object { I_ID: 1, I_Product: "Pillow Case", I_SN: "N/A", I_Quantity: "274", UNIT_ID: "pieces", I_Location: "Sunken" }
+// ​
+// I_ID: 1
+// ​
+// I_Location: "Sunken"
+// ​
+// I_Product: "Pillow Case"
+// ​
+// I_Quantity: "274"
+// ​
+// I_SN: "N/A"
+// ​
+// UNIT_ID: "pieces"  
+// * Note changedMade has this turned into the respective ID and will be the one to be passed instead of the name.
+// ​
+// <prototype>: Object { … }
+// editProduct.js:6:13
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+document.getElementById('deleteModal').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const productID = parseInt(document.getElementById('deleteProductId').value);
+    fetch(`/api/equipment/delete/${productID}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == "success"){
+            retrieveEquipment();
+            success_div.innerHTML = successCard(`Successfully deleted product`); // TODO: Show the name of deleted product
+        } else {
+            error_div.innerHTML = alertCard("Something wrong happened when trying to delete the product.");
+        }
+        closeModal();
+    })
+    .catch(error => {
+        closeModal();
+        error_div.innerHTML = alertCard("Error: " + error);
+    });
+});
+
+
+
+// -------------------------------------------------------------------------------------------------- //
+
+
+
+// Implement search functionality
+document.getElementById('search-button').onclick = function() {
+    performSearch();
+};
+
+document.getElementById('search-input').addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission
+        performSearch(); // Trigger search function
+    }
+});
+
+function performSearch() {
+    var input = document.getElementById('search-input').value.toLowerCase();
+    if (input) {
+        currentEquipments = getEquipmentArray().filter(item => 
+            Object.values(item).some(value => value.toString().toLowerCase().includes(input))
+        );
+    } else {
+        currentEquipments = Equipments;
+    }
+    updateEquipmentVars();
+    changePage(1);
+}
+
+const limit = 10;
+var maxPages = 1;
+var currentPage = 1;
+var Equipments = [];
+
+var currentEquipments = Equipments;
+
+const paginate_nums_div = document.getElementById('paginate_nums');
+const next_btn = document.getElementById('next');
+const prev_btn = document.getElementById('prev');
+
+
+function appendEquipment(equipment){
+    Equipments.push(equipment);
+}
+
+function updateEquipmentVars(){
+    maxPages = Math.ceil(getEquipmentArray().length / limit)
+    paginate_nums_div.innerHTML = "";
+    for (let num = 1; num <= maxPages; num++) {
+        paginate_nums_div.innerHTML += `<a onclick="changePage(${num})" class="btn btn-primary paginate-nums">${num}</a>`;
+    }
+
+    checkButtons();
+}
+
+function changePage(page){
+    currentPage = page;
+    checkButtons();
+    paginate(getEquipmentArray());
+}
+
+function getEquipmentArray(){
+    return currentEquipments;
+}
+
+function paginate(array){
+    const startIndex = (currentPage - 1) * limit;
+    table.innerHTML = "";
+    for (let equipment of array.slice(startIndex, startIndex + limit)){
+        table.innerHTML += appendRow(
+            equipment.ID, 
+            equipment.Product_Name,
+            (equipment.Serial_Number == 0)? "N/A" : equipment.Serial_Number,
+            equipment.Quantity,
+            equipment.Unit.name ?? "",
+            equipment.Location
+        )
+    }
+}
+
+function onPrev(){
+    if (currentPage > 1) changePage(currentPage - 1);
+}
+
+function onNext(){
+    if (currentPage < maxPages) changePage(currentPage + 1);
+}
+
+function checkButtons(){
+    if (currentPage == 1) {
+        prev_btn.classList.remove("btn-primary");
+        prev_btn.classList.add("d-none", "disabled");
+    } else {
+        prev_btn.classList.add("btn-primary");
+        prev_btn.classList.remove("d-none", "disabled");
+    }
+
+    if (currentPage == maxPages) {
+        next_btn.classList.remove("btn-primary");
+        next_btn.classList.add("d-none", "disabled");
+    } else {
+        next_btn.classList.add("btn-primary");
+        next_btn.classList.remove("d-none", "disabled");
+    }
+}
+
+function appendRow(id, productName, serialNum, quantity, unit, location){
+    if (!serialNum){
+        serialNum = "N/A";
+    }
+
+    return `
+    <tr>
+        <td> ${productName} </td>
+        <td> ${serialNum} </td>
+        <td> ${quantity} ${unit} </td>
+        <td> ${location} </td>
+        <td>
+            <button type="button" class="btn btn-primary"
+                onclick="openEditModal(${id}, '${productName.replace(/'/g, "\\'")}', ${quantity}, '${location}', '${unit.toLowerCase()}', '${serialNum.replace(/'/g, "\\'")}')">
+                <i class="fa-regular fa-pen-to-square"></i> 
+                Edit
+            </button>
+            <button type="button" class="btn btn-danger" onclick="openModal(${id})"><i class="fa-solid fa-trash"></i></button>
+        </td>
+    </tr>
+    `;
+}
+
+function retrieveEquipment() {
+    fetch('/api/equipment/view', {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok){
+            error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
+        }
+        return response.json();
+    })
+    .then(data =>{
+        if (data.status == "success"){
+            Equipments = [];
+            currentEquipments = Equipments;
+            for (let equipment of data.equipment) {
+                appendEquipment(equipment);
+            }
+            updateEquipmentVars();
+            paginate(getEquipmentArray());
+        } else {
+            throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
+        }
+    })
+    .catch(error => {
+        error_div.innerHTML = alertCard("Error: " + error);
+    });
+}
+</script>
 
 </body>
 </html>
