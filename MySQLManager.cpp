@@ -88,4 +88,20 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
         std::cerr << "MySQLX Error: " << e.what() << std::endl;
         return MySQLResult::InternalServerError;
     }
+
+
+}
+
+MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage) {
+    try {
+        mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
+        inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE)
+            .values(product, serial_num, quantity, unit_id, location, storage).execute();
+
+        return MySQLResult::Success;
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error adding equipment: " << err.what() << std::endl;
+        return MySQLResult::InternalServerError;
+    }
 }
