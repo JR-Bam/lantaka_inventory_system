@@ -74,7 +74,7 @@ void RouteHandlers::signUp(const Request& req, Response& res) {
             return;
         }
 
-        switch (MySQLManager::addUser(username, password)) {
+        switch (MySQLManager::signUp(username, password)) {
         case MySQLResult::Success:
             handle_success_api(res, "User signed up successfully.");
             break;
