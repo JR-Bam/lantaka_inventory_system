@@ -56,6 +56,38 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
+void RouteHandlers::signUp(const Request& req, Response& res) {
+    try {
+        json req_json = json::parse(req.body);
+
+        if (!req_json.contains("username") || !req_json.contains("password") || !req_json.contains("confirm_password")) {
+            handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
+            return;
+        }
+
+        std::string username = req_json["username"];
+        std::string password = req_json["password"];
+        std::string confirm_password = req_json["confirm_password"];
+
+        if (password != confirm_password) {
+            handle_error_api(res, "Passwords do not match", StatusCode::BadRequest_400);
+            return;
+        }
+
+        switch (MySQLManager::addUser(username, password)) {
+        case MySQLResult::Success:
+            handle_success_api(res, "User signed up successfully.");
+            break;
+        case MySQLResult::InternalServerError:
+            handle_error_api(res, "Internal server error occurred.", StatusCode::InternalServerError_500);
+            break;
+        }
+    }
+    catch (const std::exception& e) {
+        handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
+    }
+}
+
 void RouteHandlers::addEquipment(const Request& req, Response& res) {
     try
     {

@@ -63,6 +63,20 @@ MySQLResult MySQLManager::validateCredentials(const std::string& username, const
     }
 }
 
+MySQLResult MySQLManager::signUp(const std::string& username, const std::string& password) {
+    try {
+        mysqlx::Table users = instance().session.getSchema(SQLConsts::dbName).getTable("users");
+        users.insert(SQLColumn::USER_UNAME, SQLColumn::USER_PWORD)
+            .values(username, password).execute();
+        return MySQLResult::Success;
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error adding user: " << err.what() << std::endl;
+        return MySQLResult::InternalServerError;
+    }
+}
+
+
 MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params)
 {
     using namespace mysqlx;
