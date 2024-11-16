@@ -65,9 +65,11 @@ MySQLResult MySQLManager::validateCredentials(const std::string& username, const
 
 MySQLResult MySQLManager::signUp(const std::string& username, const std::string& password) {
     try {
+        std::string hashedPass = BCrypt::generateHash(password);
+
         mysqlx::Table users = instance().session.getSchema(SQLConsts::dbName).getTable("users");
         users.insert(SQLColumn::USER_UNAME, SQLColumn::USER_PWORD)
-            .values(username, password).execute();
+            .values(username, hashedPass).execute();
         return MySQLResult::Success;
     }
     catch (const mysqlx::Error& err) {
