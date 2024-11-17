@@ -22,6 +22,7 @@ int main()
     // For HTML Files
     svr.set_mount_point("/", "./public/login");
     svr.set_mount_point("/home", "./public/home");
+    svr.set_mount_point("/signup", "./public/signup");
     // For the images
     svr.set_mount_point("/images", "./assets");
 
