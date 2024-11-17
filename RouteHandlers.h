@@ -23,7 +23,7 @@ public:
 	static void verifyAccount(const Request& req, Response& res); // Reworked
 	static void authSession(const Request& req, Response& res);
 
-	static void RouteHandlers::signUp(const Request& req, Response& res);
+	static void signUp(const Request& req, Response& res);
 	static void addEquipment(const Request& req, Response& res);
 	static void viewEquipment(const Request& req, Response& res);
 	static void editEquipment(const Request& req, Response& res); // Reworked

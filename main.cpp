@@ -31,6 +31,7 @@ int main()
     svr.Post("/api/equipment/edit", &RouteHandlers::editEquipment);
     svr.Delete(R"(/api/equipment/delete/(\d+))", &RouteHandlers::removeEquipment);
 
+    svr.Post("/api/signup", &RouteHandlers::signUp);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/shutdown", [&svr](const Request& req, Response& res) {
