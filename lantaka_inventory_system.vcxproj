@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClInclude Include="jwt_handler.h" />
     <ClInclude Include="Logs.h" />
-    <ClInclude Include="MySQL_handler.h" />
+    <ClInclude Include="MySQLManager.h" />
     <ClInclude Include="RouteHandlers.h" />
   </ItemGroup>
   <ItemGroup>

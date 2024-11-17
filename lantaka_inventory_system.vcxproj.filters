@@ -27,12 +27,18 @@
     <ClCompile Include="MySQLManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Logs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jwt_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RouteHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MySQLManager.h">
