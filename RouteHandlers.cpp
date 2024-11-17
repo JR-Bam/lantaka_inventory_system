@@ -143,8 +143,9 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["Location"] = row[5].isNull() ? "" : row[5].get<std::string>();
             jsonRow["Storage"] = row[6].isNull() ? "" : row[6].get<std::string>();
 
-            int unit_id = row[4].isNull() ? 0 : row[4].get<int>();
-            jsonRow["Unit"]["id"] = unit_id;
+            
+            jsonRow["Unit"]["id"] = row[4].isNull() ? 0 : row[4].get<int>();
+            int unit_id = jsonRow["Unit"]["id"];
 
             if (unit_id != 0) {
                 std::string unit_name = MySQLManager::queryEquipment(unit_id);
