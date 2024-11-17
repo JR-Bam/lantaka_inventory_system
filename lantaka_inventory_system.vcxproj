@@ -139,7 +139,7 @@
     <ClCompile Include="jwt_handler.cpp" />
     <ClCompile Include="Logs.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MySQL_handler.cpp" />
+    <ClCompile Include="MySQLManager.cpp" />
     <ClCompile Include="RouteHandlers.cpp" />
   </ItemGroup>
   <ItemGroup>

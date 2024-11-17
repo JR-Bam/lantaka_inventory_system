@@ -24,7 +24,7 @@
     <ClCompile Include="RouteHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MySQL_handler.cpp">
+    <ClCompile Include="MySQLManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="RouteHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MySQL_handler.h">
+    <ClInclude Include="MySQLManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

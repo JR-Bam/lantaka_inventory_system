@@ -1,6 +1,7 @@
 // lantaka_inventory_system.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // !!!!!! Run in Release MODE !!!!!!
 
+
 // P.S. Ako nalang in charge sa jwt_handler shizz kay masakit sa ulo e explain
 #include "Logs.h"
 #include "RouteHandlers.h"
@@ -9,8 +10,7 @@
 #include <chrono>
 #include <iostream>
 #include <windows.h>
-#include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
-#include "bcrypt/BCrypt.hpp"
+
 
 static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
@@ -24,11 +24,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 {
     Server svr;
 
-    // std::cout << BCrypt::generateHash("password") << std::endl;
-
     // For HTML Files
     svr.set_mount_point("/", "./public/login");
     svr.set_mount_point("/home", "./public/home");
+    svr.set_mount_point("/signup", "./public/signup");
     // For the images
     svr.set_mount_point("/images", "./assets");
 
@@ -38,6 +37,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     svr.Post("/api/equipment/edit", &RouteHandlers::editEquipment);
     svr.Delete(R"(/api/equipment/delete/(\d+))", &RouteHandlers::removeEquipment);
 
+    svr.Post("/api/signup", &RouteHandlers::signUp);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/shutdown", [&svr](const Request& req, Response& res) {
