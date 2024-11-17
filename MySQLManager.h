@@ -78,6 +78,7 @@ public:
 	// - MySQLResult::BadCredentials : Returned if the username does not exist in the database or if the password is incorrect.
 	// - MySQLResult::InternalServerError : Returned if a mysqlx::Error is caught during execution.
 	static MySQLResult validateCredentials(const std::string& username, const std::string& password);
+
 	// Updates specified fields of an equipment entry in the inventory table of the MySQL database 
 	// based on the provided equipment ID. The function iterates over key-value pairs in the params 
 	// vector and dynamically sets the corresponding fields for the specified equipment ID.
@@ -85,8 +86,9 @@ public:
 	// - MySQLResult::Success: Returned if the update was successful, with at least one row affected.
 	// - MySQLResult::NotFound: Returned if no rows were affected, indicating the specified ID does not exist.
 	// - MySQLResult::InternalServerError: Returned if a mysqlx::Error is caught during execution.
-	static MySQLResult signUp(const std::string& username, const std::string& password);
 	static MySQLResult updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params);
+
+	static MySQLResult signUp(const std::string& username, const std::string& password);
 	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage);
 	static mysqlx::RowResult viewEquipment();
 	static std::string queryEquipment(const int& unit_id);
