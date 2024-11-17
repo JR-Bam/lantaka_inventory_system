@@ -130,39 +130,24 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
 void RouteHandlers::viewEquipment(const Request& req, Response& res)
 {
     try {
-        sql::Connection* con = MySQLManager::connectDB();
-        if (!con) {
-            handle_error_api(res, "Database connection failed", 500);
-            return;
-        }
-        sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM inventory");
-        sql::ResultSet* result(pstmt->executeQuery());
-
+        auto result = MySQLManager::viewEquipment();
         json jsonArray = json::array();
-
-        while (result->next()) {
+        while (auto row = result.fetchOne()) {
             json jsonRow;
 
-            jsonRow["ID"]               = result->getInt(SQLColumn::EQ_ID);
-            jsonRow["Product_Name"]     = result->getString(SQLColumn::EQ_NAME);
-            jsonRow["Serial_Number"]    = result->getString(SQLColumn::EQ_SERIAL_NUM);
-            jsonRow["Quantity"]         = result->getInt(SQLColumn::EQ_QUANTITY);
-            jsonRow["Location"]         = result->getString(SQLColumn::EQ_LOCATION);
-            jsonRow["Storage"]          = result->getString(SQLColumn::EQ_STORAGE);
+            jsonRow["ID"] = row["EQ_ID"];
+            jsonRow["Product_Name"] = row["EQ_NAME"];
+            jsonRow["Serial_Number"] = row["EQ_SERIAL_NUM"];
+            jsonRow["Quantity"] = row["EQ_QUANTITY"];
+            jsonRow["Location"] = row["EQ_LOCATION"];
+            jsonRow["Storage"] = row["EQ_STORAGE"];
 
-            int unit_id = result->getInt(SQLColumn::EQ_UNIT_ID);
+            int unit_id = row["EQ_UNIT_ID"];
             jsonRow["Unit"]["id"]       = unit_id;
             if (unit_id != 0){
-                sql::PreparedStatement* unit_query = con->prepareStatement("SELECT * FROM unit WHERE UN_ID = ?");
-                unit_query->setInt(1, unit_id);
-
-                sql::ResultSet* unit_query_result = unit_query->executeQuery();
-                unit_query_result->next();
-
-                jsonRow["Unit"]["name"] = unit_query_result->getString("UN_Name");
-
-                delete unit_query;
-                delete unit_query_result;
+                std::string unit_name = MySQLManager::queryEquipment(unit_id);
+                jsonRow["Unit"]["name"] = unit_name.empty() ? nullptr : unit_name;
+                
             }
             else {
                 jsonRow["Unit"]["name"] = nullptr;

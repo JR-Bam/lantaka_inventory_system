@@ -121,3 +121,44 @@ MySQLResult MySQLManager::addEquipment(const std::string& product, const std::st
         return MySQLResult::InternalServerError;
     }
 }
+mysqlx::RowResult MySQLManager::viewEquipment() {
+    try {
+        mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
+        mysqlx::Table inventory = db.getTable("inventory");
+        return inventory.select("*").execute();
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error viewing equipment: " << err.what() << std::endl;
+        return mysqlx::RowResult();
+    }
+}
+std::string MySQLManager::queryEquipment(const int& unit_id) {
+    try {
+        mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
+        mysqlx::Table unitTable = db.getTable("unit");
+        
+        mysqlx::RowResult unit_query_result = unitTable
+            .select("UN_Name")
+            .where("UN_ID = :unit_id")
+            .bind("unit_id", unit_id)
+            .execute();
+        if (unit_query_result.count() > 0) {
+            mysqlx::Row row = unit_query_result.fetchOne();
+            mysqlx::Value value = row["UN_Name"];
+            if (!value.isNull()) {
+                return value.get<std::string>();
+            }
+            else {
+                return "Error: UN_Name is null";
+            }
+        }
+        else {
+            return "Unit not found"; 
+        }
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error viewing equipment: " << err.what() << std::endl;
+        return "Error fetching unit name";
+      }
+
+}
