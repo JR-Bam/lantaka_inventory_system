@@ -136,6 +136,7 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
         while (auto row = result.fetchOne()) {
             json jsonRow;
 
+            // Safely access and convert values from the result set
             jsonRow["ID"] = row[0].isNull() ? 0 : row[0].get<int>();
             jsonRow["Product_Name"] = row[1].isNull() ? "" : row[1].get<std::string>();
             jsonRow["Serial_Number"] = row[2].isNull() ? "" : row[2].get<std::string>();
@@ -143,20 +144,23 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["Location"] = row[5].isNull() ? "" : row[5].get<std::string>();
             jsonRow["Storage"] = row[6].isNull() ? "" : row[6].get<std::string>();
 
+            // Safely access the unit ID
             int unit_id = row[4].isNull() ? 0 : row[4].get<int>();
             jsonRow["Unit"]["id"] = unit_id;
 
+            // If unit_id is not 0, fetch unit name
             if (unit_id != 0) {
                 std::string unit_name = MySQLManager::queryEquipment(unit_id);
                 jsonRow["Unit"]["name"] = unit_name.empty() ? "" : unit_name;
             }
             else {
-                jsonRow["Unit"]["name"] = "";
+                jsonRow["Unit"]["name"] = "";  // Use empty string for null cases
             }
 
             jsonArray.push_back(jsonRow);
         }
 
+        // Set response content
         res.set_content(jsonArray.dump(1), "application/json");
         handle_success_view(res, "success", jsonArray);
     }
