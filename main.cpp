@@ -2,25 +2,25 @@
 // !!!!!! Run in Release MODE !!!!!!
 
 // P.S. Ako nalang in charge sa jwt_handler shizz kay masakit sa ulo e explain
-
+#include "Logs.h"
 #include "RouteHandlers.h"
 
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <windows.h>
 #include "mysqlx/xdevapi.h"     // Library for MYSQLX (Because I don's use XAMPP)
-#include "mysql/jdbc.h"         // Use this library to connect to XAMPP MySQL
 #include "bcrypt/BCrypt.hpp"
 
 static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
     std::this_thread::sleep_for(std::chrono::seconds(3));
     svr.stop();
-    // TODO: Log into file that server has stopped with timestamp
-    std::cout << "Server offline...\n";
+    
+    Logs::logLine(Logs::Type::Stop);
 }
 
-int main()
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) // Don't Ask, this is the main function pramis
 {
     Server svr;
 
@@ -47,8 +47,8 @@ int main()
         shutdown_thread.detach();
     });
 
-    std::cout << "Starting server..." << std::endl;
-    // TODO: Log into file the time in which server as started
+    Logs::logLine(Logs::Type::Start);
+
     svr.listen("localhost", 8080);
 
     return 0;
