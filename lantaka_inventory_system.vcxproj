@@ -137,12 +137,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="jwt_handler.cpp" />
+    <ClCompile Include="Logs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MySQL_handler.cpp" />
     <ClCompile Include="RouteHandlers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jwt_handler.h" />
+    <ClInclude Include="Logs.h" />
     <ClInclude Include="MySQL_handler.h" />
     <ClInclude Include="RouteHandlers.h" />
   </ItemGroup>
