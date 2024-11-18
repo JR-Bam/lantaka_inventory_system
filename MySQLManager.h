@@ -1,5 +1,4 @@
 #pragma once
-#include <mysql/jdbc.h>
 #include <mysqlx/xdevapi.h>
 #include <utility>
 
@@ -59,15 +58,6 @@ private:
 		session.close();
 	}
 public:
-	// Legacy function, outdated.
-	static sql::Connection* connectDB();
-
-
-	// Not recommended for RouteHandlers to work with sql directly, I recommend making 
-	// functions built for a specific task that returns a mysqlx::RowResult or
-	// MySQLResult and RouteHandlers will only need to parse the RowResult.
-	// FYI: You don't need to free this
-	static mysqlx::Schema* getDatabase(const std::string& name);
 
 	// Checks if the provided username and password combination is valid by querying the users table 
 	// in the MySQL database. It returns an appropriate MySQLResult enum value indicating whether 
