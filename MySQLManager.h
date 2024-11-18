@@ -92,5 +92,6 @@ public:
 	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage);
 	static mysqlx::RowResult viewEquipment();
 	static std::string queryEquipment(const int& unit_id);
+	static MySQLResult deleteEquipment(const int& inv_id);
 };
 

@@ -156,3 +156,18 @@ std::string MySQLManager::queryEquipment(const int& unit_id) {
         return "error";
     }
 }
+MySQLResult MySQLManager::deleteEquipment(const int& inv_id) {
+    try {
+        mysqlx::Schema IMS = instance().session.getSchema(SQLConsts::dbName);
+        mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
+        inventory.remove()
+            .where("I_ID = :inv_id")
+            .bind("inv_id", inv_id)
+            .execute();
+        return MySQLResult::Success;
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error deleting equipment: " << err.what() << std::endl;
+        return MySQLResult::InternalServerError;
+    }
+}
