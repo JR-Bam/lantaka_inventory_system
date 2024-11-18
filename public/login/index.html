@@ -81,20 +81,27 @@
         <div class="form-container">
             <center><img src="/images/adzu_logo.png" alt="ateneo"></center>
             <!-- <h2 class="text-center" style="color: white; font-family: 'Matura MT Script Capitals', sans-serif;">ADZU <br>Lantaka <br> Inventory Management System</h2> -->
-            <h2 class="text-center" style="color: white; font-family: 'Roboto slab', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2>
+            <h2 class="text-center mb-3" style="color: white; font-family: 'Roboto slab', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2>
             <!-- <h2 class="text-center" style="color: white; font-family: 'Teko', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
             <!-- <h2 class="text-center" style="color: white; font-family: 'Alata', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
 
-            <div id="error_div" class="alert alert-danger d-none" role="alert"></div>
+            <div id="error_div" class="alert alert-danger d-none" role="alert">test</div>
 
             <form method="post" id="login_form">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" required>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <h5 class="text-center mt-3" style="color: white; font-family: 'Alata', sans-serif;">Not yet signed in? <a href="/signup">Create an account.</a></h5>
             </form> 
         </div>
     </div>
@@ -105,18 +112,29 @@
 </html>
 
 <script>
+    /*
+        A username is composed of a first and last name in this format
+        "{firstname}@{lastname}"
+        Example:
+        "Juan@Dela Cruz"
+    */
+
     const form = document.getElementById('login_form');
     const errorDiv = document.getElementById('error_div');
+
+    const fnamediv = document.getElementById('firstName');
+    const lnamediv = document.getElementById('lastName');
+    const pworddiv = document.getElementById('password');
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();  // Prevent the form from submitting the usual way
         
-        // Create a FormData object
-        const formData = new FormData(form);
-        
-        // Convert form data to JSON
-        const jsonData = {};
-        formData.forEach((value, key) => { jsonData[key] = value });
+        const jsonData = {
+            "username": fnamediv.value + "@" + lnamediv.value,
+            "password": pworddiv.value
+        };
+
+        console.log(jsonData);
         
         // Send the JSON data via POST
         fetch('/api/login', {
