@@ -3,6 +3,16 @@
 #include <iostream>
 #include <bcrypt/BCrypt.hpp>
 
+std::string MySQLManager::getEquipmentUsername(int id)
+{
+    mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
+    return inventory.select(SQLColumn::EQ_NAME)
+        .where("I_ID = :inv_id")
+        .bind("inv_id", id)
+        .execute()
+        .fetchOne()[0].get<std::string>();
+}
+
 MySQLResult MySQLManager::validateCredentials(const std::string& username, const std::string& password)
 {
     using namespace mysqlx;
@@ -58,6 +68,8 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
         Schema IMS = instance().session.getSchema(SQLConsts::dbName);
         Table inventory = IMS.getTable("inventory");
 
+        std::string equipmentName = getEquipmentUsername(id);
+
         TableUpdate update = inventory.update();        // Initialize update query statement
         for (const auto& pair : params) {               // sets the parameters
             update.set(pair.first, pair.second);
@@ -69,7 +81,7 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
 
         if (queryResult.getAffectedItemsCount() > 0)
         {
-            Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Create, username, "Housekeeping");
+            Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Update, username, equipmentName, id);
             return MySQLResult::Success;
         }
         else
@@ -136,21 +148,28 @@ std::string MySQLManager::queryEquipment(const int& unit_id) {
         }
     }
     catch (const mysqlx::Error& err) {
-        return "error";
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        return std::string();
     }
 }
-MySQLResult MySQLManager::deleteEquipment(const int& inv_id) {
+MySQLResult MySQLManager::deleteEquipment(const int& inv_id, const std::string& username) {
     try {
         mysqlx::Schema IMS = instance().session.getSchema(SQLConsts::dbName);
         mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
+
+        std::string equipmentName = getEquipmentUsername(inv_id);
+
         inventory.remove()
             .where("I_ID = :inv_id")
             .bind("inv_id", inv_id)
             .execute();
+
+        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Delete, username, equipmentName, inv_id);
+
         return MySQLResult::Success;
     }
     catch (const mysqlx::Error& err) {
-        std::cerr << "Error deleting equipment: " << err.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }

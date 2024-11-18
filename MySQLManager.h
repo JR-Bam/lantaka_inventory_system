@@ -57,6 +57,8 @@ private:
 	~MySQLManager() {
 		session.close();
 	}
+
+	static std::string getEquipmentUsername(int id);
 public:
 
 	// Checks if the provided username and password combination is valid by querying the users table 
@@ -82,6 +84,6 @@ public:
 	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage, const std::string& username);
 	static mysqlx::RowResult viewEquipment(const std::string& username);
 	static std::string queryEquipment(const int& unit_id);
-	static MySQLResult deleteEquipment(const int& inv_id);
+	static MySQLResult deleteEquipment(const int& inv_id, const std::string& username);
 };
 

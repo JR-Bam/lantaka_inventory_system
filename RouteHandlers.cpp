@@ -246,9 +246,14 @@ void RouteHandlers::removeEquipment(const Request& req, Response& res)
 {
     
     try {
+        std::string username = getUsername(req);
+        if (username.empty()) {
+            handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
+            return;
+        }
         int equipmentID = std::stoi(req.matches[1].str());
 
-        switch (MySQLManager::deleteEquipment(equipmentID)) {
+        switch (MySQLManager::deleteEquipment(equipmentID, username)) {
         case MySQLResult::Success:
             handle_success_api(res, "Equipment deleted successfully.");
             break;

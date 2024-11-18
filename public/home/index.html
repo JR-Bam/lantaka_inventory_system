@@ -255,7 +255,7 @@ var selectedEquipment = {
 
 function alertCard(message){
     return `
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alata">
             ${message}
             <button type="button" class="close" aria-label="Close" onclick="error_div.innerHTML = null">
                 <span aria-hidden="true">&times;</span>
@@ -266,7 +266,7 @@ function alertCard(message){
 
 function successCard(message){
     return `
-        <div class="alert alert-success">
+        <div class="alert alert-success alata">
             ${message}
             <button type="button" class="close" aria-label="Close" onclick="success_div.innerHTML = null">
                 <span aria-hidden="true">&times;</span>
@@ -543,6 +543,7 @@ document.getElementById('deleteModal').addEventListener('submit', function(event
             error_div.innerHTML = alertCard("Something wrong happened when trying to delete the product.");
         }
         closeModal();
+        closeEditModal();
     })
     .catch(error => {
         closeModal();
