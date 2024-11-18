@@ -74,6 +74,9 @@
             max-height: 10rem;
             max-width: 10rem;
         }
+        .alata {
+            font-family: 'Alata', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -81,11 +84,12 @@
         <div class="form-container">
             <center><img src="/images/adzu_logo.png" alt="ateneo"></center>
             <!-- <h2 class="text-center" style="color: white; font-family: 'Matura MT Script Capitals', sans-serif;">ADZU <br>Lantaka <br> Inventory Management System</h2> -->
-            <h2 class="text-center mb-3" style="color: white; font-family: 'Roboto slab', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2>
+            <h2 class="text-center mb-3 alata" style="color: white;">ADZU Lantaka <br> Inventory Management System</h2>
             <!-- <h2 class="text-center" style="color: white; font-family: 'Teko', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
             <!-- <h2 class="text-center" style="color: white; font-family: 'Alata', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
 
-            <div id="error_div" class="alert alert-danger d-none" role="alert">test</div>
+            <div id="error_div" class="alert alert-danger d-none alata" role="alert"></div>
+            <div id="success_div" class="alert alert-success d-none alata" role="alert"></div>
 
             <form method="post" id="login_form">
                 <div class="form-row">
@@ -100,8 +104,8 @@
                 <div class="form-group">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
-                <h5 class="text-center mt-3" style="color: white; font-family: 'Alata', sans-serif;">Not yet signed in? <a href="/signup">Create an account.</a></h5>
+                <button type="submit" class="btn btn-primary btn-block alata">Login</button>
+                <h5 class="text-center mt-3 alata" style="color: white;">Not yet signed in? <a href="/signup">Create an account.</a></h5>
             </form> 
         </div>
     </div>
@@ -121,6 +125,7 @@
 
     const form = document.getElementById('login_form');
     const errorDiv = document.getElementById('error_div');
+    const successDiv = document.getElementById('success_div');
 
     const fnamediv = document.getElementById('firstName');
     const lnamediv = document.getElementById('lastName');
@@ -170,11 +175,16 @@
 
         // Get the 'status' parameter
         const status = params.get('status');
+        const success = params.get('success');
 
         // Check if the parameter exists and do something with it
         if (status) {
             errorDiv.classList.remove("d-none"); // Make error div visible
             errorDiv.innerHTML = "Error: " + status;
+        }
+        if (success) {
+            successDiv.classList.remove("d-none");
+            successDiv.innerHTML = success;
         }
 
     });

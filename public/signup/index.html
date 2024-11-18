@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="/signup/CSS_Signup.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
 </head>
 <body>
 <div class="signup-container">
-    <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 40px">Create New User</h2>
-    <form action="signup.php" method="post">
+    <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 40px">Create New Account</h2>
+    <form id="signup-form">
 
         <div class="form-group">
             <div class="input-group" style="display: flex; gap: 5px;">
@@ -27,20 +28,74 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="password-form-group">
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            <div class="invalid-feedback d-none alata" id="error_msg"></div>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="c_password-form-group">
             <label for="password">Confirm Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Confirm Password" required>
+            <input type="password" class="form-control" id="c_password" name="password" placeholder="Confirm Password" required>
         </div>
-        <button type="submit" class="btn btn-success btn-block">Register</button>
+        <button type="submit" class="btn btn-success btn-block alata">Register</button>
     </form>
+    <p class="alata text-center mt-3">Already have an account? <a href="/">Sign in.</a></p>
 </div>
 </body>
 </html>
 
 <script>
     // TODO: Signup 
+    const fnamediv = document.getElementById('firstname');
+    const lnamediv = document.getElementById('lastname');
+    const pworddiv = document.getElementById('password');
+    const cpwdiv = document.getElementById('c_password');
+
+    const pwdfgroup = document.getElementById('password-form-group');
+    const cpwdfgroup = document.getElementById('c_password-form-group');
+    document.getElementById('signup-form').addEventListener('submit', function(event){
+        event.preventDefault();
+
+        if (pworddiv.value != cpwdiv.value) {
+            pworddiv.classList.add('is-invalid');
+            cpwdiv.classList.add('is-invalid');
+            showError("Passwords do not match. Try again.");
+            return;
+        }
+
+        const username = `${fnamediv.value.trim()}@${lnamediv.value.trim()}`;
+        const jsonData = {
+            "username": username,
+            "password": pworddiv.value,
+            "confirm_password": cpwdiv.value
+        };
+
+        fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok){
+                throw "Something happened internally.";
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            console.log(data);
+            window.location.href = "/?success=Successfully Created Account";
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            showError(err);
+        });
+    });
+
+    function showError(msg){
+        document.getElementById('error_msg').innerHTML = msg;
+        document.getElementById('error_msg').classList.remove('d-none');
+    }
 </script>

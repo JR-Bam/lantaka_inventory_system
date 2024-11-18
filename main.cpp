@@ -27,10 +27,8 @@ static void open_browser(Server& svr, std::string url) {
     while (!svr.is_running()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-
-#ifdef _WIN32
-    system(std::string("start " + url).c_str());
-#endif // _WIN32
+    std::wstring w_url = std::wstring(url.begin(), url.end());
+    ShellExecute(NULL, L"open", w_url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) // Don't Ask, this is the main function pramis

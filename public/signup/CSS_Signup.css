@@ -22,3 +22,7 @@ body {
     display: flex;
     align-items: flex-end; 
 }
+
+.alata {
+    font-family: 'Alata', sans-serif;
+}
