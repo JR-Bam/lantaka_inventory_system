@@ -93,15 +93,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/dependencies/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/dependencies/include_x86</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib_x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn8.lib;bcrypt.lib;zstd.lib;zlib.lib;lz4.lib;libprotobuf.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -158,6 +158,33 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="dependencies\bin\mysqlcppconnx-2-vs14.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="dependencies\bin_x86\libcrypto-3.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="dependencies\bin_x86\libssl-3.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="dependencies\bin_x86\mysqlcppconn8-2-vs14.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="dependencies\bin_x86\lz4.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="dependencies\bin_x86\zlib1.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="dependencies\bin_x86\zstd.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="dependencies\bin_x86\libprotobuf-lite.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

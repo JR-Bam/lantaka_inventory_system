@@ -48,7 +48,13 @@
   <ItemGroup>
     <CopyFileToFolders Include="dependencies\bin\libssl-3-x64.dll" />
     <CopyFileToFolders Include="dependencies\bin\libcrypto-3-x64.dll" />
-    <CopyFileToFolders Include="dependencies\bin\mysqlcppconn-10-vs14.dll" />
     <CopyFileToFolders Include="dependencies\bin\mysqlcppconnx-2-vs14.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\libcrypto-3.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\libssl-3.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\mysqlcppconn8-2-vs14.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\lz4.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\zlib1.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\zstd.dll" />
+    <CopyFileToFolders Include="dependencies\bin_x86\libprotobuf-lite.dll" />
   </ItemGroup>
 </Project>
