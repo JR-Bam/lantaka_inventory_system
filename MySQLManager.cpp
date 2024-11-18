@@ -1,4 +1,5 @@
 #include "MySQLManager.h"
+#include "Logs.h"
 #include <iostream>
 #include <bcrypt/BCrypt.hpp>
 
@@ -58,7 +59,7 @@ MySQLResult MySQLManager::validateCredentials(const std::string& username, const
         return MySQLResult::BadCredentials;
     }
     catch (mysqlx::Error& e) {
-        std::cerr << "MySQLX Error: " << e.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, e.what());
         return MySQLResult::InternalServerError;
     }
 }
@@ -74,12 +75,13 @@ MySQLResult MySQLManager::signUp(const std::string& username, const std::string&
     }
     catch (const mysqlx::Error& err) {
         std::cerr << "Error adding user: " << err.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
 
 
-MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params)
+MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params, const std::string& username)
 {
     using namespace mysqlx;
     try {
@@ -96,39 +98,50 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
             .execute();                                 // finally execute update query statement
 
         if (queryResult.getAffectedItemsCount() > 0)
+        {
+            Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Create, username, "Housekeeping");
             return MySQLResult::Success;
+        }
         else
+        {
+            Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, "Equipment ID " + std::to_string(id) + " not found when updating");
             return MySQLResult::NotFound;
+        }
     }
     catch (mysqlx::Error& e) {
-        std::cerr << "MySQLX Error: " << e.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, e.what());
         return MySQLResult::InternalServerError;
     }
 
 
 }
 
-MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage) {
+MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage, const std::string& username) {
     try {
         mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
-        inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE)
+        mysqlx::Result result = inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE)
             .values(product, serial_num, quantity, unit_id, location, storage).execute();
+
+        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Create, username, product, result.getAutoIncrementValue());
 
         return MySQLResult::Success;
     }
     catch (const mysqlx::Error& err) {
-        std::cerr << "Error adding equipment: " << err.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
-mysqlx::RowResult MySQLManager::viewEquipment() {
+mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username) {
     try {
         mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
         mysqlx::Table inventory = db.getTable("inventory");
+
+        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, "Housekeeping");
+
         return inventory.select("*").execute();
     }
     catch (const mysqlx::Error& err) {
-        std::cerr << "Error viewing equipment: " << err.what() << std::endl;
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return mysqlx::RowResult();
     }
 }

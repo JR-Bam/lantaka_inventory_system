@@ -287,9 +287,11 @@ function logout(){
 
 
 const token = localStorage.getItem("Lantaka-IMS-Sess-Token");
+const tokenParams = new URLSearchParams({ token: token });
 if (!token){
     window.location.href = "/?status=Please Log In First";
 } else {
+
     fetch('/api/validate-token', {
         method: "GET",
         headers: {
@@ -407,7 +409,7 @@ document.getElementById('addProductModal').addEventListener('submit', function (
 
     console.log(productData);
 
-    fetch('/api/equipment/add', {
+    fetch(`/api/equipment/add?${tokenParams.toString()}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -477,7 +479,7 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
     }
 
     // Make a request to the server
-    fetch('/api/equipment/edit', {
+    fetch(`/api/equipment/edit?${tokenParams.toString()}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -529,7 +531,7 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
 document.getElementById('deleteModal').addEventListener('submit', function(event) {
     event.preventDefault();
     const productID = parseInt(document.getElementById('deleteProductId').value);
-    fetch(`/api/equipment/delete/${productID}`, {
+    fetch(`/api/equipment/delete/${productID}?${tokenParams.toString()}`, {
         method: 'DELETE'
     })
     .then(response => response.json())
@@ -681,7 +683,7 @@ function appendRow(id, productName, serialNum, quantity, unit, location){
 }
 
 function retrieveEquipment() {
-    fetch('/api/equipment/view', {
+    fetch(`/api/equipment/view?${tokenParams.toString()}`, {
         method: 'GET'
     })
     .then(response => {

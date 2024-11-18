@@ -86,11 +86,11 @@ public:
 	// - MySQLResult::Success: Returned if the update was successful, with at least one row affected.
 	// - MySQLResult::NotFound: Returned if no rows were affected, indicating the specified ID does not exist.
 	// - MySQLResult::InternalServerError: Returned if a mysqlx::Error is caught during execution.
-	static MySQLResult updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params);
+	static MySQLResult updateEquipment(const int id, const std::vector<std::pair<std::string, std::string>>& params, const std::string& username);
 
 	static MySQLResult signUp(const std::string& username, const std::string& password);
-	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage);
-	static mysqlx::RowResult viewEquipment();
+	static MySQLResult addEquipment(const std::string& product, const std::string& serial_num, int quantity, int unit_id, const std::string& location, const std::string& storage, const std::string& username);
+	static mysqlx::RowResult viewEquipment(const std::string& username);
 	static std::string queryEquipment(const int& unit_id);
 };
 

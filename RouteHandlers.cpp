@@ -91,12 +91,20 @@ void RouteHandlers::signUp(const Request& req, Response& res) {
 void RouteHandlers::addEquipment(const Request& req, Response& res) {
     try
     {
+        std::string token = req.matches[1].str();
+        std::string username = getUsername(req);
+        if (username.empty()) {
+            handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
+            return;
+        }
+
         json req_json = json::parse(req.body);
 
         // Validate required fields
         if (!req_json.contains("I_Product") || !req_json.contains("I_SN") ||
             !req_json.contains("I_Quantity") || !req_json.contains("UNIT_ID") ||
-            !req_json.contains("I_Location") || !req_json.contains("E_Storage")) {
+            !req_json.contains("I_Location") || !req_json.contains("E_Storage")) 
+        {
             handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
@@ -111,7 +119,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
 
 
         // Call the MySQLManager's addEquipment method
-        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage)) {
+        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage, username)) {
         case MySQLResult::Success:
             handle_success_api(res, "Equipment added successfully.");
             break;
@@ -130,7 +138,13 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
 void RouteHandlers::viewEquipment(const Request& req, Response& res)
 {
     try {
-        auto result = MySQLManager::viewEquipment();
+        std::string username = getUsername(req);
+        if (username.empty()) {
+            handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
+            return;
+        }
+
+        auto result = MySQLManager::viewEquipment(username);
         json jsonArray = json::array();
 
         while (auto row = result.fetchOne()) {
@@ -181,6 +195,12 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
     */
     try
     {
+        std::string username = getUsername(req);
+        if (username.empty()) { 
+            handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
+            return;
+        }
+
         json req_json = json::parse(req.body);
 
         if (!req_json.contains("EquipmentID") || !req_json.contains("Updates")) {
@@ -203,7 +223,7 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
             }
         }
 
-        switch (MySQLManager::updateEquipment(equipmentID, params)) {
+        switch (MySQLManager::updateEquipment(equipmentID, params, username)) {
             case MySQLResult::Success:
                 handle_success_api(res, "Equipment editted successfully.");
                 break;
@@ -268,6 +288,23 @@ void RouteHandlers::removeEquipment(const Request& req, Response& res)
     success or an error, if it's an error they can check the type of error by
     looking at errorType.
 */
+
+std::string RouteHandlers::getUsername(const Request& req)
+{
+    auto token_it = req.params.find("token"); 
+    if (token_it == req.params.end()) { 
+        return std::string();
+    }
+    
+    std::string token = token_it->second; // Extract the token value
+    const TokenResponse result = jwt_handler::validate_token(token);
+    if (result.status == Token::Valid) {
+        return result.username;
+    }
+    else {
+        return std::string();
+    }
+}
 
 void RouteHandlers::handle_success_authSess(Response& res, std::string& username)
 {

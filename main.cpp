@@ -11,6 +11,9 @@
 #include <iostream>
 #include <windows.h>
 
+static const std::string HOST = "localhost";
+static const int PORT = 8080;
+
 
 static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
@@ -18,6 +21,16 @@ static void shutdown_server(Server& svr) {
     svr.stop();
     
     Logs::logLine(Logs::Type::Stop);
+}
+
+static void open_browser(Server& svr, std::string url) {
+    while (!svr.is_running()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+#ifdef _WIN32
+    system(std::string("start " + url).c_str());
+#endif // _WIN32
 }
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) // Don't Ask, this is the main function pramis
@@ -49,7 +62,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
     Logs::logLine(Logs::Type::Start);
 
-    svr.listen("localhost", 8080);
+    // Separate thread to open the browser
+    std::thread browser_thread(open_browser, std::ref(svr), std::string("http://" + HOST + ":" + std::to_string(PORT)));
+
+    svr.listen(HOST, PORT);
+
+    browser_thread.join();
 
     return 0;
 }

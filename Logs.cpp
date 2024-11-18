@@ -37,7 +37,7 @@ std::string Logs::parseOperation(CrudOperation& op, std::string& user, std::stri
 	}
 
 	return "User `" + user + "` performed `" + opToStr + "` on equipment `" + equipment +
-		"` with ID `" + std::to_string(equipmentID) + "`";
+		"` #`" + std::to_string(equipmentID) + "`";
 }
 
 void Logs::logLine(
