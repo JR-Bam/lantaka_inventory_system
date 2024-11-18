@@ -101,7 +101,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -132,7 +132,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/dependencies/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);libcrypto.lib;libssl.lib;mysqlcppconnx.lib;bcrypt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,11 +153,6 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="dependencies\bin\libssl-3-x64.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="dependencies\bin\mysqlcppconn-10-vs14.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

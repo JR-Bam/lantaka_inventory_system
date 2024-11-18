@@ -3,36 +3,6 @@
 #include <iostream>
 #include <bcrypt/BCrypt.hpp>
 
-sql::Connection* MySQLManager::connectDB()
-{
-    sql::mysql::MySQL_Driver* driver;
-    sql::Connection* con;
-
-    try {
-        // Set the username, password, and dbname on RouteHandlers.h
-        driver = sql::mysql::get_mysql_driver_instance();
-        con = driver->connect("mysql://127.0.0.1:3306", SQLConsts::username, SQLConsts::password);
-        con->setSchema(SQLConsts::dbName);
-    }
-    catch (sql::SQLException& e) {
-        std::cerr << "Error connecting to the database: " << e.what() << std::endl;
-        return nullptr;
-    }
-    return con;
-}
-
-mysqlx::Schema* MySQLManager::getDatabase(const std::string& name)
-{
-    try {
-        mysqlx::Schema* schema = new mysqlx::Schema(instance().session.getSchema(name));
-        return schema;
-    }
-    catch (mysqlx::Error& e) {
-        std::cerr << "Error connecting to the database: " << e.what() << std::endl;
-        return nullptr;
-    }
-}
-
 MySQLResult MySQLManager::validateCredentials(const std::string& username, const std::string& password)
 {
     using namespace mysqlx;
@@ -167,5 +137,20 @@ std::string MySQLManager::queryEquipment(const int& unit_id) {
     }
     catch (const mysqlx::Error& err) {
         return "error";
+    }
+}
+MySQLResult MySQLManager::deleteEquipment(const int& inv_id) {
+    try {
+        mysqlx::Schema IMS = instance().session.getSchema(SQLConsts::dbName);
+        mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
+        inventory.remove()
+            .where("I_ID = :inv_id")
+            .bind("inv_id", inv_id)
+            .execute();
+        return MySQLResult::Success;
+    }
+    catch (const mysqlx::Error& err) {
+        std::cerr << "Error deleting equipment: " << err.what() << std::endl;
+        return MySQLResult::InternalServerError;
     }
 }

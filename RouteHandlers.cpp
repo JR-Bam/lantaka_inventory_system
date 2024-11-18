@@ -244,24 +244,20 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
 
 void RouteHandlers::removeEquipment(const Request& req, Response& res)
 {
+    
     try {
         int equipmentID = std::stoi(req.matches[1].str());
-        sql::Connection* con = MySQLManager::connectDB();
 
-        if (!con) {
-            handle_error_api(res, "Database connection failed", StatusCode::InternalServerError_500);
-            return;
+        switch (MySQLManager::deleteEquipment(equipmentID)) {
+        case MySQLResult::Success:
+            handle_success_api(res, "Equipment deleted successfully.");
+            break;
+        case MySQLResult::InternalServerError:
+            handle_error_api(res, "Internal server error occurred.", StatusCode::InternalServerError_500);
+            break;
         }
-
-        sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM inventory WHERE " + SQLColumn::EQ_ID + " = ?");
-        pstmt->setInt(1, equipmentID);
-        pstmt->executeUpdate();
-
-        delete pstmt;
-        delete con;
-
-        handle_success_api(res, "Equipment deleted successfully.");
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::BadRequest_400);
     }
