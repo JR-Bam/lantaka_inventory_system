@@ -25,8 +25,8 @@ private:
 	static const std::string secretKey;
 	static const std::string issuer;
 public:
-	static std::string create_token(std::string);
-	static TokenResponse validate_token(std::string);
+	static std::string		create_token	(std::string);
+	static TokenResponse	validate_token	(std::string);
 
 };
 
