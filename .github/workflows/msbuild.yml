@@ -1,0 +1,32 @@
+name: MSBuild
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        platform: [Win32, x64] # Specify both platforms
+        configuration: [Release]
+
+    env:
+      # Path to the solution file relative to the root of the project
+      SOLUTION_FILE_PATH: lantaka_inventory_system.sln
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build Solution
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}}
