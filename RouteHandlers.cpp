@@ -308,7 +308,7 @@ std::string RouteHandlers::getUsername(const Request& req)
 }
 std::string RouteHandlers::getCategory(const Request& req)
 {
-    auto storage_it = req.params.find("storage");
+    auto storage_it = req.params.find("E_Storage");
     if (storage_it == req.params.end()) {
         return std::string();
     }
