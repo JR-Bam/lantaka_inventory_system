@@ -684,7 +684,7 @@ function appendRow(id, productName, serialNum, quantity, unit, location){
 }
 
 function retrieveEquipment() {
-    fetch(`/api/equipment/view?${tokenParams.toString()}`, {
+    fetch(`/api/equipment/view?E_Storage=Housekeeping&${tokenParams.toString()}`, {
         method: 'GET'
     })
     .then(response => {

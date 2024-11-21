@@ -120,7 +120,7 @@ mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const 
 
         Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, "Housekeeping");
 
-        return inventory.select("*").where("E_Storage = '"+ storage + "'").execute();
+        return inventory.select("*").where("E_Storage = '" + storage + "'").execute();
     }
     catch (const mysqlx::Error& err) {
         Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
