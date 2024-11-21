@@ -684,7 +684,8 @@ function appendRow(id, productName, serialNum, quantity, unit, location){
 }
 
 function retrieveEquipment() {
-    fetch(`/api/equipment/view?E_Storage=Housekeeping&${tokenParams.toString()}`, {
+    const storage = "Housekeeping";
+    fetch(`/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`, {
         method: 'GET'
     })
     .then(response => {
