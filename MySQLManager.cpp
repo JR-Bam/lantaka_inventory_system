@@ -113,14 +113,14 @@ MySQLResult MySQLManager::addEquipment(const std::string& product, const std::st
         return MySQLResult::InternalServerError;
     }
 }
-mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username) {
+mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const std::string& storage) {
     try {
         mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
         mysqlx::Table inventory = db.getTable("inventory");
 
         Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, "Housekeeping");
 
-        return inventory.select("*").execute();
+        return inventory.select("*").where("E_Storage = '"+ storage + "'").execute();
     }
     catch (const mysqlx::Error& err) {
         Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());

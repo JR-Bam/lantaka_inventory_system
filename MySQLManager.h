@@ -117,7 +117,7 @@ public:
 														 const std::string& storage, 
 														 const std::string& username);
 
-	static mysqlx::RowResult	viewEquipment			(const std::string& username);
+	static mysqlx::RowResult	viewEquipment			(const std::string& username,const std::string& storage);
 	static std::string			queryEquipment			(const int& unit_id);
 	static MySQLResult			deleteEquipment			(const int& inv_id, 
 														 const std::string& username);

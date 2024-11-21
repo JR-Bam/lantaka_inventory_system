@@ -143,8 +143,8 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
             return;
         }
-
-        auto result = MySQLManager::viewEquipment(username);
+        std::string storage = getCategory(req);
+        auto result = MySQLManager::viewEquipment(username,storage);
         json jsonArray = json::array();
 
         while (auto row = result.fetchOne()) {
@@ -305,6 +305,15 @@ std::string RouteHandlers::getUsername(const Request& req)
     else {
         return std::string();
     }
+}
+std::string RouteHandlers::getCategory(const Request& req)
+{
+    auto storage_it = req.params.find("storage");
+    if (storage_it == req.params.end()) {
+        return std::string();
+    }
+    std::string storage = storage_it->second;
+    return storage;
 }
 
 void RouteHandlers::handle_success_authSess(Response& res, std::string& username)

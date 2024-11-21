@@ -12,6 +12,7 @@ class RouteHandlers
 {
 private:
 	static std::string getUsername(const Request& req);
+	static std::string getCategory(const Request& req);
 	static void handle_success_authSess(Response& res, std::string& username);
 	static void handle_success_verifyAcc(Response& res, std::string& username);
 	
