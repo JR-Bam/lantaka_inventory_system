@@ -117,8 +117,41 @@ public:
 														 const std::string& storage, 
 														 const std::string& username);
 
+	/**
+	*This function connects to the mysql database and takes the table inventory from the schema lantaka_ims
+	*and returns all inventory that has E_Storage of storage
+	* 
+	*Preconditions: username should be valid and storage has value
+	* 
+	*@param username is used for logging the action
+	*@param storage to determine which equipments/items to show
+	* 
+	*@return all inventory items/equipments in specific storage
+	*/
 	static mysqlx::RowResult	viewEquipment			(const std::string& username,const std::string& storage);
+	
+	/**
+	*This function connects to the mysql database and takes the table unit from the schema lantaka_ims
+	*and returns the name of the unit associated with the unit_id in the param
+	* 
+	*Precondition: unit_id corresponds to a equipment and has value
+	* 
+	*@param unit_id is the primary key or id of the unit associated with the equipment in this instance
+	* 
+	*@return the name of the unit
+	*/
 	static std::string			queryEquipment			(const int& unit_id);
+	/**
+	*This function connects to the mysql database and takes the table inventory from schema lantaka_ims
+	*gets the equipment name by running inv_id in param through getEquipmentUsername() function then deletes it
+	* 
+	*Precondition: inv_id has value and username is valid
+	* 
+	*@param inv_id is the id of the equipment to delete
+	*@param username is for logging purposes
+	* 
+	*@return either a success or error
+	*/
 	static MySQLResult			deleteEquipment			(const int& inv_id, 
 														 const std::string& username);
 };
