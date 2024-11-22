@@ -5,7 +5,7 @@
 const std::string jwt_handler::secretKey = ":33333"; // Ideally this'll be stored somewhere secret (malamang)
 const std::string jwt_handler::issuer = "lantaka-IMS-RESTAPI";
 
-std::string jwt_handler::create_token(std::string username)
+std::string jwt_handler::create_token(std::string& username)
 {
     return jwt::create()
         .set_issuer(jwt_handler::issuer)
@@ -16,7 +16,7 @@ std::string jwt_handler::create_token(std::string username)
         .sign(jwt::algorithm::hs256{ secretKey });
 }
 
-TokenResponse jwt_handler::validate_token(std::string token)
+TokenResponse jwt_handler::validate_token(std::string& token)
 {
 	try{
         auto decoded = jwt::decode(token);

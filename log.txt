@@ -1,0 +1,5 @@
+[2024-11-22 23:37:54] [START] Server Started Successfully.
+[2024-11-22 23:38:09] [ERROR] Error while parsing operation logs
+[2024-11-22 23:38:09] [ERROR] CDK Error: Unknown column 'E_Storage' in 'where clause'
+[2024-11-22 23:41:18] [START] Server Started Successfully.
+[2024-11-22 23:41:25] [ERROR] Error while parsing operation logs

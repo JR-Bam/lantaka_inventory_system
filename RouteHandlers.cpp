@@ -37,7 +37,7 @@ void RouteHandlers::authSession(const Request& req, Response& res)
     // We expect the header would look like this:
     // Authorization: Bearer <token>
     // So in extracting the token we just need to remove "Bearer " from the header value
-    const std::string token = req.get_header_value("Authorization").substr(7);
+    std::string token = req.get_header_value("Authorization").substr(7);
     TokenResponse tokenResponse = jwt_handler::validate_token(token);
 
     switch (tokenResponse.status) {
@@ -248,12 +248,8 @@ void RouteHandlers::editEquipment(const Request& req, Response& res)
         handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
-/*This function gets the equipmentID of the equipment/item the user wants to delete 
-and send it to MySQLManager::deleteEquipment to delete
-Precondition: req must contain equipment ID
-@param req is the equipment the user wants to delete
-@param res is whether the deletion is a success or an error has occured
-@return when username is unavailable or empty */
+
+
 void RouteHandlers::removeEquipment(const Request& req, Response& res)
 {
     
@@ -289,7 +285,7 @@ void RouteHandlers::removeEquipment(const Request& req, Response& res)
         "status": "success",
         ...
     }
-
+    
     Error Response
     {
         "status": "error",
@@ -318,11 +314,7 @@ std::string RouteHandlers::getUsername(const Request& req)
         return std::string();
     }
 }
-/*This function takes E_Storage and stores whatever the value associated to
-E_Storage into string storage and returns it
-Precondition: req has E_Storage which should have value
-@param req It should include the key "E_Storage" in it which holds value representing storage category
-@return is a string which either consists of nothing or the value of E_Storage*/
+
 std::string RouteHandlers::getCategory(const Request& req)
 {
     auto storage_it = req.params.find("E_Storage");

@@ -16,10 +16,19 @@ namespace SQLColumn {
 	const std::string EQ_QUANTITY = "I_Quantity";
 	const std::string EQ_UNIT_ID = "UNIT_ID";
 	const std::string EQ_LOCATION = "I_Location";
-	const std::string EQ_STORAGE = "E_Storage";
+	const std::string EQ_STORAGE = "Storage_Category";
+	const std::string EQ_STORAGE_SUB = "Storage_Subcategory";
+	const std::string EQ_STATUS = "Status";
 
 	const std::string USER_UNAME = "U_Username";
 	const std::string USER_PWORD = "U_Password";
+	const std::string USER_ID = "U_ID";
+
+	const std::string LOGS_TYPE = "M_Type";
+	const std::string LOGS_TSTAMP = "M_TimeStamp";
+	const std::string LOGS_U_ID = "U_ID";
+	const std::string LOGS_E_ID = "E_ID";
+	const std::string LOGS_P_TIME = "Parsed_Time";
 }
 
 /**
@@ -128,7 +137,8 @@ public:
 	* 
 	*@return all inventory items/equipments in specific storage
 	*/
-	static mysqlx::RowResult	viewEquipment			(const std::string& username,const std::string& storage);
+	static mysqlx::RowResult	viewEquipment			(const std::string& username,
+														 const std::string& storage);
 	
 	/**
 	*This function connects to the mysql database and takes the table unit from the schema lantaka_ims
@@ -154,5 +164,11 @@ public:
 	*/
 	static MySQLResult			deleteEquipment			(const int& inv_id, 
 														 const std::string& username);
+
+	static MySQLResult			logOp					(std::string& type,
+														 std::string& user,
+														 int equipmentID,
+														 int64_t timestamp,
+														 std::string& parsedTime);
 };
 

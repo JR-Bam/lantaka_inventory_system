@@ -13,6 +13,42 @@ std::string MySQLManager::getEquipmentUsername(int id)
         .fetchOne()[0].get<std::string>();
 }
 
+MySQLResult MySQLManager::logOp(std::string& type, std::string& user, int equipmentID, int64_t timestamp, std::string& parsedTime)
+{
+    using namespace mysqlx;
+    try
+    {
+        Schema IMS = instance().session.getSchema(SQLConsts::dbName);
+        Table users = IMS.getTable("users");
+        Table logs = IMS.getTable("management");
+
+        int userID = users
+            .select(SQLColumn::USER_ID)
+            .where(SQLColumn::USER_UNAME + " = :user")
+            .bind("user", user)
+            .execute()
+            .fetchOne()[0].get<int>();
+
+        logs.insert(SQLColumn::LOGS_TYPE,
+                SQLColumn::LOGS_TSTAMP,
+                SQLColumn::LOGS_U_ID,
+                SQLColumn::LOGS_E_ID,
+                SQLColumn::LOGS_P_TIME)
+            .values(type,
+                timestamp,
+                userID,
+                equipmentID,
+                parsedTime
+            ).execute();
+
+        return MySQLResult::Success;
+    }
+    catch (const mysqlx::Error&)
+    {
+        return MySQLResult::InternalServerError;
+    }
+}
+
 MySQLResult MySQLManager::validateCredentials(const std::string& username, const std::string& password)
 {
     using namespace mysqlx;
@@ -113,12 +149,8 @@ MySQLResult MySQLManager::addEquipment(const std::string& product, const std::st
         return MySQLResult::InternalServerError;
     }
 }
-/*This function connects to the mysql database and takes the table inventory from the schema lantaka_ims
-and returns all inventory that has E_Storage of storage
-Preconditions: username should be valid and storage has value
-@param username is used for logging the action
-@param storage to determine which equipments/items to show
-@return all inventory items/equipments in specific storage*/
+
+
 mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const std::string& storage) {
     try {
         mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
@@ -126,18 +158,15 @@ mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const 
 
         Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, "Housekeeping");
 
-        return inventory.select("*").where("E_Storage = '" + storage + "'").execute();
+        return inventory.select("*").where(SQLColumn::EQ_STORAGE + " = '" + storage + "'").execute();
     }
     catch (const mysqlx::Error& err) {
         Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return mysqlx::RowResult();
     }
 }
-/*This function connects to the mysql database and takes the table unit from the schema lantaka_ims
-and returns the name of the unit associated with the unit_id in the param
-Precondition: unit_id corresponds to a equipment and has value
-@param unit_id is the primary key or id of the unit associated with the equipment in this instance
-@return the name of the unit*/
+
+
 std::string MySQLManager::queryEquipment(const int& unit_id) {
     try {
         mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
@@ -163,12 +192,8 @@ std::string MySQLManager::queryEquipment(const int& unit_id) {
         return std::string();
     }
 }
-/*This function connects to the mysql database and takes the table inventory from schema lantaka_ims
-gets the equipment name by running inv_id in param through getEquipmentUsername() function then deletes it
-Precondition: inv_id has value and username is valid
-@param inv_id is the id of the equipment to delete
-@param username is for logging purposes
-@return either a success or error*/
+
+
 MySQLResult MySQLManager::deleteEquipment(const int& inv_id, const std::string& username) {
     try {
         mysqlx::Schema IMS = instance().session.getSchema(SQLConsts::dbName);

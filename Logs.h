@@ -45,7 +45,8 @@ private:
 	}
 
 	// From: https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
-	static std::string getCurrentTime();
-	static std::string parseOperation(CrudOperation& op, std::string& user, std::string& equipment, int equipmentID);
+	static std::string getCurrentTime(std::int64_t timestamp = 0);
+	static int64_t getCurrentTimeStamp();
+	static std::string parseOperation(CrudOperation& op, std::string& user, std::string& equipment, int equipmentID, int64_t timestamp, std::string& parsedTime);
 };
 
