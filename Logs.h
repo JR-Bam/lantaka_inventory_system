@@ -22,7 +22,7 @@ public:
 		CrudOperation op = CrudOperation::Read,
 		std::string user = std::string(),
 		std::string equipment = std::string(),
-		int equipmentID = -1,
+		int equipmentID = 1,
 		std::string error = std::string()
 	);
 

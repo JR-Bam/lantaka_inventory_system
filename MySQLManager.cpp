@@ -43,8 +43,9 @@ MySQLResult MySQLManager::logOp(std::string& type, std::string& user, int equipm
 
         return MySQLResult::Success;
     }
-    catch (const mysqlx::Error&)
+    catch (const mysqlx::Error& err)
     {
+        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
