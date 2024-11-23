@@ -1,0 +1,6 @@
+[2024-11-23 13:39:28] [START] Server Started Successfully.
+[2024-11-23 13:39:31] [MANAGEMENT] User `admin@admin` viewed equipment category `Housekeeping`
+[2024-11-23 13:39:50] [MANAGEMENT] User `admin@admin` performed `Edit` on equipment `Chair Cover Brown` #`19`
+[2024-11-23 13:39:50] [MANAGEMENT] User `admin@admin` viewed equipment category `Housekeeping`
+[2024-11-23 13:39:55] [MANAGEMENT] User `admin@admin` performed `Edit` on equipment `Chair Cover Brown` #`19`
+[2024-11-23 13:39:55] [MANAGEMENT] User `admin@admin` viewed equipment category `Housekeeping`
