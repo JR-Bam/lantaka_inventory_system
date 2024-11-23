@@ -15,7 +15,7 @@ This is an automatic Inventory System developed to keep track of equipment.
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
 - [jwt-cpp](https://github.com/Thalhammer/jwt-cpp)
 - [MySQL Connector C++ XDevAPI (for MySQL X)](https://dev.mysql.com/doc/x-devapi-userguide/en/)
-- [bcrypt.cpp](https://github.com/hilch/Bcrypt.cpp)
+- [libbcrypt](https://github.com/trusch/libbcrypt)
 
 
 ## Run Locally

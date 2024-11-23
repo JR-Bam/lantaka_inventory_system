@@ -1,4 +1,39 @@
-// lantaka_inventory_system.cpp : This file contains the 'main' function. Program execution begins and ends there.
+/*****************************************************************//**
+ * \file   main.cpp
+ * \brief  This file contains the 'main' function. Program execution begins and ends there.
+ * 
+ * \date   November 2024
+ *********************************************************************/
+
+/** \mainpage Lantaka Inventory Management System
+ * This is the documentaion for the Lantaka Inventory Management System.
+ * Information about classes and functions can be found here.
+ * 
+ * \section compiling Compiling the program.
+ * 
+ * Currently the project supports two configurations and platforms.
+ * 1. x86 Release
+ * 2. x64 Release
+ * 
+ * Build the project accordingly. Then, run the curresponding batch scripts to package the build. 
+ * 
+ * \section dep Dependencies.
+ * 
+ * The program depends on a mysql server set up with the X protocol. This program will utilize
+ * a MySQL client with the following credentials:
+ * - Username: user
+ * - Password (empty): 
+ * - Schema Name: lantaka_ims
+ * 
+ * \section lib Libraries Used.
+ * This program utilizes the following external libraries:
+ * - [nlohmann/json](https://github.com/nlohmann/json)
+ * - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+ * - [jwt-cpp](https://github.com/Thalhammer/jwt-cpp)
+ * - [MySQL Connector C++ XDevAPI](https://dev.mysql.com/doc/x-devapi-userguide/en/)
+ * - [libbcrypt](https://github.com/trusch/libbcrypt)
+ */
+
 // !!!!!! Run in Release MODE !!!!!!
 
 
@@ -10,10 +45,16 @@
 #include <iostream>
 #include <windows.h>
 
-static const std::string HOST = "localhost";
-static const int PORT = 8080;
+/// The host
+static const std::string HOST = "localhost"; 
+/// The port
+static const int PORT = 8080; 
 
-
+/**
+ * @brief Separate thread function to shut down the server 3 seconds after being called to.
+ * 
+ * \param svr reference to the Server object.
+ */
 static void shutdown_server(Server& svr) {
     // Wait for 3 seconds before stopping
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -22,6 +63,12 @@ static void shutdown_server(Server& svr) {
     Logs::logLine(Logs::Type::Stop);
 }
 
+/**
+ * @brief Separate thread function to open the browser and to the site this server is hosting on.
+ * 
+ * \param svr reference to the Server object.
+ * \param url the url the program redirects the user to
+ */
 static void open_browser(Server& svr, std::string url) {
     while (!svr.is_running()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

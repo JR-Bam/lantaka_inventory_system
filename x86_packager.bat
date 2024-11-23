@@ -5,7 +5,7 @@ set assets_folder=assets
 set public_folder=public
 
 set ims_exe_file=%build_folder%lantaka_inventory_system_x86.exe
-set shutdown_exe_file=%build_folder%server_shutdown_x86.exe
+set shutdown_exe_file=server_shutdown_x86.exe
 
 set libcrypto_dll=%build_folder%libcrypto-3.dll
 set libssl_dll=%build_folder%libssl-3.dll
