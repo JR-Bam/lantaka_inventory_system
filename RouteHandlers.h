@@ -40,12 +40,6 @@ private:
 	*@return is a string which either consists of nothing or the value of E_Storage*/
 	static std::string	getCategory				(const Request& req);
 
-	/**
-	 * .
-	 * 
-	 * \param res
-	 * \param username
-	 */
 	static void			handle_success_authSess	(Response& res, 
 												 std::string& username);
 	static void			handle_success_verifyAcc(Response& res, 
@@ -62,7 +56,65 @@ private:
 
 public:
 
+	/**
+	 * @brief POST handler of login attempts from the client.
+	 * 
+	 * @param req The HTTP request object. Expects a JSON body with the following structure:
+	 * ```json
+	 * {
+	 *	"username": "<string>",
+	 *	"password": "<string>"
+	 * }
+	 * ```
+	 * 
+	 * @param res The HTTP response object. Returns a 200 OK response on success with a JSON payload containing a JWT session token.
+	 * 
+	 * 
+	 * ## Success Response Body
+	 * ```json
+	 * {
+	 *	"status": "success",
+	 *	"token": "<token_string>"
+	 * }
+	 * ```
+	 * 
+	 * ## Error Response Body
+	 * In case on an error, res will return a response with the corresponding HTTP status and a JSON payload:
+	 * ```json
+	 * {
+	 *	"status": "error"
+	 *	"message: "<string>"
+	 * }
+	 * ```
+	 */
 	static void verifyAccount	(const Request& req, Response& res);
+
+	/**
+	 * @brief GET handler to validate login sessions.
+	 * 
+	 * @param req The HTTP request object. Expects an authorization header that contains the session token.
+	 * ```js 
+	 * Authorization: Bearer <token> 
+	 * ```
+	 * @param res The HTTP response object. Returns a 200 OK response if token is valid with a JSON body containing the username.
+	 * 
+	 * ## Success Response Body
+	 * ```json
+	 * {
+	 *	"status": "success",
+	 *	"username": "<username>"
+	 * }
+	 * ```
+	 * 
+	 * ## Error Response Body
+	 * In case on an error, res will return a response with the corresponding HTTP status and a JSON payload:
+	 * ```json
+	 * {
+	 *	"status": "error",
+	 *	"message: "<string>"
+	 * }
+	 * ```
+	 */
 	static void authSession		(const Request& req, Response& res);
 
 	static void signUp			(const Request& req, Response& res);
@@ -79,6 +131,33 @@ public:
 	*@return if username is empty or invalid
 	*/
 	static void viewEquipment	(const Request& req, Response& res);
+
+	/**
+	 * @brief PUT handler to edit an existing equipment.
+	 * 
+	 * @param req The HTTP request object. Expects a JSON body with the following structure:
+	 * ```json
+	 * {
+	 *	  "EquipmentID": 21,
+	 *	  "Updates": [
+	 *		  {"<Column_Name>": <Value>},
+	 *		  {"<Column_Name>": <Value>}
+	 *	  ]
+	 * }
+	 * ```
+	 * @note The array for "Updates" is not limited to two elements, it depends on the values the client wishes to edit.
+	 * 
+	 * @param res The HTTP response object. Returns a 200 OK response if the edit was successful.
+	 * 
+	 * ## Success and Error Response Body
+	 * The response bodies for both cases are almost identical. Both kinds of responses can be differentiated by the HTTP Status Code and/or message.
+	 * ```json
+	 * {
+	 *	"status": "<success/error>",
+	 *  "message": "string"
+	 * }
+	 * ```
+	 */
 	static void editEquipment	(const Request& req, Response& res);
 	/**
 	*This function gets the equipmentID of the equipment/item the user wants to delete

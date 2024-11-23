@@ -26,14 +26,14 @@ int64_t Logs::getCurrentTimeStamp()
 	return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
 }
 
-std::string Logs::parseOperation(
-	CrudOperation& op, 
-	std::string& user, 
-	std::string& equipment, 
-	int equipmentID,
-	int64_t timestamp, 
-	std::string& parsedTime
-) {
+std::string 
+Logs::parseOperation	(CrudOperation& op, 
+						std::string& user, 
+						std::string& equipment, 
+						int equipmentID,
+						int64_t timestamp, 
+						std::string& parsedTime) 
+{
 	std::string opToStr;
 
 	switch (op) {
@@ -91,7 +91,7 @@ void Logs::logLine(
 		{
 			std::string operationParsed = Logs::parseOperation(op, user, equipement, equipmentID, currentTimeStamp, currentTime);
 			if (operationParsed.empty()) {
-				logLine(Type::Error, Logs::Read, "", "", -1, "Error while parsing operation logs");
+				logLine(Type::Error, CrudOperation::Read, "", "", -1, "Error while parsing operation logs");
 				return;
 			}
 			line += " [MANAGEMENT] ";

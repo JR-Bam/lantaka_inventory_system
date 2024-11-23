@@ -2,7 +2,6 @@
 // !!!!!! Run in Release MODE !!!!!!
 
 
-// P.S. Ako nalang in charge sa jwt_handler shizz kay masakit sa ulo e explain
 #include "Logs.h"
 #include "RouteHandlers.h"
 
@@ -45,7 +44,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     // Endpoints
     svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
     svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
-    svr.Post("/api/equipment/edit", &RouteHandlers::editEquipment);
+    svr.Put("/api/equipment/edit", &RouteHandlers::editEquipment);
     svr.Delete(R"(/api/equipment/delete/(\d+))", &RouteHandlers::removeEquipment);
 
     svr.Post("/api/signup", &RouteHandlers::signUp);

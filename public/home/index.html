@@ -250,7 +250,8 @@ var selectedEquipment = {
     "I_SN": null,
     "I_Quantity": null,
     "UNIT_ID": null,
-    "I_Location": null
+    "I_Location": null,
+    "Status": null
 };
 
 function alertCard(message){
@@ -448,7 +449,8 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
         "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
         "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
-        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value
+        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
+        "Status": null // TODO: Status column connect to here
     };
 
     console.log(changesMade);
@@ -473,14 +475,14 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
 
     console.log(JSON.stringify(requestBody));
 
-    if (nullCount == 5){
+    if (nullCount == Object.keys(changesMade).length){
         closeEditModal();
         return;
     }
 
     // Make a request to the server
     fetch(`/api/equipment/edit?${tokenParams.toString()}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },

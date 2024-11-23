@@ -191,16 +191,6 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
 
 void RouteHandlers::editEquipment(const Request& req, Response& res)
 {
-    /*
-    * Edit JSON FOrmat
-    {
-      "EquipmentID": 21,
-      "Updates": [
-            {"<Column_Name>": <Value>},
-            {"<Column_Name>": <Value>}
-        ]
-    }
-    */
     try
     {
         std::string username = getUsername(req);

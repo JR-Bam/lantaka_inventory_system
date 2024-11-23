@@ -9,11 +9,14 @@
 
 
 namespace Token {
+	/**
+	 * @brief the status of the token.
+	 */
 	enum Status {
-		Valid,
-		Expired,
-		Malformed,
-		Unhandled
+		Valid, /// Token is valid
+		Expired, /// Token is past its lifetime of 3 hours
+		Malformed, /// Token is not in the right format 
+		Unhandled /// Condition has not been addressed
 	};
 }
 

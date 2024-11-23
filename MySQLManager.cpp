@@ -45,7 +45,7 @@ MySQLResult MySQLManager::logOp(std::string& type, std::string& user, int equipm
     }
     catch (const mysqlx::Error& err)
     {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
@@ -76,7 +76,7 @@ MySQLResult MySQLManager::validateCredentials(const std::string& username, const
         return MySQLResult::BadCredentials;
     }
     catch (mysqlx::Error& e) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, e.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, e.what());
         return MySQLResult::InternalServerError;
     }
 }
@@ -92,7 +92,7 @@ MySQLResult MySQLManager::signUp(const std::string& username, const std::string&
     }
     catch (const mysqlx::Error& err) {
         std::cerr << "Error adding user: " << err.what() << std::endl;
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
@@ -123,12 +123,12 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
         }
         else
         {
-            Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, "Equipment ID " + std::to_string(id) + " not found when updating");
+            Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, "Equipment ID " + std::to_string(id) + " not found when updating");
             return MySQLResult::NotFound;
         }
     }
     catch (mysqlx::Error& e) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, e.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, e.what());
         return MySQLResult::InternalServerError;
     }
 
@@ -146,7 +146,7 @@ MySQLResult MySQLManager::addEquipment(const std::string& product, const std::st
         return MySQLResult::Success;
     }
     catch (const mysqlx::Error& err) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
@@ -162,7 +162,7 @@ mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const 
         return inventory.select("*").where(SQLColumn::EQ_STORAGE + " = '" + storage + "'").execute();
     }
     catch (const mysqlx::Error& err) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return mysqlx::RowResult();
     }
 }
@@ -189,7 +189,7 @@ std::string MySQLManager::queryEquipment(const int& unit_id) {
         }
     }
     catch (const mysqlx::Error& err) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return std::string();
     }
 }
@@ -212,7 +212,7 @@ MySQLResult MySQLManager::deleteEquipment(const int& inv_id, const std::string& 
         return MySQLResult::Success;
     }
     catch (const mysqlx::Error& err) {
-        Logs::logLine(Logs::Type::Error, Logs::Read, "", "", -1, err.what());
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
         return MySQLResult::InternalServerError;
     }
 }
