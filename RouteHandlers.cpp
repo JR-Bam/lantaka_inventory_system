@@ -87,7 +87,22 @@ void RouteHandlers::signUp(const Request& req, Response& res) {
         handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
     }
 }
-
+/**
+* This function handles the addition of new equipment to the inventory.
+* It validates the request, extracts required fields, and then calls
+* MySQLManager::addEquipment to insert the data into the database.
+*
+* Precondition: req must be valid and contain required parameters like
+* I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, and E_Storage.
+*
+* @param req is the user's request to add new equipment.
+* @param res is the response of the system to the user.
+*
+* @return if username is empty or invalid, returns a 401 Unauthorized status.
+* If required fields are missing, returns a 400 Bad Request status.
+* If the addition is successful, returns a success message.
+* If an internal server error occurs, returns a 500 Internal Server Error status.
+*/
 void RouteHandlers::addEquipment(const Request& req, Response& res) {
     try
     {
@@ -103,7 +118,8 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         // Validate required fields
         if (!req_json.contains("I_Product") || !req_json.contains("I_SN") ||
             !req_json.contains("I_Quantity") || !req_json.contains("UNIT_ID") ||
-            !req_json.contains("I_Location") || !req_json.contains("E_Storage")) 
+            !req_json.contains("I_Location") || !req_json.contains("Storage_Category") ||
+            !req_json.contains("Storage_Subcategory") || !req_json.contains("Status"))
         {
             handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
@@ -115,11 +131,12 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         int quantity = req_json["I_Quantity"];
         int unit_id = req_json["UNIT_ID"];
         std::string location = req_json["I_Location"];
-        std::string storage = req_json["E_Storage"];
-
+        std::string storage_category = req_json["Storage_Category"];
+        std::string storage_sub = req_json["Storage_Subcategory"];
+        std::string status = req_json["Status"];
 
         // Call the MySQLManager's addEquipment method
-        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage, username)) {
+        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage_category, storage_sub, status, username)) {
         case MySQLResult::Success:
             handle_success_api(res, "Equipment added successfully.");
             break;

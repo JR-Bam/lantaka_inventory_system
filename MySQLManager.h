@@ -118,12 +118,24 @@ public:
 	static MySQLResult			signUp					(const std::string& username, 
 														 const std::string& password);
 
+	/**
+	 * This function adds a new equipment record to the inventory table in the MySQL database.
+	 * It connects to the database, inserts the equipment details into the table,
+	 * and logs the operation.
+	 *
+	 * Preconditions: product, serial_num, quantity, unit_id, location, and storage
+	 * must all have valid values. username should be a valid user for logging purposes.
+	 *  @return MySQLResult::Success if the equipment was added successfully.
+	 * @return MySQLResult::InternalServerError if there was an error during the operation.
+	 */
 	static MySQLResult			addEquipment			(const std::string& product, 
 														 const std::string& serial_num, 
 														 int quantity, 
 														 int unit_id, 
 														 const std::string& location, 
-														 const std::string& storage, 
+														 const std::string& storage_category, 
+														 const std::string& storage_sub, 
+														 const std::string& status, 
 														 const std::string& username);
 
 	/**

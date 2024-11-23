@@ -118,6 +118,22 @@ public:
 	static void authSession		(const Request& req, Response& res);
 
 	static void signUp			(const Request& req, Response& res);
+	/**
+	* This function handles the addition of new equipment to the inventory.
+	* It validates the request, extracts required fields, and then calls
+	* MySQLManager::addEquipment to insert the data into the database.
+	*
+	* Precondition: req must be valid and contain required parameters like
+	* I_Product, I_SN, I_Quantity, UNIT_ID, I_Location, and E_Storage.
+	*
+	* @param req is the user's request to add new equipment.
+	* @param res is the response of the system to the user.
+	*
+	* @return if username is empty or invalid, returns a 401 Unauthorized status.
+	* If required fields are missing, returns a 400 Bad Request status.
+	* If the addition is successful, returns a success message.
+	* If an internal server error occurs, returns a 500 Internal Server Error status.
+	*/
 	static void addEquipment	(const Request& req, Response& res);
 	/**
 	*this function takes the data it gets from the MySQLManager::viewEquipment
