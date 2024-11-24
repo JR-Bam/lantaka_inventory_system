@@ -151,5 +151,14 @@ body {
 .alata {
     font-family: 'Alata', sans-serif;
 }
+
+label {
+    font-family: 'Alata', sans-serif;
+}
+
+.buttons-print {
+    background-color: #007bff;
+    border-color: #007bff;
+}
         
         
