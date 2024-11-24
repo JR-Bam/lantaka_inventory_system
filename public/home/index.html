@@ -10,8 +10,21 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+        <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css"> -->
+        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+        <!-- <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script> -->
+        <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
+
     </head>
+
+    <!-- hi -->
     <body>
+
         <div class="logout tooltip-container">
             <button type="button" class="btn btn-danger btn-lg" onclick="logout()" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">
                 <img src="/images/logout.svg" alt="Logout" style="padding-left: 3px; padding-bottom: 3px; width: 25px; height: 30px; filter: invert(100%);">
@@ -25,70 +38,37 @@
             </button>
             <div class="tooltip">Print</div>
         </div>
+
     <div class="signup-container">
         <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 50px">House Keeping Inventory</h2>
-    
-        <!-- <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-success">
-                <?php 
-                    echo $_SESSION['message']; 
-                    unset($_SESSION['message']);
-                ?>
-            </div>
-        <?php endif; ?>
-    
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger">
-                <?php 
-                    echo $_SESSION['error']; 
-                    unset($_SESSION['error']); 
-                ?>
-            </div>
-        <?php endif; ?> -->
 
         <div id="error_div"></div>
         <div id="success_div"></div>
-    
-        <div class="button-container">
 
+        <!-- <div class="button-container">
             <button type="button" class="btn btn-success btn-lg alata" onclick="openAddProductModal()">
                 <i class="fa-regular fa-square-plus pr-2"></i>
                 Add Product
             </button>
-    
-            <div class="search-bar">
-                <input id="search-input" type="search" class="form-control" placeholder="Search for a product"/>
-                <button id="search-button" type="button" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-    
-        </div>
+        </div> -->
     
         <div class="table-container">
-            <table class="table table-bordered">
+            <table class="table table-bordered table-striped" id="table">
                 <thead>
                     <tr>
-                        <th scope="col" class="active alata" style="width: 25%; text-align: left;">Item Description</th>
-                        <th scope="col" class="active alata" style="width: 20%;">Serial No.</th>
-                        <th scope="col" class="active alata" style="width: 15%;">Quantity</th>
-                        <th scope="col" class="active alata" style="width: 20%;">Location</th>
-                        <th scope="col" class="active alata" style="width: 15%;">Status</th>
-                        <th scope="col" class="active alata" style="width: 5%;"></th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 25%; text-align: left;">Item Description</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Serial No.</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Quantity</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Location</th>
+
+                        <th scope="col" class="bg-primary text-white alata" style="width: 12%;">Status</th>
+                        <th scope="col" class="bg-primary text-white" style="width: 8%;"></th>
+
                     </tr>
                 </thead>
-                <tbody id="rows"></tbody>
             </table>
         </div>
         
-
-        <div id="paginate_nav" class="pagination">
-            <a id="prev" class="btn btn-primary" onclick="onPrev()">Previous</a>
-    
-            <div id="paginate_nums"></div>
-        
-            <a id="next" class="btn btn-primary" onclick="onNext()">Next</a>
-        </div>
     </div>
     
     <!-- Delete Modal -->
@@ -155,14 +135,29 @@
                     <input type="text" id="I_Location" name="I_Location" class="form-control" required>
                 </div>
 
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
+                        <label for="E_Storage">Storage:</label>
+                        <select id="E_Storage" name="E_Storage" class="form-control" required>
+                            <option value="" disabled selected>Select Storage</option>
+                            <option value="Housekeeping">Housekeeping</option>
+                            <option value="Construction-Electrical">Construction - Electrical</option>
+                            <option value="Construction-Plumbing">Construction - Plumbing</option>
+                            <option value="Construction-Carpentry">Construction - Carpentry</option>
+                            <option value="Construction-Painting">Construction - Painting</option>
+                        </select>
+                    </div>
 
-                <div class="form-group"> <!-- added by zed-->
-                    <label for="E_Storage">Storage:</label>
-                    <select id="E_Storage" name="E_Storage" class="form-control" required>
-                        <option value="" disabled selected>Select Storage</option>
-                        <option value="Housekeeping">Housekeeping</option>
-                        <option value="Construction">Construction</option>
-                    </select>
+                    <div class="form-group" style="flex: 1;"> <!-- Status Input -->
+                        <label for = "I_Status"> Status </label>
+                        <select id = "I_Status" name="I_Status" class="form-control" required> 
+                            <option value="" disabled selected> Select Status </option>
+                            <option value="Stored"> Stored </option>
+                            <option value ="For disposal">For disposal</option>
+                            <option value ="For repair">For repair</option>
+                            <option value ="Good condition / In use">Good condition / In use</option>
+                        </select>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success alata">
@@ -258,10 +253,10 @@ const success_div = document.getElementById("success_div");
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
     "pieces": 1,
     "kg": 2,
-    "litre": 3,
-    "meter": 4,
-    "feet": 5,
-    "inches": 6
+    "litre": 5, // Database has pieces and kg duplicated
+    "meter": 6,
+    "feet": 7,
+    "inches": 8
 };
 
 var selectedEquipment = {
@@ -270,7 +265,8 @@ var selectedEquipment = {
     "I_SN": null,
     "I_Quantity": null,
     "UNIT_ID": null,
-    "I_Location": null
+    "I_Location": null,
+    "Status": null
 };
 
 function alertCard(message){
@@ -294,8 +290,116 @@ function successCard(message){
         </div>
     `
 }
+
 document.addEventListener("DOMContentLoaded", (event) => {
-    retrieveEquipment();
+    const storage = "Housekeeping";
+    let table = new DataTable('#table', {
+        ajax: {
+            url: `/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`,
+            dataSrc: 'equipment',
+            error: function(xhr, error, thrown) {
+                error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
+                console.error("Error: " + error);
+                console.log("Error: " + error);
+            }
+        },
+        columns: [
+            { data: "Product_Name", className: "alata"},            // Product Name
+            { data: "Serial_Number", className: "alata"},           // Serial Number
+            {                                                       // Quantity and Unit
+                data: null,
+                render: function(data, type, row, meta) {
+                    return `${row.Quantity} ${row.Unit.name ?? ""}`;
+                },
+                className: "alata"
+            },
+            { data: "Location", className: "alata"},                // Location
+            { data: "Status", className: "alata"},                  // Status
+            {                                                       // Edit Button
+                data: null,
+                render: function(data, type, row, meta) {
+                    return `
+                    <button type="button" class="btn btn-primary alata"
+                        onclick="openEditModal(${row.ID}, '${row.Product_Name.replace(/'/g, "\\'")}', ${row.Quantity}, '${row.Location}', '${row.Unit.name.toLowerCase()}', '${row.Serial_Number.replace(/'/g, "\\'")}')">
+                        <i class="fa-regular fa-pen-to-square"></i> 
+                        Edit
+                    </button>
+                    `
+                }
+            }
+        ],
+        columnDefs: [
+            {
+                targets: 0, // Target the 1st column (zero-based index)
+                createdCell: function(td, cellData, rowData, row, col) {
+                    td.style.textAlign = "left";
+                }
+            }
+        ],
+        language: {
+            lengthMenu: 'Displaying _MENU_ items...',
+            zeroRecords: 'No items found...'
+        },
+        layout: {
+            topStart: function () {
+                let buttons = document.createElement('div');
+                buttons.innerHTML = `
+                    <button type="button" class="btn btn-success btn-lg alata" onclick="openAddProductModal()">
+                        <i class="fa-regular fa-square-plus pr-2"></i>
+                        Add Product
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg alata" id="print_btn">
+                        <i class="fa-solid fa-print"></i>
+                        Print
+                    </button>
+                `;
+                return buttons;
+            },
+            topEnd: "search",
+            top2End: {
+                buttons: [
+                    {
+                        extend: 'print',
+                        autoPrint: true,
+                        exportOptions: {
+                            columns: '.alata',
+                        },
+                        title: "",
+                        customize: function (win) {
+                            $(win.document.body).find('tr td:nth-child(1)').each(function(index){
+                                $(this).css('text-align','left');
+                            });
+                        }
+                    }
+                ]
+            },
+            bottomStart: 'pageLength',
+            bottomEnd: 'paging'
+        },
+        // dom: `
+        //     <"d-flex justify-content-between align-items-center mb-2"
+        //         l
+        //         <"text-end alata"f>  
+        //     >
+        //     rt
+        //     <"d-flex justify-content-between mt-3"
+        //         <"text-start alata"l>
+        //         <"text-end align-items-center alata"p>
+        //     >
+        // `,
+        initComplete: function() {
+            // Find the existing button and trigger its click event
+            const printButton = document.querySelector(".dt-button.buttons-print");
+            if (printButton) {
+                printButton.classList.add("d-none");
+            } else {
+                console.error("Print button not found!");
+            }
+            document.getElementById("print_btn").addEventListener("click", function () {
+                printButton.click();
+            });
+        }
+    });
 });
 
 
@@ -424,7 +528,7 @@ document.getElementById('addProductModal').addEventListener('submit', function (
         I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
         UNIT_ID: unitId,
         I_Location: document.getElementById('I_Location').value,
-        E_Storage: document.getElementById('E_Storage').value
+        E_Storage: document.getElementById('E_Storage').value // TODO: Add Updated Columns
     };
 
     console.log(productData);
@@ -468,7 +572,8 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
         "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
         "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
-        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value
+        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
+        "Status": null // TODO: Status column connect to here
     };
 
     console.log(changesMade);
@@ -493,14 +598,14 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
 
     console.log(JSON.stringify(requestBody));
 
-    if (nullCount == 5){
+    if (nullCount == Object.keys(changesMade).length){
         closeEditModal();
         return;
     }
 
     // Make a request to the server
     fetch(`/api/equipment/edit?${tokenParams.toString()}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -570,168 +675,6 @@ document.getElementById('deleteModal').addEventListener('submit', function(event
         error_div.innerHTML = alertCard("Error: " + error);
     });
 });
-
-
-
-// -------------------------------------------------------------------------------------------------- //
-
-
-
-// Implement search functionality
-document.getElementById('search-button').onclick = function() {
-    performSearch();
-};
-
-document.getElementById('search-input').addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault(); // Prevent form submission
-        performSearch(); // Trigger search function
-    }
-});
-
-function performSearch() {
-    var input = document.getElementById('search-input').value.toLowerCase();
-    if (input) {
-        currentEquipments = getEquipmentArray().filter(item => 
-            Object.values(item).some(value => value.toString().toLowerCase().includes(input))
-        );
-    } else {
-        currentEquipments = Equipments;
-    }
-    updateEquipmentVars();
-    changePage(1);
-}
-
-const limit = 15;
-var maxPages = 1;
-var currentPage = 1;
-var Equipments = [];
-
-var currentEquipments = Equipments;
-
-const paginate_nums_div = document.getElementById('paginate_nums');
-const next_btn = document.getElementById('next');
-const prev_btn = document.getElementById('prev');
-
-
-function appendEquipment(equipment){
-    Equipments.push(equipment);
-}
-
-function updateEquipmentVars(){
-    maxPages = Math.ceil(getEquipmentArray().length / limit)
-    paginate_nums_div.innerHTML = "";
-    for (let num = 1; num <= maxPages; num++) {
-        paginate_nums_div.innerHTML += `<a onclick="changePage(${num})" class="btn btn-primary paginate-nums">${num}</a>`;
-    }
-
-    checkButtons();
-}
-
-function changePage(page){
-    currentPage = page;
-    checkButtons();
-    paginate(getEquipmentArray());
-}
-
-function getEquipmentArray(){
-    return currentEquipments;
-}
-
-function paginate(array){
-    const startIndex = (currentPage - 1) * limit;
-    table.innerHTML = "";
-    for (let equipment of array.slice(startIndex, startIndex + limit)){
-        table.innerHTML += appendRow(
-            equipment.ID, 
-            equipment.Product_Name,
-            (equipment.Serial_Number == 0)? "N/A" : equipment.Serial_Number,
-            equipment.Quantity,
-            equipment.Unit.name ?? "",
-            equipment.Location
-        )
-    }
-}
-
-function onPrev(){
-    if (currentPage > 1) changePage(currentPage - 1);
-}
-
-function onNext(){
-    if (currentPage < maxPages) changePage(currentPage + 1);
-}
-
-function checkButtons(){
-    if (currentPage == 1) {
-        prev_btn.classList.remove("btn-primary");
-        prev_btn.classList.add("d-none", "disabled");
-    } else {
-        prev_btn.classList.add("btn-primary");
-        prev_btn.classList.remove("d-none", "disabled");
-    }
-
-    if (currentPage == maxPages) {
-        next_btn.classList.remove("btn-primary");
-        next_btn.classList.add("d-none", "disabled");
-    } else {
-        next_btn.classList.add("btn-primary");
-        next_btn.classList.remove("d-none", "disabled");
-    }
-}
-
-function appendRow(id, productName, serialNum, quantity, unit, location){
-    if (!serialNum){
-        serialNum = "N/A";
-    }
-
-    return `
-    <tr>
-
-        <td class="alata" style="text-align: left;"> ${productName} </td>
-        <td class="alata"> ${serialNum} </td>
-        <td class="alata"> ${quantity} ${unit} </td>
-        <td class="alata"> ${location} </td>
-        <td class="alata"> ${status} </td>
-        <td>
-            <button type="button" class="btn btn-primary alata"
-
-                onclick="openEditModal(${id}, '${productName.replace(/'/g, "\\'")}', ${quantity}, '${location}', '${unit.toLowerCase()}', '${serialNum.replace(/'/g, "\\'")}')">
-                <i class="fa-regular fa-pen-to-square"></i> 
-                Edit
-            </button>
-        </td>
-    </tr>
-    `;
-}
-
-function retrieveEquipment() {
-    const storage = "Housekeeping";
-    fetch(`/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`, {
-        method: 'GET'
-    })
-    .then(response => {
-        if (!response.ok){
-            error_div.innerHTML = alertCard("Something went wrong in fetching the equipment. Contact the developers to troubleshoot...");
-        }
-        return response.json();
-    })
-    .then(data =>{
-        if (data.status == "success"){
-            Equipments = [];
-            currentEquipments = Equipments;
-            for (let equipment of data.equipment) {
-                appendEquipment(equipment);
-            }
-            updateEquipmentVars();
-            paginate(getEquipmentArray());
-        } else {
-            throw "The response given the server indicated an unsuccessful retrieval. Contact the developers to troubleshoot..."
-        }
-    })
-    .catch(error => {
-        error_div.innerHTML = alertCard("Error: " + error);
-    });
-}
 </script>
 
 </body>
