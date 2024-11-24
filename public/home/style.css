@@ -20,7 +20,7 @@ body {
     gap: 10px;
 }
 .signup-container {
-    max-width: 1300px;
+    max-width: 1500px;
     width: 80%;
     background-color: #ffffff;
     padding: 2rem;
@@ -102,6 +102,13 @@ body {
     right: 0;
     margin-right: 20px;
     margin-top: 1%;
+} 
+.printer {
+    margin-top: 5%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 20px;
 } 
 .pagination {
     display: flex;
