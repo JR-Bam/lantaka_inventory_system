@@ -1,0 +1,25 @@
+[2024-11-24 21:34:30] [START] Server Started Successfully.
+[2024-11-24 21:35:01] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:35:01] [ERROR] Error while parsing operation logs
+[2024-11-24 21:37:27] [STOP] Server Stopped Successfully.
+[2024-11-24 21:37:36] [START] Server Started Successfully.
+[2024-11-24 21:37:43] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:37:43] [ERROR] Error while parsing operation logs
+[2024-11-24 21:49:05] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:49:05] [ERROR] Error while parsing operation logs
+[2024-11-24 21:49:45] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:49:45] [ERROR] Error while parsing operation logs
+[2024-11-24 21:51:21] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:51:21] [ERROR] Error while parsing operation logs
+[2024-11-24 21:52:01] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 21:52:01] [ERROR] Error while parsing operation logs
+[2024-11-24 22:04:50] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 22:04:50] [ERROR] Error while parsing operation logs
+[2024-11-24 22:06:21] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 22:06:21] [ERROR] Error while parsing operation logs
+[2024-11-24 22:09:32] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 22:09:32] [ERROR] Error while parsing operation logs
+[2024-11-24 22:09:56] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 22:09:56] [ERROR] Error while parsing operation logs
+[2024-11-24 22:15:32] [ERROR] CDK Error: Field 'M_ID' doesn't have a default value
+[2024-11-24 22:15:32] [ERROR] Error while parsing operation logs
