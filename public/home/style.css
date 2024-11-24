@@ -110,14 +110,6 @@ body {
     right: 0;
     margin-right: 20px;
 } 
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-.pagination .btn {
-    margin: 0 5px;
-}
 
 .tooltip-container { /* Logout hover */
     position: none; 
