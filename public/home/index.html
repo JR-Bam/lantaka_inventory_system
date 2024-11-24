@@ -128,6 +128,15 @@
                 </div>
 
                 <div class="form-row d-flex" style="gap: 10px;">
+                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
+                        <label for="E_Storage">Storage:</label>
+                        <select id="E_Storage" name="E_Storage" class="form-control" required>
+                            <option value="" disabled selected>Select Storage</option>
+                            <option value="Housekeeping">Housekeeping</option>
+                            <option value="Construction">Construction</option>
+                        </select>
+                    </div>
+
                     <div class="form-group" style="flex: 1;"> <!-- Status Input -->
                         <label for = "I_Status"> Status </label>
                         <select id = "I_Status" name="I_Status" class="form-control" required> 
@@ -136,16 +145,6 @@
                             <option value ="For disposal">For disposal</option>
                             <option value ="For repair">For repair</option>
                             <option value ="Good condition / In use">Good condition / In use</option>
-                        </select>
-                    </div>
-
-
-                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
-                        <label for="E_Storage">Storage:</label>
-                        <select id="E_Storage" name="E_Storage" class="form-control" required>
-                            <option value="" disabled selected>Select Storage</option>
-                            <option value="Housekeeping">Housekeeping</option>
-                            <option value="Construction">Construction</option>
                         </select>
                     </div>
                 </div>
