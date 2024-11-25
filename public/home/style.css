@@ -20,7 +20,7 @@ body {
     gap: 10px;
 }
 .signup-container {
-    max-width: 1300px;
+    max-width: 1500px;
     width: 80%;
     background-color: #ffffff;
     padding: 2rem;
@@ -103,14 +103,13 @@ body {
     margin-right: 20px;
     margin-top: 1%;
 } 
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-.pagination .btn {
-    margin: 0 5px;
-}
+.printer {
+    margin-top: 5%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 20px;
+} 
 
 .tooltip-container { /* Logout hover */
     position: none; 
@@ -151,6 +150,15 @@ body {
 
 .alata {
     font-family: 'Alata', sans-serif;
+}
+
+label {
+    font-family: 'Alata', sans-serif;
+}
+
+.buttons-print {
+    background-color: #007bff;
+    border-color: #007bff;
 }
         
         

@@ -179,9 +179,9 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["Serial_Number"] = row[2].isNull() ? "" : row[2].get<std::string>();
             jsonRow["Quantity"] = row[3].isNull() ? 0 : row[3].get<int>();
             jsonRow["Location"] = row[5].isNull() ? "" : row[5].get<std::string>();
-            jsonRow["Storage_Category"] = row[6].isNull() ? "" : row[5].get<std::string>();
-            jsonRow["Storage_Subcategory"] = row[7].isNull() ? "" : row[6].get<std::string>();
-            jsonRow["Status"] = row[8].isNull() ? "" : row[6].get<std::string>();
+            jsonRow["Storage_Category"] = row[6].isNull() ? "" : row[6].get<std::string>();
+            jsonRow["Storage_Subcategory"] = row[7].isNull() ? "" : row[7].get<std::string>();
+            jsonRow["Status"] = row[8].isNull() ? "" : row[8].get<std::string>();
             
             jsonRow["Unit"]["id"] = row[4].isNull() ? 0 : row[4].get<int>();
             int unit_id = jsonRow["Unit"]["id"];
