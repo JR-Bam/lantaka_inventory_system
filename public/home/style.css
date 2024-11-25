@@ -76,7 +76,7 @@ body {
 }
 
 .table-container {
-    overflow-x: auto;
+    overflow-x:visible;
 }
 .table {
     border-collapse: separate;

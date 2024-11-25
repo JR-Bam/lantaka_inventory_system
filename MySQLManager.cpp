@@ -201,13 +201,12 @@ MySQLResult MySQLManager::deleteEquipment(const int& inv_id, const std::string& 
         mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
 
         std::string equipmentName = getEquipmentUsername(inv_id);
+        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Delete, username, equipmentName, inv_id); // Has to be logged before the delete query
 
         inventory.remove()
             .where("I_ID = :inv_id")
             .bind("inv_id", inv_id)
             .execute();
-
-        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Delete, username, equipmentName, inv_id);
 
         return MySQLResult::Success;
     }

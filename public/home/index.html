@@ -7,23 +7,17 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" href="home/style.css">
+        <link rel="shortcut icon" href="/images/adzu_logo.png" type="image/x-icon">
         <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-        <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
-         <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
-        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
-         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script> -->
 
-        <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.css" rel="stylesheet">
  
-        <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.js"></script>
+        <script src="https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.js"></script>
 
     </head>
 
@@ -211,10 +205,10 @@
                     <label for="editStatus">Status:</label>
                     <select id="editStatus" name="I_Status" class="form-control" required>
                         <option value="" disabled selected>Select Status</option>
-                        <option value="use">Good Condition / In Use</option>
-                        <option value="stored">Stored</option>
-                        <option value="repair">For Repair</option>
-                        <option value="disposed">To Be Disposed</option>
+                        <option value="Good Condition">Good Condition / In Use</option>
+                        <option value="Stored">Stored</option>
+                        <option value="For Repair">For Repair</option>
+                        <option value="To Be Disposed">To Be Disposed</option>
                     </select>
                 </div>
             </div>
@@ -240,6 +234,7 @@
 const table = document.getElementById("rows");
 const error_div = document.getElementById("error_div");
 const success_div = document.getElementById("success_div");
+let tableAJAX;
 
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
     "pieces": 1,
@@ -284,7 +279,7 @@ function successCard(message){
 
 document.addEventListener("DOMContentLoaded", (event) => {
     const storage = "Housekeeping";
-    let table = new DataTable('#table', {
+    tableAJAX = new DataTable('#table', {
         ajax: {
             url: `/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`,
             dataSrc: 'equipment',
@@ -311,7 +306,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 render: function(data, type, row, meta) {
                     return `
                     <button type="button" class="btn btn-primary alata"
-                        onclick="openEditModal(${row.ID}, '${row.Product_Name.replace(/'/g, "\\'")}', ${row.Quantity}, '${row.Location}', '${row.Unit.name.toLowerCase()}', '${row.Serial_Number.replace(/'/g, "\\'")}')">
+                        onclick="openEditModal(${row.ID}, 
+                            '${row.Product_Name.replace(/'/g, "\\'")}', 
+                            ${row.Quantity}, 
+                            '${row.Location}', 
+                            '${row.Unit.name.toLowerCase()}', 
+                            '${row.Serial_Number.replace(/'/g, "\\'")}', 
+                            '${row.Status}')">
                         <i class="fa-regular fa-pen-to-square"></i> 
                         Edit
                     </button>
@@ -330,7 +331,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         language: {
             lengthMenu: 'Displaying _MENU_ items...',
             zeroRecords: 'No items found...',
-            search: 'Search for items: '
+            search: '<i class="fa-solid fa-magnifying-glass"></i>'
         },
         layout: {
             topStart: function () {
@@ -355,7 +356,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 `;
                 return buttons;
             },
-            topEnd: "search",
+            topEnd: {
+                search: {
+                    placeholder: 'Search for items...'
+                }
+            },
             top2End: {
                 buttons: [
                     {
@@ -384,7 +389,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         },
         initComplete: function() {
             // Find the existing button and trigger its click event
-            const printButton = document.querySelector(".dt-button.buttons-print");
+            const printButton = document.querySelector(".btn.btn-secondary.buttons-print");
             if (printButton) {
                 printButton.classList.add("d-none");
             } else {
@@ -395,7 +400,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             });
 
             // Find the existing button and trigger its click event
-            const excelButton = document.querySelector(".dt-button.buttons-excel.buttons-html5");
+            const excelButton = document.querySelector(".btn.btn-secondary.buttons-excel.buttons-html5");
             if (excelButton) {
                 excelButton.classList.add("d-none");
             } else {
@@ -461,17 +466,18 @@ function closeModal() {
     document.getElementById('deleteModal').style.display = 'none';
 }
 
-function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM){
+function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM, STATUS){
     selectedEquipment["I_ID"] = ID;
     selectedEquipment["I_Product"] = NAME;
     selectedEquipment["I_SN"] = SERIALNUM;
     selectedEquipment["I_Quantity"] = QUANTITY;
     selectedEquipment["UNIT_ID"] = UNIT.toLowerCase();
     selectedEquipment["I_Location"] = LOCATION;
+    selectedEquipment["Status"] = STATUS;
 }
 
-function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum) {
-    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum);
+function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status) {
+    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status);
 
     document.getElementById('editModal').style.display = 'block';
     document.getElementById('editProductId').value = productId;
@@ -480,8 +486,10 @@ function openEditModal(productId, productName, productQuantity, productLocation,
     document.getElementById('editLocation').value = productLocation;
     document.getElementById('editSerialNum').value = serialNum;
     document.getElementById('editQuantityUnit').value = productQuantityUnit;
+    document.getElementById('editStatus').value = status;
 
     document.getElementById('delete_btn').onclick = function () {
+        console.log(productId);
         openModal(productId);
     };
     
@@ -527,6 +535,9 @@ document.getElementById('addProductModal').addEventListener('submit', function (
 
     const selectedUnit = document.getElementById('I_Unit').value;
     const unitId = unitMapping[selectedUnit];
+    const storage = document.getElementById('E_Storage').value;
+    const category = (storage.includes("-"))? storage.split("-"): [storage, ""];
+
 
     const productData = {
         I_Product: document.getElementById('I_Product').value,
@@ -534,7 +545,9 @@ document.getElementById('addProductModal').addEventListener('submit', function (
         I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
         UNIT_ID: unitId,
         I_Location: document.getElementById('I_Location').value,
-        E_Storage: document.getElementById('E_Storage').value // TODO: Add Updated Columns
+        Storage_Category: category[0],
+        Storage_Subcategory: category[1],
+        Status: document.getElementById('I_Status').value
     };
 
     console.log(productData);
@@ -542,8 +555,7 @@ document.getElementById('addProductModal').addEventListener('submit', function (
     fetch(`/api/equipment/add?${tokenParams.toString()}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("Lantaka-IMS-Sess-Token")}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(productData)
     })
@@ -552,7 +564,7 @@ document.getElementById('addProductModal').addEventListener('submit', function (
             if (data.status === "success") {
                 success_div.innerHTML = successCard("Product added successfully");
                 closeAddProductModal();
-                retrieveEquipment();
+                tableAJAX.ajax.reload();
             } else {
                 error_div.innerHTML = alertCard("Error adding product: " + data.message);
             }
@@ -579,7 +591,7 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
         "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
         "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
-        "Status": null // TODO: Status column connect to here
+        "Status": (selectedEquipment["Status"] === document.getElementById("editStatus").value)? null : document.getElementById("editStatus").value,
     };
 
     console.log(changesMade);
@@ -620,7 +632,7 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         .then(response => response.json())
         .then(data => {
             if (data.status == "success"){
-                retrieveEquipment();
+                tableAJAX.ajax.reload();
                 success_div.innerHTML = successCard(`Successfully edited equipment: ${selectedEquipment["I_Product"]}`);
             } else {
                 error_div.innerHTML = alertCard("Something wrong happened when trying to edit the product.");
@@ -668,7 +680,7 @@ document.getElementById('deleteModal').addEventListener('submit', function(event
     .then(response => response.json())
     .then(data => {
         if (data.status == "success"){
-            retrieveEquipment();
+            tableAJAX.ajax.reload();
             success_div.innerHTML = successCard(`Successfully deleted product`); // TODO: Show the name of deleted product
         } else {
             error_div.innerHTML = alertCard("Something wrong happened when trying to delete the product.");
