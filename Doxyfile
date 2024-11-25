@@ -42,19 +42,19 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = Lantaka Inventory Management System
+PROJECT_NAME           = "Lantaka Inventory System"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = v0.3.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = An Inventory Management System to view, manage, and modify equipment and products of a specific category.
+PROJECT_BRIEF          =
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -67,14 +67,14 @@ PROJECT_LOGO           =
 # when the HTML document is shown. Doxygen will copy the logo to the output
 # directory.
 
-PROJECT_ICON           = assets/adzu_logo.png
+PROJECT_ICON           = C:/Users/ASUS/source/repos/lantaka_inventory_system/assets/adzu_logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where Doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = docs
+OUTPUT_DIRECTORY       = C:/Users/ASUS/source/repos/lantaka_inventory_system/docs
 
 # If the CREATE_SUBDIRS tag is set to YES then Doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -965,7 +965,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  =
+INPUT                  = C:/Users/ASUS/source/repos/lantaka_inventory_system
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -2402,7 +2402,7 @@ SQLITE3_RECREATE_DB    = YES
 # Note that this feature is still experimental and incomplete at the moment.
 # The default value is: NO.
 
-GENERATE_PERLMOD       = YES
+GENERATE_PERLMOD       = NO
 
 # If the PERLMOD_LATEX tag is set to YES, Doxygen will generate the necessary
 # Makefile rules, Perl scripts and LaTeX code to be able to generate PDF and DVI
@@ -2410,7 +2410,7 @@ GENERATE_PERLMOD       = YES
 # The default value is: NO.
 # This tag requires that the tag GENERATE_PERLMOD is set to YES.
 
-PERLMOD_LATEX          = YES
+PERLMOD_LATEX          = NO
 
 # If the PERLMOD_PRETTY tag is set to YES, the Perl module output will be nicely
 # formatted so it can be parsed by a human reader. This is useful if you want to
