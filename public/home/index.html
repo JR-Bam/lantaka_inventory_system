@@ -1,3 +1,11 @@
+<!-- 
+    For Housekeeping.
+
+    Housekeeping has the following differences from Construction:
+    - User will not be able to choose the category when adding an item.
+
+    ! Erase this comment when you're done.
+-->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -234,6 +242,8 @@
 const table = document.getElementById("rows");
 const error_div = document.getElementById("error_div");
 const success_div = document.getElementById("success_div");
+
+const storage = "Housekeeping";
 let tableAJAX;
 
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
@@ -278,7 +288,6 @@ function successCard(message){
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    const storage = "Housekeeping";
     tableAJAX = new DataTable('#table', {
         ajax: {
             url: `/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`,
@@ -536,8 +545,6 @@ document.getElementById('addProductModal').addEventListener('submit', function (
     const selectedUnit = document.getElementById('I_Unit').value;
     const unitId = unitMapping[selectedUnit];
     const storage = document.getElementById('E_Storage').value;
-    const category = (storage.includes("-"))? storage.split("-"): [storage, ""];
-
 
     const productData = {
         I_Product: document.getElementById('I_Product').value,
@@ -545,8 +552,8 @@ document.getElementById('addProductModal').addEventListener('submit', function (
         I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
         UNIT_ID: unitId,
         I_Location: document.getElementById('I_Location').value,
-        Storage_Category: category[0],
-        Storage_Subcategory: category[1],
+        Storage_Category: "Housekeeping",
+        Storage_Subcategory: "",
         Status: document.getElementById('I_Status').value
     };
 
