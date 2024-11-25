@@ -97,7 +97,7 @@
                     <!-- Quantity Input -->
                     <div class="form-group" style="flex: 1;">
                         <label for="I_Quantity">Quantity</label>
-                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                        <input type="number" step="any" id="I_Quantity" name="I_Quantity" class="form-control" required>
                     </div>
 
                     <!-- Unit Input -->
@@ -123,23 +123,12 @@
 
                 
                 <!-- Location Input -->
-                <div class="form-group">
-                    <label for="I_Location">Location</label>
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Location">Location</label>
                     <input type="text" id="I_Location" name="I_Location" class="form-control" required>
                 </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
-                        <label for="E_Storage">Storage:</label>
-                        <select id="E_Storage" name="E_Storage" class="form-control" required>
-                            <option value="" disabled selected>Select Storage</option>
-                            <option value="Housekeeping">Housekeeping</option>
-                            <option value="Construction-Electrical">Construction - Electrical</option>
-                            <option value="Construction-Plumbing">Construction - Plumbing</option>
-                            <option value="Construction-Carpentry">Construction - Carpentry</option>
-                            <option value="Construction-Painting">Construction - Painting</option>
-                        </select>
-                    </div>
+                    
 
                     <div class="form-group" style="flex: 1;"> <!-- Status Input -->
                         <label for = "I_Status"> Status </label>
