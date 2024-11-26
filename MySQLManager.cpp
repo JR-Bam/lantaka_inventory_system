@@ -135,7 +135,7 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
 
 }
 
-MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, float quantity, int unit_id, const std::string& location, const std::string& storage_category, const std::string& storage_sub, const std::string& status, const std::string& username) {
+MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, double quantity, int unit_id, const std::string& location, const std::string& storage_category, const std::string& storage_sub, const std::string& status, const std::string& username) {
     try {
         mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
         mysqlx::Result result = inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE, SQLColumn::EQ_STORAGE_SUB, SQLColumn::EQ_STATUS)

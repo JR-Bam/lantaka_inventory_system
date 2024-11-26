@@ -128,7 +128,7 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         // Extract fields from JSON
         std::string product = req_json["I_Product"];
         std::string serial_num = req_json["I_SN"];
-        float quantity = req_json["I_Quantity"];
+        double quantity = req_json["I_Quantity"];
         int unit_id = req_json["UNIT_ID"];
         std::string location = req_json["I_Location"];
         std::string storage_category = req_json["Storage_Category"];
@@ -177,7 +177,7 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["ID"] = row[0].isNull() ? 0 : row[0].get<int>();
             jsonRow["Product_Name"] = row[1].isNull() ? "" : row[1].get<std::string>();
             jsonRow["Serial_Number"] = row[2].isNull() ? "" : row[2].get<std::string>();
-            jsonRow["Quantity"] = row[3].isNull() ? 0 : row[3].get<float>();
+            jsonRow["Quantity"] = row[3].isNull() ? 0 : row[3].get<double>();
             jsonRow["Location"] = row[5].isNull() ? "" : row[5].get<std::string>();
             jsonRow["Storage_Category"] = row[6].isNull() ? "" : row[6].get<std::string>();
             jsonRow["Storage_Subcategory"] = row[7].isNull() ? "" : row[7].get<std::string>();
