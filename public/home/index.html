@@ -575,6 +575,18 @@ document.getElementById('addProductModal').addEventListener('submit', function (
 });
 
 
+document.getElementById('I_Unit').addEventListener('change', function () {
+    const quantityInput = document.getElementById('I_Quantity');
+    if (this.value === 'pieces') {
+        // Only integers allowed for "pieces"
+        quantityInput.step = 1;
+    } else {
+        // Allow floats for other units
+        quantityInput.step = 'any';
+    }
+});
+
+
 // -------------------------------------------------------------------------------------------------- //
 
 
