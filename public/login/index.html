@@ -9,6 +9,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Teko' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         body {
             background: url('/images/bg_pic.png') no-repeat center center fixed;
@@ -80,6 +81,31 @@
     </style>
 </head>
 <body>
+    <button type="button" class="btn btn-lg btn-danger position-absolute" data-toggle="modal" data-target="#shutdown-modal" style="bottom: 2vh; left: 2vh;">
+        <i class="fa-solid fa-power-off"></i>
+    </button>
+
+    <div id="shutdown-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="shutdownModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="alata" id="shutdownModalLabel">Shutdown system</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="alata">Are you sure you want to shut down the system?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="shutdown-btn" name="delete" class="btn btn-danger alata">Yes</button>
+                    <button type="button" class="btn btn-light alata" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
     <div class="login-container">
         <div class="form-container">
             <center><img src="/images/adzu_logo.png" alt="ateneo"></center>
@@ -126,10 +152,26 @@
     const form = document.getElementById('login_form');
     const errorDiv = document.getElementById('error_div');
     const successDiv = document.getElementById('success_div');
+    const shutdownBtn = document.getElementById('shutdown-btn');
 
     const fnamediv = document.getElementById('firstName');
     const lnamediv = document.getElementById('lastName');
     const pworddiv = document.getElementById('password');
+
+
+    shutdownBtn.onclick = async function() {
+        try {
+            const response = await fetch("/shutdown");
+            if (!response.ok) {
+                throw new Error(`Failed to shut down system...`);
+            }
+
+            window.close();
+        } catch (error) {
+            errorDiv.classList.remove("d-none"); // Make error div visible
+            errorDiv.innerHTML = "Error: " + error;
+        }
+    }
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();  // Prevent the form from submitting the usual way
