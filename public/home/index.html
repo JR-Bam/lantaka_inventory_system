@@ -1,11 +1,3 @@
-<!-- 
-    For Housekeeping.
-
-    Housekeeping has the following differences from Construction:
-    - User will not be able to choose the category when adding an item.
-
-    ! Erase this comment when you're done.
--->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -570,6 +562,17 @@ document.getElementById('addProductModal').addEventListener('submit', function (
             console.error("Error:", error);
             error_div.innerHTML = alertCard("An error occurred while adding the product.");
         });
+});
+
+document.getElementById('I_Unit').addEventListener('change', function () {
+    const quantityInput = document.getElementById('I_Quantity');
+    if (this.value === 'pieces') {
+        // Only integers allowed for "pieces"
+        quantityInput.step = 1;
+    } else {
+        // Allow floats for other units
+        quantityInput.step = 'any';
+    }
 });
 
 
