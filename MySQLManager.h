@@ -130,7 +130,7 @@ public:
 	 */
 	static MySQLResult			addEquipment			(const std::string& product, 
 														 const std::string& serial_num, 
-														 int quantity, 
+														 double quantity, 
 														 int unit_id, 
 														 const std::string& location, 
 														 const std::string& storage_category, 

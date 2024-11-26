@@ -366,3 +366,6 @@ FodyWeavers.xsd
 
 # Doxygen
 docs/
+
+# Logs
+log.txt
