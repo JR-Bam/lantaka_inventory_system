@@ -166,7 +166,16 @@
                 throw new Error(`Failed to shut down system...`);
             }
 
-            window.close();
+            document.body.innerHTML = `
+                <div class="d-flex justify-content-center align-items-center vh-100">
+                    <div class="jumbotron text-center">
+                        <h1 class="display-4 alata">System Shutdown</h1>
+                        <p class="lead">The system has been successfully shut down. You can now close this tab.</p>
+                        <hr class="my-4">
+                        <p>Thank you for using our system.</p>
+                    </div>
+                </div>
+            `;
         } catch (error) {
             errorDiv.classList.remove("d-none"); // Make error div visible
             errorDiv.innerHTML = "Error: " + error;

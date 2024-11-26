@@ -218,11 +218,11 @@
                 <div class="form-group" style="flex: 1;">
                     <label for="editStatus">Status:</label>
                     <select id="editStatus" name="I_Status" class="form-control" required>
-                        <option value="" disabled selected>Select Status</option>
-                        <option value="Good Condition">Good Condition / In Use</option>
-                        <option value="Stored">Stored</option>
-                        <option value="For Repair">For Repair</option>
-                        <option value="To Be Disposed">To Be Disposed</option>
+                        <option value="" disabled selected> Select Status </option>
+                        <option value="Stored"> Stored </option>
+                        <option value ="For disposal">For disposal</option>
+                        <option value ="For repair">For repair</option>
+                        <option value ="Good condition / In use">Good condition / In use</option>
                     </select>
                 </div>
             </div>
@@ -428,7 +428,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 });
 
-
 function logout(){
     localStorage.removeItem("Lantaka-IMS-Sess-Token");
     // alert("removed");
@@ -502,6 +501,8 @@ function openEditModal(productId, productName, productQuantity, productLocation,
     document.getElementById('editSerialNum').value = serialNum;
     document.getElementById('editQuantityUnit').value = productQuantityUnit;
     document.getElementById('editStatus').value = status;
+
+    document.getElementById('editQuantityUnit').dispatchEvent(new Event('change'));
 
     document.getElementById('delete_btn').onclick = function () {
         console.log(productId);
@@ -603,7 +604,7 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
     const changesMade = {
         "I_Product": (selectedEquipment["I_Product"] === document.getElementById("editProductName").value)? null : document.getElementById("editProductName").value,
         "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
-        "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseInt(document.getElementById("editQuantity").value),
+        "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseFloat(document.getElementById("editQuantity").value),
         "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
         "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
         "Status": (selectedEquipment["Status"] === document.getElementById("editStatus").value)? null : document.getElementById("editStatus").value,
@@ -679,6 +680,18 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
 // ​
 // <prototype>: Object { … }
 // editProduct.js:6:13
+
+document.getElementById('editQuantityUnit').addEventListener('change', function () {
+    const quantityInput = document.getElementById('editQuantity');
+    if (this.value === 'pieces') {
+        // Only integers allowed for "pieces"
+        quantityInput.step = 1;
+    } else {
+        // Allow floats for other units
+        quantityInput.step = 'any';
+    }
+});
+
 
 
 
