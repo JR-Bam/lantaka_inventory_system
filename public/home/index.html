@@ -103,6 +103,11 @@
                             <option value="meter">Meter</option>
                             <option value="feet">Feet</option>
                             <option value="inches">Inches</option>
+                            <option value="sets">Sets</option>
+                            <option value="g">Grams</option>
+                            <option value="ml">mL</option>
+                            <option value="mm">mm</option>
+                            <option value="cm">cm</option>
                         </select>
                     </div>
                 </div>
@@ -175,6 +180,11 @@
                             <option value="meter">Meter</option>
                             <option value="feet">Feet</option>
                             <option value="inches">Inches</option>
+                            <option value="sets">Sets</option>
+                            <option value="g">Grams</option>
+                            <option value="ml">mL</option>
+                            <option value="mm">mm</option>
+                            <option value="cm">cm</option>
                         </select>
                     </div>
                 </div>
@@ -230,10 +240,15 @@ let tableAJAX;
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
     "pieces": 1,
     "kg": 2,
+    "sets": 3,
+    "g": 4,
     "litre": 5, // Database has pieces and kg duplicated
     "meter": 6,
     "feet": 7,
-    "inches": 8
+    "inches": 8,
+    "ml": 9,
+    "mm": 10,
+    "cm": 11
 };
 
 var selectedEquipment = {
