@@ -14,6 +14,8 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+        <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 
         <link href="https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.css" rel="stylesheet">
  
@@ -48,13 +50,17 @@
             <table class="table table-bordered table-striped" id="table">
                 <thead>
                     <tr>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 25%; text-align: left;">Item Description</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Serial No.</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Quantity</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Location</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 20%; text-align: left;">Item Description</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Serial No.</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 10%;">Quantity</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 10%;">Location</th>
 
-                        <th scope="col" class="bg-primary text-white alata" style="width: 12%;">Status</th>
-                        <th scope="col" class="bg-primary text-white" style="width: 8%;"></th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Status</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Remarks</th>
+                        <th scope="col" class="bg-primary text-white alata d-none" style="width: 0%;">Date Received</th>
+                        <th scope="col" class="bg-primary text-white alata d-none" style="width: 0%;">Date Released</th>
+                        <th scope="col" class="bg-primary text-white alata d-none" style="width: 0%;">Released To</th>
+                        <th scope="col" class="bg-primary text-white" style="width: 15%;"></th>
 
                     </tr>
                 </thead>
@@ -76,93 +82,157 @@
         </div>
     </div>
 
+    <div id="moreinfoModal" class="modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="text-align: center;">
+                <h3 class="alata" id="info_label">More info.</h3>
+                <span class="close" onclick="closeInfoModal()">&times;</span>
+    
+                <div class="form-group bg-primary rounded-lg shadow-sm text-white py-3">
+                    <i class="fa-solid fa-table-cells-row-lock fa-xl pb-4"></i>
+                    <h4><span class="font-weight-bold badge badge-success">Date Received</span></h4>
+                    <p id="dateReceived" class="text-white alata">N/A</p>
+                </div>
+                <div class="d-flex align-items-stretch w-100">
+                    <div class="form-group bg-primary rounded-lg shadow-sm text-white py-3 mr-2" style="flex: 1">
+                        <i class="fa-solid fa-table-cells-row-unlock fa-xl pb-4"></i>
+                        <h4><span class="font-weight-bold badge badge-success">Date Released</span></h4>
+                        <p id="dateReleased" class="text-white alata">N/A</p>
+                    </div>
+                    <div class="form-group bg-primary rounded-lg shadow-sm text-white py-3 ml-2" style="flex: 1">
+                        <i class="fa-solid fa-people-carry-box fa-xl pb-4"></i>
+                        <h4><span class="font-weight-bold badge badge-success">Released To</span></h4>
+                        <p id="releasedTo" class="text-white alata">N/A</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Product Modal -->
     <div id="addProductModal" class="modal">
+
         <div class="modal-content">
             <span class="close" onclick="closeAddProductModal()">&times;</span>
-            <h3 class="alata">Add New Product</h3>
-
+            <div class="form-row justify-content-center" style="gap: 10px;">
+                <h3 class="alata">Add New Product</h3>
+            </div>
+            
+    
             <form id="addProductForm">
-
                 <input type="hidden" name="add_product" value="1">
-
-                <!-- Product Name Input -->
-                <div class="form-group">
-                    <label for="I_Product">Product Name</label>
-                    <input type="text" id="I_Product" name="I_Product" class="form-control" required>
-                </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <!-- Quantity Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Quantity">Quantity</label>
-                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+    
+                <div class="form-row d-flex" style="gap: 20px;">
+                    <!-- Left Column -->
+                    <div style="flex: 3;">
+                        <!-- Product Name Input -->
+                        <div class="form-group">
+                            <label for="I_Product">Product Name</label>
+                            <input type="text" id="I_Product" name="I_Product" class="form-control" required>
+                        </div>
+    
+                        <!-- Quantity & Unit -->
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Quantity">Quantity</label>
+                                <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Unit">Unit</label>
+                                <select id="I_Unit" name="I_Unit" class="form-control" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                    <option value="pieces">Pieces</option>
+                                    <option value="kg">Kg</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="meter">Meter</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="inches">Inches</option>
+                                    <option value="sets">Sets</option>
+                                    <option value="g">Grams</option>
+                                    <option value="ml">mL</option>
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <!-- Serial Number Input -->
+                        <div class="form-group">
+                            <label for="I_SN">Serial Number</label>
+                            <input type="text" id="I_SN" name="I_SN" class="form-control">
+                        </div>
+    
+                        <!-- Location Input -->
+                        <div class="form-group">
+                            <label for="I_Location">Location</label>
+                            <input type="text" id="I_Location" name="I_Location" class="form-control" required>
+                        </div>
+    
+                        <!-- Storage & Status -->
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="E_Storage">Storage</label>
+                                <select id="E_Storage" name="E_Storage" class="form-control" required>
+                                    <option value="" disabled selected>Select Storage</option>
+                                    <option value="Housekeeping">Housekeeping</option>
+                                    <option value="Construction-Electrical">Construction - Electrical</option>
+                                    <option value="Construction-Plumbing">Construction - Plumbing</option>
+                                    <option value="Construction-Carpentry">Construction - Carpentry</option>
+                                    <option value="Construction-Painting">Construction - Painting</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Status">Status</label>
+                                <select id="I_Status" name="I_Status" class="form-control" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Stored">Stored</option>
+                                    <option value="For disposal">For disposal</option>
+                                    <option value="For repair">For repair</option>
+                                    <option value="Good condition / In use">Good condition / In use</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Unit Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Unit">Unit</label>
-                        <select id="I_Unit" name="I_Unit" class="form-control" required>
-                            <option value="" disabled selected>Select Unit</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="kg">Kg</option>
-                            <option value="litre">Litre</option>
-                            <option value="meter">Meter</option>
-                            <option value="feet">Feet</option>
-                            <option value="inches">Inches</option>
-                            <option value="sets">Sets</option>
-                            <option value="g">Grams</option>
-                            <option value="ml">mL</option>
-                            <option value="mm">mm</option>
-                            <option value="cm">cm</option>
-                        </select>
+    
+                    <!-- Right Column -->
+                    <div style="flex: 2;">
+                        <!-- Date Pickers -->
+                        <div class="form-group">
+                            <label for="I_DateReleased">Date Released</label>
+                            <input type="text" id="I_DateReleased" name="I_DateReleased" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="I_DateReceived">Date Received</label>
+                            <input type="text" id="I_DateReceived" name="I_DateReceived" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <!-- Released To -->
+                        <div class="form-group">
+                            <label for="I_ReleasedTo">Released To</label>
+                            <input type="text" id="I_ReleasedTo" name="I_ReleasedTo" class="form-control">
+                        </div>
+    
+                        <!-- Remarks Textarea -->
+                        <div class="form-group">
+                            <label for="I_Remarks">Remarks</label>
+                            <textarea id="I_Remarks" name="I_Remarks" class="form-control" rows="4" style="resize: none;"></textarea>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Serial Number Input -->
-                <div class="form-group">
-                    <label for="I_SN">Serial Number</label>
-                    <input type="text" id="I_SN" name="I_SN" class="form-control">
+    
+                <!-- Add Product Button -->
+                <div class="form-row justify-content-center" style="gap: 10px;">
+                    <button type="submit" class="btn btn-success alata">
+                        <i class="fa-regular fa-square-plus pr-2"></i>
+                        Add Product
+                    </button>
                 </div>
-
                 
-                <!-- Location Input -->
-                <div class="form-group">
-                    <label for="I_Location">Location</label>
-                    <input type="text" id="I_Location" name="I_Location" class="form-control" required>
-                </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
-                        <label for="E_Storage">Storage:</label>
-                        <select id="E_Storage" name="E_Storage" class="form-control" required>
-                            <option value="" disabled selected>Select Storage</option>
-                            <option value="Housekeeping">Housekeeping</option>
-                            <option value="Construction-Electrical">Construction - Electrical</option>
-                            <option value="Construction-Plumbing">Construction - Plumbing</option>
-                            <option value="Construction-Carpentry">Construction - Carpentry</option>
-                            <option value="Construction-Painting">Construction - Painting</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="flex: 1;"> <!-- Status Input -->
-                        <label for = "I_Status"> Status </label>
-                        <select id = "I_Status" name="I_Status" class="form-control" required> 
-                            <option value="" disabled selected> Select Status </option>
-                            <option value="Stored"> Stored </option>
-                            <option value ="For disposal">For disposal</option>
-                            <option value ="For repair">For repair</option>
-                            <option value ="Good condition / In use">Good condition / In use</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-success alata">
-                    <i class="fa-regular fa-square-plus pr-2"></i>
-                    Add Product
-                </button>
             </form>
         </div>
+        
+
     </div>
     
     <!-- Edit Modal -->
@@ -170,66 +240,97 @@
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
 
-            <h3 class="alata">Edit Product</h3>
-
-            <form id="editSubmit">
-                <input type="hidden" id="editProductId" name="I_ID" value="">
-
-                <div class="form-group">
-                    <label for="editProductName">Product Name:</label>
-                    <input type="text" class="form-control" id="editProductName" name="I_Product" value="" readonly>
-                </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <!-- Quantity Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Quantity">Quantity</label>
-                        <input type="number" id="editQuantity" name="I_Quantity" class="form-control" required>
-                    </div>
-
-                    <!-- Unit Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Unit">Unit</label>
-                        <select id="editQuantityUnit" name="I_Unit" class="form-control" required>
-                            <option value="" disabled selected>Select Unit</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="kg">Kg</option>
-                            <option value="litre">Litre</option>
-                            <option value="meter">Meter</option>
-                            <option value="feet">Feet</option>
-                            <option value="inches">Inches</option>
-                            <option value="sets">Sets</option>
-                            <option value="g">Grams</option>
-                            <option value="ml">mL</option>
-                            <option value="mm">mm</option>
-                            <option value="cm">cm</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="editSerialNum">Serial Number:</label>
-                    <input type="text" class="form-control" id="editSerialNum" name="I_SN" value="" required>
-                </div>
-
-            <div class="form-row d-flex" style="gap: 10px;">
-                <div class="form-group" style="flex: 1;">
-                    <label for="editLocation">Located at:</label>
-                    <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
-                </div>
-
-                <div class="form-group" style="flex: 1;">
-                    <label for="editStatus">Status:</label>
-                    <select id="editStatus" name="I_Status" class="form-control" required>
-                        <option value="" disabled selected> Select Status </option>
-                        <option value="Stored"> Stored </option>
-                        <option value ="For disposal">For disposal</option>
-                        <option value ="For repair">For repair</option>
-                        <option value ="Good condition / In use">Good condition / In use</option>
-                    </select>
-                </div>
+            <div class="form-row justify-content-center" style="gap: 10px;">
+                <h3 class="alata">Edit Product</h3>
             </div>
 
+            <form id="editSubmit">
+                <!-- Left Column -->
+                <div class="form-row d-flex" style="gap: 20px;">
+                    <div style="flex: 3;">
+                        <input type="hidden" id="editProductId" name="I_ID" value="">
+
+                        <div class="form-group">
+                            <label for="editProductName">Product Name:</label>
+                            <input type="text" class="form-control" id="editProductName" name="I_Product" value="" readonly>
+                        </div>
+
+                        <div class="d-flex" style="gap: 10px;">
+                            <!-- Quantity Input -->
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Quantity">Quantity</label>
+                                <input type="number" id="editQuantity" name="I_Quantity" class="form-control" required>
+                            </div>
+
+                            <!-- Unit Input -->
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Unit">Unit</label>
+                                <select id="editQuantityUnit" name="I_Unit" class="form-control" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                    <option value="pieces">Pieces</option>
+                                    <option value="kg">Kg</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="meter">Meter</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="inches">Inches</option>
+                                    <option value="sets">Sets</option>
+                                    <option value="g">Grams</option>
+                                    <option value="ml">mL</option>
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editSerialNum">Serial Number</label>
+                            <input type="text" class="form-control" id="editSerialNum" name="I_SN" value="" required>
+                        </div>
+
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="editLocation">Located at:</label>
+                                <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
+                            </div>
+
+                            <div class="form-group" style="flex: 1;">
+                                <label for="editStatus">Status:</label>
+                                <select id="editStatus" name="I_Status" class="form-control" required>
+                                    <option value="" disabled selected> Select Status </option>
+                                    <option value="Stored"> Stored </option>
+                                    <option value ="For disposal">For disposal</option>
+                                    <option value ="For repair">For repair</option>
+                                    <option value ="Good condition / In use">Good condition / In use</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div style="flex: 2;">
+                        <!-- Date Pickers -->
+                        <div class="form-group">
+                            <label for="editDateReleased">Date Released</label>
+                            <input type="text" id="editDateReleased" name="editDateReleased" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="editDateReceived">Date Received</label>
+                            <input type="text" id="editDateReceived" name="editDateReceived" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <!-- Released To -->
+                        <div class="form-group">
+                            <label for="editReleasedTo">Released To</label>
+                            <input type="text" id="editReleasedTo" name="editReleasedTo" class="form-control">
+                        </div>
+    
+                        <!-- Remarks Textarea -->
+                        <div class="form-group">
+                            <label for="editRemarks">Remarks</label>
+                            <textarea id="editRemarks" name="editRemarks" class="form-control" rows="4" style="resize: none;"></textarea>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-row justify-content-center" style="gap: 10px;">
 
@@ -274,7 +375,11 @@ var selectedEquipment = {
     "I_Quantity": null,
     "UNIT_ID": null,
     "I_Location": null,
-    "Status": null
+    "Status": null,
+    "Remarks": null,
+    "Date_Received": null,
+    "Date_Released": null,
+    "Released_To": null
 };
 
 function alertCard(message){
@@ -300,6 +405,16 @@ function successCard(message){
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
+    $('.datepicker').each(function(){
+        $(this).datepicker({
+            format: 'yyyy-mm-dd',
+            todayHighlight: true,
+            uiLibrary: 'bootstrap4'
+        });
+    });
+
+
+    
     const storage = "Housekeeping";
     tableAJAX = new DataTable('#table', {
         ajax: {
@@ -323,21 +438,41 @@ document.addEventListener("DOMContentLoaded", (event) => {
             },
             { data: "Location", className: "alata"},                // Location
             { data: "Status", className: "alata"},                  // Status
+            { data: "Remarks", className: "alata"},                 // Remarks
+            { data: "Date_Received", className: "alata d-none"},    // Date Received (HIDDEN)
+            { data: "Date_Released", className: "alata d-none"},    // Date Released (HIDDEN)
+            { data: "Released_To", className: "alata d-none"},      // Released To (HIDDEN)
             {                                                       // Edit Button
                 data: null,
                 render: function(data, type, row, meta) {
                     return `
-                    <button type="button" class="btn btn-primary alata"
-                        onclick="openEditModal(${row.ID}, 
-                            '${row.Product_Name.replace(/'/g, "\\'")}', 
-                            ${row.Quantity}, 
-                            '${row.Location}', 
-                            '${row.Unit.name.toLowerCase()}', 
-                            '${row.Serial_Number.replace(/'/g, "\\'")}', 
-                            '${row.Status}')">
-                        <i class="fa-regular fa-pen-to-square"></i> 
-                        Edit
-                    </button>
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-info alata mr-2 text-sm"
+                                onclick="openInfoModal( 
+                                    '${row.Product_Name.replace(/'/g, "\\'").replace(/"/g, '\\"')}',  
+                                    '${row.Date_Received}', 
+                                    '${row.Date_Released}',
+                                    '${row.Released_To.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n')}')">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span class="small">MoreInfo</span>
+                            </button> 
+                            <button type="button" class="btn btn-primary alata"
+                                onclick="openEditModal(${row.ID}, 
+                                    '${row.Product_Name.replace(/'/g, "\\'").replace(/"/g, '\\"')}', 
+                                    ${row.Quantity}, 
+                                    '${row.Location.replace(/"/g, '\\"')}', 
+                                    '${row.Unit.name.toLowerCase().replace(/"/g, '\\"')}', 
+                                    '${row.Serial_Number.replace(/'/g, "\\'").replace(/"/g, '\\"')}', 
+                                    '${row.Status.replace(/"/g, '\\"')}',
+                                    '${row.Remarks.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n')}',
+                                    '${row.Date_Received}',
+                                    '${row.Date_Released}',
+                                    '${row.Released_To.replace(/'/g, "\\'").replace(/"/g, '\\"')}',
+                                    )">
+                                <i class="fa-regular fa-pen-to-square"></i> 
+                                Edit
+                            </button>       
+                        </div>
                     `
                 }
             }
@@ -378,12 +513,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 `;
                 return buttons;
             },
-            topEnd: {
+            top2End: {
                 search: {
                     placeholder: 'Search for items...'
                 }
             },
-            top2End: {
+            top2Start: {
                 buttons: [
                     {
                         extend: 'print',
@@ -407,7 +542,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 ],
             },
             bottomStart: 'pageLength',
-            bottomEnd: 'paging'
+            topEnd: 'paging',
+            bottomEnd: ''
         },
         initComplete: function() {
             // Find the existing button and trigger its click event
@@ -491,7 +627,20 @@ function closeModal() {
     document.getElementById('deleteModal').style.display = 'none';
 }
 
-function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM, STATUS){
+function openInfoModal(name, Date_Received, Date_Released, Released_To) {
+    document.getElementById('info_label').innerHTML = `More info for ${name}.`;
+    document.getElementById('dateReceived').textContent = Date_Received || 'N/A';
+    document.getElementById('dateReleased').textContent = Date_Released || 'N/A';
+    document.getElementById('releasedTo').textContent = Released_To || 'N/A';
+
+    document.getElementById('moreinfoModal').style.display = 'block';
+}
+
+function closeInfoModal(){
+    document.getElementById('moreinfoModal').style.display = 'none';
+}
+
+function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM, STATUS, REMARKS, DATE_RECEIVED, DATE_RELEASED, RELEASED_TO){
     selectedEquipment["I_ID"] = ID;
     selectedEquipment["I_Product"] = NAME;
     selectedEquipment["I_SN"] = SERIALNUM;
@@ -499,10 +648,14 @@ function resetSelectedEquipment(ID, NAME, QUANTITY, LOCATION, UNIT, SERIALNUM, S
     selectedEquipment["UNIT_ID"] = UNIT.toLowerCase();
     selectedEquipment["I_Location"] = LOCATION;
     selectedEquipment["Status"] = STATUS;
+    selectedEquipment["Remarks"] = REMARKS;
+    selectedEquipment["Date_Received"] = DATE_RECEIVED;
+    selectedEquipment["Date_Released"] = DATE_RELEASED;
+    selectedEquipment["Released_To"] = RELEASED_TO;
 }
 
-function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status) {
-    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status);
+function openEditModal(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status, remarks, dateReceived, dateReleased, releasedTo) {
+    resetSelectedEquipment(productId, productName, productQuantity, productLocation, productQuantityUnit, serialNum, status, remarks, dateReceived, dateReleased, releasedTo);
 
     document.getElementById('editModal').style.display = 'block';
     document.getElementById('editProductId').value = productId;
@@ -512,6 +665,10 @@ function openEditModal(productId, productName, productQuantity, productLocation,
     document.getElementById('editSerialNum').value = serialNum;
     document.getElementById('editQuantityUnit').value = productQuantityUnit;
     document.getElementById('editStatus').value = status;
+    document.getElementById('editRemarks').value = remarks;
+    document.getElementById('editDateReceived').value = dateReceived;
+    document.getElementById('editDateReleased').value = dateReleased;
+    document.getElementById('editReleasedTo').value = releasedTo;
 
     document.getElementById('editQuantityUnit').dispatchEvent(new Event('change'));
 
@@ -574,7 +731,11 @@ document.getElementById('addProductModal').addEventListener('submit', function (
         I_Location: document.getElementById('I_Location').value,
         Storage_Category: category[0],
         Storage_Subcategory: category[1],
-        Status: document.getElementById('I_Status').value
+        Status: document.getElementById('I_Status').value,
+        Remarks: document.getElementById('I_Remarks').value,
+        Date_Received: document.getElementById('I_DateReceived').value,
+        Date_Released: document.getElementById('I_DateReleased').value,
+        Released_To: document.getElementById('I_ReleasedTo').value,
     };
 
     console.log(productData);
@@ -619,6 +780,10 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
         "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
         "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
         "Status": (selectedEquipment["Status"] === document.getElementById("editStatus").value)? null : document.getElementById("editStatus").value,
+        "Remarks": (selectedEquipment["Remarks"] === document.getElementById("editRemarks").value)? null : document.getElementById("editRemarks").value,
+        "Date_Received": (selectedEquipment["Date_Received"] === document.getElementById("editDateReceived").value)? null : document.getElementById("editDateReceived").value,
+        "Date_Released": (selectedEquipment["Date_Released"] === document.getElementById("editDateReleased").value)? null : document.getElementById("editDateReleased").value,
+        "Released_To": (selectedEquipment["Released_To"] === document.getElementById("editReleasedTo").value)? null : document.getElementById("editReleasedTo").value
     };
 
     console.log(changesMade);

@@ -160,7 +160,9 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         if (!req_json.contains("I_Product") || !req_json.contains("I_SN") ||
             !req_json.contains("I_Quantity") || !req_json.contains("UNIT_ID") ||
             !req_json.contains("I_Location") || !req_json.contains("Storage_Category") ||
-            !req_json.contains("Storage_Subcategory") || !req_json.contains("Status"))
+            !req_json.contains("Storage_Subcategory") || !req_json.contains("Status") ||
+            !req_json.contains("Remarks") || !req_json.contains("Date_Received") || 
+            !req_json.contains("Date_Released") || !req_json.contains("Released_To"))
         {
             handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
@@ -175,9 +177,13 @@ void RouteHandlers::addEquipment(const Request& req, Response& res) {
         std::string storage_category = req_json["Storage_Category"];
         std::string storage_sub = req_json["Storage_Subcategory"];
         std::string status = req_json["Status"];
+        std::string remarks = req_json["Remarks"];
+        std::string date_received = req_json["Date_Received"];
+        std::string date_released = req_json["Date_Released"];
+        std::string released_to = req_json["Released_To"];
 
         // Call the MySQLManager's addEquipment method
-        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage_category, storage_sub, status, username)) {
+        switch (MySQLManager::addEquipment(product, serial_num, quantity, unit_id, location, storage_category, storage_sub, status, remarks, date_received, date_released, released_to, username)) {
         case MySQLResult::Success:
             handle_success_api(res, "Equipment added successfully.");
             break;

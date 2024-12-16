@@ -188,11 +188,25 @@ MySQLResult MySQLManager::updateEquipment(const int id, const std::vector<std::p
 
 }
 
-MySQLResult MySQLManager::addEquipment(const std::string& product, const std::string& serial_num, double quantity, int unit_id, const std::string& location, const std::string& storage_category, const std::string& storage_sub, const std::string& status, const std::string& username) {
+MySQLResult MySQLManager::addEquipment(
+    const std::string& product, 
+    const std::string& serial_num, 
+    double quantity, 
+    int unit_id, 
+    const std::string& location, 
+    const std::string& storage_category, 
+    const std::string& storage_sub, 
+    const std::string& status, 
+    const std::string& remarks,
+    const std::string& date_received,
+    const std::string& date_released,
+    const std::string& released_to,
+    const std::string& username
+) {
     try {
         mysqlx::Table inventory = instance().session.getSchema(SQLConsts::dbName).getTable("inventory");
-        mysqlx::Result result = inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE, SQLColumn::EQ_STORAGE_SUB, SQLColumn::EQ_STATUS)
-            .values(product, serial_num, quantity, unit_id, location, storage_category, storage_sub, status).execute();
+        mysqlx::Result result = inventory.insert(SQLColumn::EQ_NAME, SQLColumn::EQ_SERIAL_NUM, SQLColumn::EQ_QUANTITY, SQLColumn::EQ_UNIT_ID, SQLColumn::EQ_LOCATION, SQLColumn::EQ_STORAGE, SQLColumn::EQ_STORAGE_SUB, SQLColumn::EQ_STATUS, SQLColumn::EQ_REMARKS, SQLColumn::EQ_D_RECEIVED, SQLColumn::EQ_D_RELEASED, SQLColumn::EQ_RELEASED_P)
+            .values(product, serial_num, quantity, unit_id, location, storage_category, storage_sub, status, remarks, date_received, date_released, released_to).execute();
 
         Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Create, username, product, result.getAutoIncrementValue());
 

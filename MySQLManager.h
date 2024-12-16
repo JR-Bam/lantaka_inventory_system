@@ -140,7 +140,11 @@ public:
 														 const std::string& location, 
 														 const std::string& storage_category, 
 														 const std::string& storage_sub, 
-														 const std::string& status, 
+														 const std::string& status,
+														 const std::string& remarks, 
+														 const std::string& date_received, 
+														 const std::string& date_released, 
+														 const std::string& released_to,
 														 const std::string& username);
 
 	/**
