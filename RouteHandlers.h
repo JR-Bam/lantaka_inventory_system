@@ -117,7 +117,9 @@ public:
 	 */
 	static void authSession		(const Request& req, Response& res);
 
-	static void signUp			(const Request& req, Response& res);
+	static void logs			(const Request& req, Response& res);
+
+	static void newPassword		(const Request& req, Response& res);
 	/**
 	* This function handles the addition of new equipment to the inventory.
 	* It validates the request, extracts required fields, and then calls

@@ -19,6 +19,10 @@ namespace SQLColumn {
 	const std::string EQ_STORAGE = "Storage_Category";
 	const std::string EQ_STORAGE_SUB = "Storage_Subcategory";
 	const std::string EQ_STATUS = "Status";
+	const std::string EQ_REMARKS = "Remarks";
+	const std::string EQ_D_RELEASED = "Date_Released";
+	const std::string EQ_D_RECEIVED = "Date_Received";
+	const std::string EQ_RELEASED_P = "Released_To";
 
 	const std::string USER_UNAME = "U_Username";
 	const std::string USER_PWORD = "U_Password";
@@ -115,7 +119,8 @@ public:
 														 const std::vector<std::pair<std::string, std::string>>& params, 
 														 const std::string& username);
 
-	static MySQLResult			signUp					(const std::string& username, 
+	static MySQLResult			updatePassword			(const std::string& username, 
+														 const std::string& old,
 														 const std::string& password);
 
 	/**
@@ -135,7 +140,11 @@ public:
 														 const std::string& location, 
 														 const std::string& storage_category, 
 														 const std::string& storage_sub, 
-														 const std::string& status, 
+														 const std::string& status,
+														 const std::string& remarks, 
+														 const std::string& date_received, 
+														 const std::string& date_released, 
+														 const std::string& released_to,
 														 const std::string& username);
 
 	/**
@@ -182,5 +191,8 @@ public:
 														 int equipmentID,
 														 int64_t timestamp,
 														 std::string& parsedTime);
+
+	static MySQLResult			appendLogline			(const std::string& logEntry);
+	static mysqlx::RowResult	getLoglines				();
 };
 
