@@ -18,12 +18,10 @@
         <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 
         <link href="https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.css" rel="stylesheet">
- 
         <script src="https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.1.8/b-3.2.0/b-html5-3.2.0/b-print-3.2.0/datatables.min.js"></script>
 
     </head>
 
-    <!-- hi -->
     <body>
 
         <div class="logout tooltip-container">
@@ -41,7 +39,7 @@
         
 
     <div class="signup-container">
-        <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 50px">House Keeping Inventory</h2>
+        <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 50px">Construction Inventory</h2>
 
         <div id="error_div"></div>
         <div id="success_div"></div>
@@ -50,10 +48,11 @@
             <table class="table table-bordered table-striped" id="table">
                 <thead>
                     <tr>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 20%; text-align: left;">Item Description</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Serial No.</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 10%;">Quantity</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 10%;">Location</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 25%; text-align: left;">Item Description</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Serial No.</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Quantity</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Category</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Location</th>
 
                         <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Status</th>
                         <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Remarks</th>
@@ -121,103 +120,74 @@
     
             <form id="addProductForm">
                 <input type="hidden" name="add_product" value="1">
-    
-                <div class="form-row d-flex" style="gap: 20px;">
-                    <!-- Left Column -->
-                    <div style="flex: 3;">
-                        <!-- Product Name Input -->
-                        <div class="form-group">
-                            <label for="I_Product">Product Name</label>
-                            <input type="text" id="I_Product" name="I_Product" class="form-control" required>
-                        </div>
-    
-                        <!-- Quantity & Unit -->
-                        <div class="d-flex" style="gap: 10px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label for="I_Quantity">Quantity</label>
-                                <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label for="I_Unit">Unit</label>
-                                <select id="I_Unit" name="I_Unit" class="form-control" required>
-                                    <option value="" disabled selected>Select Unit</option>
-                                    <option value="pieces">Pieces</option>
-                                    <option value="kg">Kg</option>
-                                    <option value="litre">Litre</option>
-                                    <option value="meter">Meter</option>
-                                    <option value="feet">Feet</option>
-                                    <option value="inches">Inches</option>
-                                    <option value="sets">Sets</option>
-                                    <option value="g">Grams</option>
-                                    <option value="ml">mL</option>
-                                    <option value="mm">mm</option>
-                                    <option value="cm">cm</option>
-                                </select>
-                            </div>
-                        </div>
-    
-                        <!-- Serial Number Input -->
-                        <div class="form-group">
-                            <label for="I_SN">Serial Number</label>
-                            <input type="text" id="I_SN" name="I_SN" class="form-control">
-                        </div>
-    
-                        <!-- Location Input -->
-                        <div class="form-group">
-                            <label for="I_Location">Location</label>
-                            <input type="text" id="I_Location" name="I_Location" class="form-control" required>
-                        </div>
-    
-                        <!-- Storage & Status -->
-                        <div class="d-flex" style="gap: 10px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label for="E_Storage">Storage</label>
-                                <select id="E_Storage" name="E_Storage" class="form-control" required>
-                                    <option value="" disabled selected>Select Storage</option>
-                                    <option value="Housekeeping">Housekeeping</option>
-                                    <option value="Construction-Electrical">Construction - Electrical</option>
-                                    <option value="Construction-Plumbing">Construction - Plumbing</option>
-                                    <option value="Construction-Carpentry">Construction - Carpentry</option>
-                                    <option value="Construction-Painting">Construction - Painting</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label for="I_Status">Status</label>
-                                <select id="I_Status" name="I_Status" class="form-control" required>
-                                    <option value="" disabled selected>Select Status</option>
-                                    <option value="Stored">Stored</option>
-                                    <option value="For disposal">For disposal</option>
-                                    <option value="For repair">For repair</option>
-                                    <option value="Good condition / In use">Good condition / In use</option>
-                                </select>
-                            </div>
-                        </div>
+
+                <!-- Product Name Input -->
+                <div class="form-group">
+                    <label for="I_Product">Product Name</label>
+                    <input type="text" id="I_Product" name="I_Product" class="form-control" required>
+                </div>
+
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <!-- Quantity Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Quantity">Quantity</label>
+                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
                     </div>
-    
-                    <!-- Right Column -->
-                    <div style="flex: 2;">
-                        <!-- Date Pickers -->
-                        <div class="form-group">
-                            <label for="I_DateReleased">Date Released</label>
-                            <input type="text" id="I_DateReleased" name="I_DateReleased" class="form-control datepicker" readonly>
-                        </div>
-    
-                        <div class="form-group">
-                            <label for="I_DateReceived">Date Received</label>
-                            <input type="text" id="I_DateReceived" name="I_DateReceived" class="form-control datepicker" readonly>
-                        </div>
-    
-                        <!-- Released To -->
-                        <div class="form-group">
-                            <label for="I_ReleasedTo">Released To</label>
-                            <input type="text" id="I_ReleasedTo" name="I_ReleasedTo" class="form-control">
-                        </div>
-    
-                        <!-- Remarks Textarea -->
-                        <div class="form-group">
-                            <label for="I_Remarks">Remarks</label>
-                            <textarea id="I_Remarks" name="I_Remarks" class="form-control" rows="4" style="resize: none;"></textarea>
-                        </div>
+
+                    <!-- Unit Input -->
+                    <div class="form-group" style="flex: 1;">
+                        <label for="I_Unit">Unit</label>
+                        <select id="I_Unit" name="I_Unit" class="form-control" required>
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="kg">Kg</option>
+                            <option value="litre">Litre</option>
+                            <option value="meter">Meter</option>
+                            <option value="feet">Feet</option>
+                            <option value="inches">Inches</option>
+                            <option value="sets">Sets</option>
+                            <option value="g">Grams</option>
+                            <option value="ml">mL</option>
+                            <option value="mm">mm</option>
+                            <option value="cm">cm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Serial Number Input -->
+                <div class="form-group">
+                    <label for="I_SN">Serial Number</label>
+                    <input type="text" id="I_SN" name="I_SN" class="form-control">
+                </div>
+
+                
+                <!-- Location Input -->
+                <div class="form-group">
+                    <label for="I_Location">Location</label>
+                    <input type="text" id="I_Location" name="I_Location" class="form-control" required>
+                </div>
+
+                <div class="form-row d-flex" style="gap: 10px;">
+                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
+                        <label for="E_Storage">Storage:</label>
+                        <select id="E_Storage" name="E_Storage" class="form-control" required>
+                            <option value="" disabled selected>Select Storage</option>
+                            <option value="Construction-Electrical">Construction - Electrical</option>
+                            <option value="Construction-Plumbing">Construction - Plumbing</option>
+                            <option value="Construction-Carpentry">Construction - Carpentry</option>
+                            <option value="Construction-Painting">Construction - Painting</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1;"> <!-- Status Input -->
+                        <label for = "I_Status"> Status </label>
+                        <select id = "I_Status" name="I_Status" class="form-control" required> 
+                            <option value="" disabled selected> Select Status </option>
+                            <option value="Stored"> Stored </option>
+                            <option value ="For disposal">For disposal</option>
+                            <option value ="For repair">For repair</option>
+                            <option value ="Good condition / In use">Good condition / In use</option>
+                        </select>
                     </div>
                 </div>
     
@@ -353,8 +323,8 @@ const table = document.getElementById("rows");
 const error_div = document.getElementById("error_div");
 const success_div = document.getElementById("success_div");
 
-const storage = "Housekeeping";
 let tableAJAX;
+const storage = "Construction";
 
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
     "pieces": 1,
@@ -415,9 +385,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
     });
 
-
-    
-    const storage = "Housekeeping";
     tableAJAX = new DataTable('#table', {
         ajax: {
             url: `/api/equipment/view?E_Storage=${encodeURIComponent(storage)}&${tokenParams.toString()}`,
@@ -437,7 +404,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                     return `${row.Quantity} ${row.Unit.name ?? ""}`;
                 },
                 className: "alata"
-            },
+            },                                                      
+            { data: "Storage_Subcategory", className: "alata" },    // Category
             { data: "Location", className: "alata"},                // Location
             { data: "Status", className: "alata"},                  // Status
             { data: "Remarks", className: "alata"},                 // Remarks
