@@ -51,8 +51,8 @@
                         <th scope="col" class="bg-primary text-white alata" style="width: 25%; text-align: left;">Item Description</th>
                         <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Serial No.</th>
                         <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Quantity</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Category</th>
-                        <th scope="col" class="bg-primary text-white alata" style="width: 20%;">Location</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 10%;">Category</th>
+                        <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Location</th>
 
                         <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Status</th>
                         <th scope="col" class="bg-primary text-white alata" style="width: 15%;">Remarks</th>
@@ -121,73 +121,104 @@
             <form id="addProductForm">
                 <input type="hidden" name="add_product" value="1">
 
-                <!-- Product Name Input -->
-                <div class="form-group">
-                    <label for="I_Product">Product Name</label>
-                    <input type="text" id="I_Product" name="I_Product" class="form-control" required>
-                </div>
+                <div class="form-row d-flex" style="gap: 20px;">
+                    <!-- Left Column -->
+                    <div style="flex: 3;">
+                        <!-- Product Name Input -->
+                        <div class="form-group">
+                            <label for="I_Product">Product Name</label>
+                            <input type="text" id="I_Product" name="I_Product" class="form-control" required>
+                        </div>
 
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <!-- Quantity Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Quantity">Quantity</label>
-                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                        <div class="d-flex" style="gap: 10px;">
+                            <!-- Quantity Input -->
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Quantity">Quantity</label>
+                                <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                            </div>
+
+                            <!-- Unit Input -->
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Unit">Unit</label>
+                                <select id="I_Unit" name="I_Unit" class="form-control" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                    <option value="pieces">Pieces</option>
+                                    <option value="kg">Kg</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="meter">Meter</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="inches">Inches</option>
+                                    <option value="sets">Sets</option>
+                                    <option value="g">Grams</option>
+                                    <option value="ml">mL</option>
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Serial Number Input -->
+                        <div class="form-group">
+                            <label for="I_SN">Serial Number</label>
+                            <input type="text" id="I_SN" name="I_SN" class="form-control">
+                        </div>
+
+                        
+                        <!-- Location Input -->
+                        <div class="form-group">
+                            <label for="I_Location">Location</label>
+                            <input type="text" id="I_Location" name="I_Location" class="form-control" required>
+                        </div>
+
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;"> <!-- added by zed-->
+                                <label for="E_Storage">Storage</label>
+                                <select id="E_Storage" name="E_Storage" class="form-control" required>
+                                    <option value="" disabled selected>Select Storage</option>
+                                    <option value="Construction-Electrical">Construction - Electrical</option>
+                                    <option value="Construction-Plumbing">Construction - Plumbing</option>
+                                    <option value="Construction-Carpentry">Construction - Carpentry</option>
+                                    <option value="Construction-Painting">Construction - Painting</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="flex: 1;"> <!-- Status Input -->
+                                <label for = "I_Status"> Status </label>
+                                <select id = "I_Status" name="I_Status" class="form-control" required> 
+                                    <option value="" disabled selected> Select Status </option>
+                                    <option value="Stored"> Stored </option>
+                                    <option value ="For disposal">For disposal</option>
+                                    <option value ="For repair">For repair</option>
+                                    <option value ="Good condition / In use">Good condition / In use</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Unit Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Unit">Unit</label>
-                        <select id="I_Unit" name="I_Unit" class="form-control" required>
-                            <option value="" disabled selected>Select Unit</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="kg">Kg</option>
-                            <option value="litre">Litre</option>
-                            <option value="meter">Meter</option>
-                            <option value="feet">Feet</option>
-                            <option value="inches">Inches</option>
-                            <option value="sets">Sets</option>
-                            <option value="g">Grams</option>
-                            <option value="ml">mL</option>
-                            <option value="mm">mm</option>
-                            <option value="cm">cm</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Serial Number Input -->
-                <div class="form-group">
-                    <label for="I_SN">Serial Number</label>
-                    <input type="text" id="I_SN" name="I_SN" class="form-control">
-                </div>
-
-                
-                <!-- Location Input -->
-                <div class="form-group">
-                    <label for="I_Location">Location</label>
-                    <input type="text" id="I_Location" name="I_Location" class="form-control" required>
-                </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <div class="form-group" style="flex: 1;"> <!-- added by zed-->
-                        <label for="E_Storage">Storage:</label>
-                        <select id="E_Storage" name="E_Storage" class="form-control" required>
-                            <option value="" disabled selected>Select Storage</option>
-                            <option value="Construction-Electrical">Construction - Electrical</option>
-                            <option value="Construction-Plumbing">Construction - Plumbing</option>
-                            <option value="Construction-Carpentry">Construction - Carpentry</option>
-                            <option value="Construction-Painting">Construction - Painting</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="flex: 1;"> <!-- Status Input -->
-                        <label for = "I_Status"> Status </label>
-                        <select id = "I_Status" name="I_Status" class="form-control" required> 
-                            <option value="" disabled selected> Select Status </option>
-                            <option value="Stored"> Stored </option>
-                            <option value ="For disposal">For disposal</option>
-                            <option value ="For repair">For repair</option>
-                            <option value ="Good condition / In use">Good condition / In use</option>
-                        </select>
+                    <!-- Right Column -->
+                    <div style="flex: 2;">
+                        <!-- Date Pickers -->
+                        <div class="form-group">
+                            <label for="I_DateReleased">Date Released</label>
+                            <input type="text" id="I_DateReleased" name="I_DateReleased" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="I_DateReceived">Date Received</label>
+                            <input type="text" id="I_DateReceived" name="I_DateReceived" class="form-control datepicker" readonly>
+                        </div>
+    
+                        <!-- Released To -->
+                        <div class="form-group">
+                            <label for="I_ReleasedTo">Released To</label>
+                            <input type="text" id="I_ReleasedTo" name="I_ReleasedTo" class="form-control">
+                        </div>
+    
+                        <!-- Remarks Textarea -->
+                        <div class="form-group">
+                            <label for="I_Remarks">Remarks</label>
+                            <textarea id="I_Remarks" name="I_Remarks" class="form-control" rows="4" style="resize: none;"></textarea>
+                        </div>
                     </div>
                 </div>
     
@@ -259,12 +290,12 @@
 
                         <div class="d-flex" style="gap: 10px;">
                             <div class="form-group" style="flex: 1;">
-                                <label for="editLocation">Located at:</label>
+                                <label for="editLocation">Located at</label>
                                 <input type="text" class="form-control" id="editLocation" name="I_Location" value="" required>
                             </div>
 
                             <div class="form-group" style="flex: 1;">
-                                <label for="editStatus">Status:</label>
+                                <label for="editStatus">Status</label>
                                 <select id="editStatus" name="I_Status" class="form-control" required>
                                     <option value="" disabled selected> Select Status </option>
                                     <option value="Stored"> Stored </option>
@@ -408,7 +439,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
             { data: "Storage_Subcategory", className: "alata" },    // Category
             { data: "Location", className: "alata"},                // Location
             { data: "Status", className: "alata"},                  // Status
-            { data: "Remarks", className: "alata"},                 // Remarks
+            {                                                       // Remarks
+                data: null,
+                render: function(data, type, row, meta) {
+                    return row.Remarks.replace(/\\n/g, ' ');
+                }, 
+                className: "alata"
+            },
             { data: "Date_Received", className: "alata d-none"},    // Date Received (HIDDEN)
             { data: "Date_Released", className: "alata d-none"},    // Date Released (HIDDEN)
             { data: "Released_To", className: "alata d-none"},      // Released To (HIDDEN)
@@ -689,6 +726,8 @@ document.getElementById('addProductModal').addEventListener('submit', function (
 
     const selectedUnit = document.getElementById('I_Unit').value;
     const unitId = unitMapping[selectedUnit];
+    const storage = document.getElementById('E_Storage').value;
+    const category = (storage.includes("-"))? storage.split("-"): [storage, ""];
 
     const productData = {
         I_Product: document.getElementById('I_Product').value,
