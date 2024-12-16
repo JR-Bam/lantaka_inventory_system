@@ -51,7 +51,6 @@
         }
         .form-control {
             font-size: 1.5rem;
-            padding: 1rem;
             font-family: 'Verdana', monospace;
         }
         .btn-primary {
@@ -110,22 +109,18 @@
     <div class="login-container">
         <div class="form-container">
             <center><img src="/images/adzu_logo.png" alt="ateneo"></center>
-            <!-- <h2 class="text-center" style="color: white; font-family: 'Matura MT Script Capitals', sans-serif;">ADZU <br>Lantaka <br> Inventory Management System</h2> -->
             <h2 class="text-center mb-3 alata" style="color: white;">ADZU Lantaka <br> Inventory Management System</h2>
-            <!-- <h2 class="text-center" style="color: white; font-family: 'Teko', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
-            <!-- <h2 class="text-center" style="color: white; font-family: 'Alata', sans-serif;">ADZU Lantaka <br> Inventory Management System</h2> -->
 
             <div id="error_div" class="alert alert-danger d-none alata" role="alert"></div>
             <div id="success_div" class="alert alert-success d-none alata" role="alert"></div>
 
             <form method="post" id="login_form">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" required>
-                    </div>
+                <div class="form-group">
+                    <select id="roles" name="roles" class="form-control" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="employee">Employee</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -143,20 +138,12 @@
 </html>
 
 <script>
-    /*
-        A username is composed of a first and last name in this format
-        "{firstname}@{lastname}"
-        Example:
-        "Juan@Dela Cruz"
-    */
-
     const form = document.getElementById('login_form');
     const errorDiv = document.getElementById('error_div');
     const successDiv = document.getElementById('success_div');
     const shutdownBtn = document.getElementById('shutdown-btn');
 
-    const fnamediv = document.getElementById('firstName');
-    const lnamediv = document.getElementById('lastName');
+    const rolediv = document.getElementById('roles');
     const pworddiv = document.getElementById('password');
 
 
@@ -187,7 +174,7 @@
         e.preventDefault();  // Prevent the form from submitting the usual way
         
         const jsonData = {
-            "username": fnamediv.value + "@" + lnamediv.value,
+            "username": rolediv.value,
             "password": pworddiv.value
         };
 

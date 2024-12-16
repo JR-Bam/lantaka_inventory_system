@@ -88,13 +88,15 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     // For the images
     svr.set_mount_point("/images", "./assets");
 
+
     // Endpoints
     svr.Get("/api/equipment/view", &RouteHandlers::viewEquipment);
     svr.Post("/api/equipment/add", &RouteHandlers::addEquipment);
     svr.Put("/api/equipment/edit", &RouteHandlers::editEquipment);
     svr.Delete(R"(/api/equipment/delete/(\d+))", &RouteHandlers::removeEquipment);
 
-    svr.Post("/api/signup", &RouteHandlers::signUp);
+    svr.Get("/logs.txt", &RouteHandlers::logs);
+    svr.Post("/api/new-pass", &RouteHandlers::newPassword);
     svr.Post("/api/login", &RouteHandlers::verifyAccount);
     svr.Get("/api/validate-token", &RouteHandlers::authSession);
     svr.Get("/shutdown", [&svr](const Request& req, Response& res) {

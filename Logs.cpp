@@ -72,8 +72,6 @@ void Logs::logLine(
 	std::string error
 ){
 
-	std::ofstream& file = instance().logFile;
-
 	int64_t currentTimeStamp = getCurrentTimeStamp();
 	std::string currentTime = getCurrentTime(currentTimeStamp);
 
@@ -104,7 +102,5 @@ void Logs::logLine(
 			break;
 	}
 
-	if (file.is_open()) {
-		file << line << std::endl;
-	}
+	MySQLManager::appendLogline(line);
 }
