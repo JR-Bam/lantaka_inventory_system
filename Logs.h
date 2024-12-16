@@ -5,7 +5,7 @@
  * \date   November 2024
  *********************************************************************/
 #pragma once
-#include <fstream>
+#include <string>
 
 /**
  * \class Logs Logs.h "Logs.h"
@@ -65,22 +65,6 @@ public:
 							 std::string error = std::string());
 
 private:
-	const std::string fileName = "log.txt"; /// Name of the text file logs will output to
-	std::ofstream logFile; /// The output file object
-
-	Logs(const Logs&) = delete;
-	Logs& operator=(const Logs&) = delete;
-
-	static Logs& instance() {
-		static Logs logManager;
-		return logManager;
-	}
-
-	Logs() : logFile(fileName, std::ios::app) {}
-
-	~Logs() {
-		logFile.close();
-	}
 
 	/**
 	 * @brief Get the current time stamp and parse it as a string with the format "%Y-%m-%d %X".

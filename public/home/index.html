@@ -30,6 +30,13 @@
             </button>
             <div class="tooltip">Logout</div>
         </div>
+        <div class="logs tooltip-container">
+            <button type="button" class="btn btn-info btn-lg" onclick="logs()" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </button>
+            <div class="tooltip">Logs</div>
+        </div>
+        
 
     <div class="signup-container">
         <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 50px">House Keeping Inventory</h2>
@@ -432,6 +439,10 @@ function logout(){
     localStorage.removeItem("Lantaka-IMS-Sess-Token");
     // alert("removed");
     document.location.href = '/';
+}
+
+function logs(){
+    document.location.href = `/logs.txt?${tokenParams.toString()}`;
 }
 
 

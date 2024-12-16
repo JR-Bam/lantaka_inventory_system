@@ -2,6 +2,7 @@
 #include "jwt_handler.h"
 #include "MySQLManager.h"
 #include <vector>
+#include <sstream>
 
 void RouteHandlers::verifyAccount(const Request& req, Response& res)
 {
@@ -56,27 +57,67 @@ void RouteHandlers::authSession(const Request& req, Response& res)
 
 }
 
-void RouteHandlers::signUp(const Request& req, Response& res) {
+void RouteHandlers::logs(const Request& req, Response& res)
+{
+    try {
+        std::string username = getUsername(req);
+        if (username.empty()) {
+            handle_error_api(res, "Session expired", StatusCode::Unauthorized_401);
+            return;
+        }
+
+        std::string logHtmlContent = R"(<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Log Viewer</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container mt-5"><h1 class="text-center mb-4">Log Viewer</h1><div class="text-center mb-4"><button class="btn btn-primary" onclick="window.location.href = '/home';"> Back to Inventory</button></div><div class="table-responsive" style="max-height: 500px; overflow-y: auto;"><table class="table table-striped table-hover table-bordered"><thead class="table-primary"><tr></tr></thead><tbody id="logTableBody"><!-- Log lines will go here --></tbody></table></div></div></body></html>)";
+
+        std::string toFind = "<!-- Log lines will go here -->";
+        std::stringstream rows;
+
+        for (const auto row : MySQLManager::getLoglines()) {
+            rows << "<tr><td>" << (row[0].isNull() ? "" : row[0].get<std::string>()) << "</td></tr>";
+        }
+
+        std::string toReplace = rows.str();
+        size_t pos = logHtmlContent.find(toFind);
+        if (pos != std::string::npos) {
+            logHtmlContent.replace(pos, toFind.length(), toReplace);
+            res.set_content(logHtmlContent, "text/html");
+        }
+        else {
+            handle_error_api(res, "Failed to parse html", StatusCode::InternalServerError_500);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        handle_error_api(res, std::string("Error occurred: ") + e.what(), StatusCode::InternalServerError_500);
+    }
+}
+
+void RouteHandlers::newPassword(const Request& req, Response& res) {
     try {
         json req_json = json::parse(req.body);
 
-        if (!req_json.contains("username") || !req_json.contains("password") || !req_json.contains("confirm_password")) {
+        if (!req_json.contains("username") || !req_json.contains("old_password") || !req_json.contains("new_password")) {
             handle_error_api(res, "Missing required fields", StatusCode::BadRequest_400);
             return;
         }
 
         std::string username = req_json["username"];
-        std::string password = req_json["password"];
-        std::string confirm_password = req_json["confirm_password"];
+        std::string old_password = req_json["old_password"];
+        std::string new_password = req_json["new"];
 
-        if (password != confirm_password) {
-            handle_error_api(res, "Passwords do not match", StatusCode::BadRequest_400);
+        if (old_password == new_password) {
+            handle_success_api(res, "Old password same as new password.");
             return;
         }
 
-        switch (MySQLManager::signUp(username, password)) {
+        switch (MySQLManager::updatePassword(username, old_password, new_password)) {
         case MySQLResult::Success:
             handle_success_api(res, "User signed up successfully.");
+            break;
+        case MySQLResult::NotFound:
+            handle_error_api(res, "User not found.", StatusCode::NotFound_404);
+            break;
+        case MySQLResult::BadCredentials:
+            handle_error_api(res, "Wrong Password.", StatusCode::Unauthorized_401);
             break;
         case MySQLResult::InternalServerError:
             handle_error_api(res, "Internal server error occurred.", StatusCode::InternalServerError_500);
@@ -182,6 +223,10 @@ void RouteHandlers::viewEquipment(const Request& req, Response& res)
             jsonRow["Storage_Category"] = row[6].isNull() ? "" : row[6].get<std::string>();
             jsonRow["Storage_Subcategory"] = row[7].isNull() ? "" : row[7].get<std::string>();
             jsonRow["Status"] = row[8].isNull() ? "" : row[8].get<std::string>();
+            jsonRow["Remarks"] = row[9].isNull() ? "" : row[9].get<std::string>();
+            jsonRow["Date_Received"] = row[10].isNull() ? "" : row[10].get<std::string>();
+            jsonRow["Date_Released"] = row[11].isNull() ? "" : row[11].get<std::string>();
+            jsonRow["Released_To"] = row[12].isNull() ? "" : row[12].get<std::string>();
             
             jsonRow["Unit"]["id"] = row[4].isNull() ? 0 : row[4].get<int>();
             int unit_id = jsonRow["Unit"]["id"];

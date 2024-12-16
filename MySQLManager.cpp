@@ -50,6 +50,43 @@ MySQLResult MySQLManager::logOp(std::string& type, std::string& user, int equipm
     }
 }
 
+MySQLResult MySQLManager::appendLogline(const std::string& logEntry)
+{
+    using namespace mysqlx;
+    try
+    {
+        Schema IMS = instance().session.getSchema(SQLConsts::dbName);
+        Table loglines = IMS.getTable("loglines");
+
+        loglines.insert("line").values(logEntry).execute();
+
+        return MySQLResult::Success;
+    }
+    catch (const std::exception& err)
+    {
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
+        return MySQLResult::InternalServerError;
+    }
+    
+}
+
+mysqlx::RowResult MySQLManager::getLoglines()
+{
+    using namespace mysqlx;
+    try
+    {
+        Schema IMS = instance().session.getSchema(SQLConsts::dbName); 
+        Table loglines = IMS.getTable("loglines");
+
+        return loglines.select("line").execute();
+    }
+    catch (const std::exception& err)
+    {
+        Logs::logLine(Logs::Type::Error, Logs::CrudOperation::Read, "", "", -1, err.what());
+        return RowResult();
+    }
+}
+
 MySQLResult MySQLManager::validateCredentials(const std::string& username, const std::string& password)
 {
     using namespace mysqlx;
@@ -81,14 +118,30 @@ MySQLResult MySQLManager::validateCredentials(const std::string& username, const
     }
 }
 
-MySQLResult MySQLManager::signUp(const std::string& username, const std::string& password) {
+MySQLResult MySQLManager::updatePassword(const std::string& username, const std::string& old, const std::string& password) {
     try {
         std::string hashedPass = BCrypt::generateHash(password);
 
         mysqlx::Table users = instance().session.getSchema(SQLConsts::dbName).getTable("users");
-        users.insert(SQLColumn::USER_UNAME, SQLColumn::USER_PWORD)
-            .values(username, hashedPass).execute();
+        mysqlx::RowResult ids = users.select(SQLColumn::USER_ID, SQLColumn::USER_PWORD)
+            .where(SQLColumn::USER_UNAME + " = :u_un")
+            .bind("u_un", username).execute();
+
+        mysqlx::Row res = ids.fetchOne();
+        if (!res) {
+            return MySQLResult::NotFound;
+        }
+
+        if (!BCrypt::validatePassword(old, res[1].get<std::string>())) {
+            return MySQLResult::BadCredentials;
+        }
+
+        users.update()
+            .set(SQLColumn::USER_PWORD, hashedPass)
+            .where(SQLColumn::USER_ID + " = :u_id")
+            .bind("u_id", res[0].get<int>()).execute();
         return MySQLResult::Success;
+        
     }
     catch (const mysqlx::Error& err) {
         std::cerr << "Error adding user: " << err.what() << std::endl;
@@ -157,7 +210,7 @@ mysqlx::RowResult MySQLManager::viewEquipment(const std::string& username,const 
         mysqlx::Schema db = instance().session.getSchema("lantaka_ims");
         mysqlx::Table inventory = db.getTable("inventory");
 
-        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, "Housekeeping");
+        Logs::logLine(Logs::Type::Operation, Logs::CrudOperation::Read, username, storage);
 
         return inventory.select("*").where(SQLColumn::EQ_STORAGE + " = '" + storage + "'").execute();
     }
