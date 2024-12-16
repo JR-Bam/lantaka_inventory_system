@@ -352,6 +352,8 @@
 const table = document.getElementById("rows");
 const error_div = document.getElementById("error_div");
 const success_div = document.getElementById("success_div");
+
+const storage = "Housekeeping";
 let tableAJAX;
 
 const unitMapping = {  // Since UNIT_ID is int in the DB we map it to its corresponding int
@@ -719,9 +721,6 @@ document.getElementById('addProductModal').addEventListener('submit', function (
 
     const selectedUnit = document.getElementById('I_Unit').value;
     const unitId = unitMapping[selectedUnit];
-    const storage = document.getElementById('E_Storage').value;
-    const category = (storage.includes("-"))? storage.split("-"): [storage, ""];
-
 
     const productData = {
         I_Product: document.getElementById('I_Product').value,
@@ -761,6 +760,17 @@ document.getElementById('addProductModal').addEventListener('submit', function (
             console.error("Error:", error);
             error_div.innerHTML = alertCard("An error occurred while adding the product.");
         });
+});
+
+document.getElementById('I_Unit').addEventListener('change', function () {
+    const quantityInput = document.getElementById('I_Quantity');
+    if (this.value === 'pieces') {
+        // Only integers allowed for "pieces"
+        quantityInput.step = 1;
+    } else {
+        // Allow floats for other units
+        quantityInput.step = 'any';
+    }
 });
 
 
