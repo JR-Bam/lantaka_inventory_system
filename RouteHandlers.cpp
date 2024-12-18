@@ -138,7 +138,7 @@ void RouteHandlers::newPassword(const Request& req, Response& res) {
         std::string new_password = req_json["new_password"];
 
         if (old_password == new_password) {
-            handle_success_api(res, "Old password same as new password.");
+            handle_error_api(res, "Old password same as new password.", StatusCode::Unauthorized_401);
             return;
         }
 
