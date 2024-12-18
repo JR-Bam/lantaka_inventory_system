@@ -109,7 +109,7 @@
                     showServerError('Role not found.');
                     break;
                 case 401:
-                    showServerError('Old password is wrong.');
+                    showServerError('Old password is wrong or is same with new password.');
                     break;
                 case 500:
                     showServerError('Something happened while updating your password. We apologize for this inconvenience');
