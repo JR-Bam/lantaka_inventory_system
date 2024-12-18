@@ -66,7 +66,40 @@ void RouteHandlers::logs(const Request& req, Response& res)
             return;
         }
 
-        std::string logHtmlContent = R"(<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Log Viewer</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container mt-5"><h1 class="text-center mb-4">Log Viewer</h1><div class="text-center mb-4"><button class="btn btn-primary" onclick="window.location.href = '/home';"> Back to Inventory</button></div><div class="table-responsive" style="max-height: 500px; overflow-y: auto;"><table class="table table-striped table-hover table-bordered"><thead class="table-primary"><tr></tr></thead><tbody id="logTableBody"><!-- Log lines will go here --></tbody></table></div></div></body></html>)";
+        std::string logHtmlContent = R"(<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Log Viewer</h1>
+        <div class="text-center mb-4">
+            <button class="btn btn-primary" onclick="window.location.href = '/home';">Back to Inventory</button>
+            <button class="btn btn-secondary" onclick="scrollToBottom();">Scroll to Bottom</button>
+        </div>
+        <div class="table-responsive" id="logContainer" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr></tr>
+                </thead>
+                <tbody id="logTableBody">
+                    <!-- Log lines will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function scrollToBottom() {
+            const logContainer = document.getElementById('logContainer');
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>)";
 
         std::string toFind = "<!-- Log lines will go here -->";
         std::stringstream rows;
