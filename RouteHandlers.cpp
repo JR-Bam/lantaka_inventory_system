@@ -102,7 +102,7 @@ void RouteHandlers::newPassword(const Request& req, Response& res) {
 
         std::string username = req_json["username"];
         std::string old_password = req_json["old_password"];
-        std::string new_password = req_json["new"];
+        std::string new_password = req_json["new_password"];
 
         if (old_password == new_password) {
             handle_success_api(res, "Old password same as new password.");
