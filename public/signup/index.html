@@ -7,47 +7,71 @@
     <title>ADZU Create User</title>
     <link rel="stylesheet" href="/signup/CSS_Signup.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/images/adzu_logo.png" type="image/x-icon">
     <link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <div class="signup-container">
-    <h2 class="text-center" style="font-family: 'Roboto slab', sans-serif;  font-size: 40px">Create New Account</h2>
+    <div class="d-flex align-items-center mb-3">
+        <h2 class="text-left my-2" style="font-family: 'Roboto slab', sans-serif;  font-size: 40px; flex: 2;">Change Password</h2>
+        <div style="flex: 1;">
+            <button class="btn btn-primary alata float-right" onclick="window.location.href = '/'">
+                <i class="fa-solid fa-arrow-left pr-2"></i>
+                Go Back
+            </button>
+        </div>
+    </div>
     <form id="signup-form">
 
         <div class="form-group">
             <div class="input-group" style="display: flex; gap: 5px;">
                 <div class="input-group-item" style="flex: 1;">
-                    <label for="firstname">First Name</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required>
-                </div>
-                <div class="input-group-item" style="flex: 1;">
-                    <label for="lastname">Last Name</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" required>
+                    <label for="role">Roles</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="employee">Employee</option>
+                        <option value="admin">Admin</option>
+                    </select>
                 </div>
             </div>
         </div>
-
+        
+        <div class="form-group" id="o_password-form-group">
+            <label for="password">Old Password</label>
+            <input type="password" class="form-control" id="o_password" name="password" placeholder="Old Password" required>
+        </div>
         <div class="form-group" id="password-form-group">
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-            <div class="invalid-feedback d-none alata" id="error_msg"></div>
         </div>
         <div class="form-group" id="c_password-form-group">
             <label for="password">Confirm Password</label>
             <input type="password" class="form-control" id="c_password" name="password" placeholder="Confirm Password" required>
+            <div class="invalid-feedback d-none alata" id="error_msg"></div>
         </div>
-        <button type="submit" class="btn btn-success btn-block alata">Register</button>
+        <button type="submit" class="btn btn-success btn-block alata">Confirm</button>
     </form>
-    <p class="alata text-center mt-3">Already have an account? <a href="/">Sign in.</a></p>
+    <div class="alert alert-success alert-dismissible alata d-none mt-4" id="success_div">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> Password has been updated.
+    </div>
+    <div class="alert alert-danger alert-dismissible alata d-none mt-4" id="error_div">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> <span id="error"></span>
+    </div>
 </div>
 </body>
 </html>
 
 <script>
     // TODO: Signup 
-    const fnamediv = document.getElementById('firstname');
-    const lnamediv = document.getElementById('lastname');
+    const rolediv = document.getElementById('role');
+    const oldpworddiv = document.getElementById('o_password');
     const pworddiv = document.getElementById('password');
     const cpwdiv = document.getElementById('c_password');
 
@@ -59,18 +83,17 @@
         if (pworddiv.value != cpwdiv.value) {
             pworddiv.classList.add('is-invalid');
             cpwdiv.classList.add('is-invalid');
-            showError("Passwords do not match. Try again.");
+            showError("Passwords do not match.");
             return;
         }
 
-        const username = `${fnamediv.value.trim()}@${lnamediv.value.trim()}`;
         const jsonData = {
-            "username": username,
-            "password": pworddiv.value,
-            "confirm_password": cpwdiv.value
+            "username": rolediv.value,
+            "old_password": oldpworddiv.value,
+            "new_password": pworddiv.value
         };
 
-        fetch('/api/signup', {
+        fetch('/api/new-pass', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,24 +101,41 @@
             body: JSON.stringify(jsonData)
         })
         .then(response => {
-            if (!response.ok){
-                throw "Something happened internally.";
-            } else {
-                return response.json();
+            switch (response.status) {
+                case 200:
+                    return response.json();
+                    break;
+                case 404:
+                    showServerError('Role not found.');
+                    break;
+                case 401:
+                    showServerError('Old password is wrong.');
+                    break;
+                case 500:
+                    showServerError('Something happened while updating your password. We apologize for this inconvenience');
+                    break;
+                default:
+                    console.log(`Unimplmented: ${response}`);
+                    break;
             }
+            throw "Not Success";
         })
         .then(data => {
             console.log(data);
-            window.location.href = "/?success=Successfully Created Account";
+            document.getElementById('success_div').classList.remove('d-none');
         })
         .catch(err => {
             console.error("Error:", err);
-            showError(err);
         });
     });
 
     function showError(msg){
         document.getElementById('error_msg').innerHTML = msg;
         document.getElementById('error_msg').classList.remove('d-none');
+    }
+
+    function showServerError(msg){
+        document.getElementById('error').innerHTML = msg;
+        document.getElementById('error_div').classList.remove('d-none');
     }
 </script>
