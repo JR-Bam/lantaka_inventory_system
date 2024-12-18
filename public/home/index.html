@@ -70,14 +70,16 @@
     
     <!-- Delete Modal -->
     <div id="deleteModal" class="modal" style="z-index: 100;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p class="alata">Are you sure you want to delete this product?</p>
-            <form method="post" action="">
-                <input type="hidden" id="deleteProductId" name="I_ID" value="">
-                <button type="submit" name="delete" class="btn btn-danger alata">Yes</button>
-                <button type="button" class="btn btn-light alata" onclick="closeModal()">No</button>
-            </form>
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="text-align: center;">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p class="alata">Are you sure you want to delete this product?</p>
+                <form method="post" action="">
+                    <input type="hidden" id="deleteProductId" name="I_ID" value="">
+                    <button type="submit" name="delete" class="btn btn-danger alata">Yes</button>
+                    <button type="button" class="btn btn-light alata" onclick="closeModal()">No</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -120,18 +122,64 @@
     
             <form id="addProductForm">
                 <input type="hidden" name="add_product" value="1">
-
-                <!-- Product Name Input -->
-                <div class="form-group">
-                    <label for="I_Product">Product Name</label>
-                    <input type="text" id="I_Product" name="I_Product" class="form-control" required>
-                </div>
-
-                <div class="form-row d-flex" style="gap: 10px;">
-                    <!-- Quantity Input -->
-                    <div class="form-group" style="flex: 1;">
-                        <label for="I_Quantity">Quantity</label>
-                        <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+    
+                <div class="form-row d-flex" style="gap: 20px;">
+                    <!-- Left Column -->
+                    <div style="flex: 3;">
+                        <!-- Product Name Input -->
+                        <div class="form-group">
+                            <label for="I_Product">Product Name</label>
+                            <input type="text" id="I_Product" name="I_Product" class="form-control" required>
+                        </div>
+    
+                        <!-- Quantity & Unit -->
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Quantity">Quantity</label>
+                                <input type="number" id="I_Quantity" name="I_Quantity" class="form-control" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Unit">Unit</label>
+                                <select id="I_Unit" name="I_Unit" class="form-control" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                    <option value="pieces">Pieces</option>
+                                    <option value="kg">Kg</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="meter">Meter</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="inches">Inches</option>
+                                    <option value="sets">Sets</option>
+                                    <option value="g">Grams</option>
+                                    <option value="ml">mL</option>
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <!-- Serial Number Input -->
+                        <div class="form-group">
+                            <label for="I_SN">Serial Number</label>
+                            <input type="text" id="I_SN" name="I_SN" class="form-control">
+                        </div>
+    
+                        <!-- Location & Status -->
+                        <div class="d-flex" style="gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Location">Location</label>
+                                <input type="text" id="I_Location" name="I_Location" class="form-control" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="I_Status">Status</label>
+                                <select id="I_Status" name="I_Status" class="form-control" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Stored">Stored</option>
+                                    <option value="For disposal">For disposal</option>
+                                    <option value="For repair">For repair</option>
+                                    <option value="Good condition / In use">Good condition / In use</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Unit Input -->
@@ -408,7 +456,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
             { data: "Storage_Subcategory", className: "alata" },    // Category
             { data: "Location", className: "alata"},                // Location
             { data: "Status", className: "alata"},                  // Status
-            { data: "Remarks", className: "alata"},                 // Remarks
+            {                                                       // Remarks
+                data: null,
+                render: function(data, type, row, meta) {
+                    return row.Remarks.replace(/\\n/g, ' ').replace(/\\"/g, '\"').replace(/\\'/g, "\'");
+                }, 
+                className: "alata"
+            },                 
             { data: "Date_Received", className: "alata d-none"},    // Date Received (HIDDEN)
             { data: "Date_Released", className: "alata d-none"},    // Date Released (HIDDEN)
             { data: "Released_To", className: "alata d-none"},      // Released To (HIDDEN)
@@ -419,25 +473,25 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         <div class="d-flex">
                             <button type="button" class="btn btn-info alata mr-2 text-sm"
                                 onclick="openInfoModal( 
-                                    '${row.Product_Name.replace(/'/g, "\\'").replace(/"/g, '\\"')}',  
+                                    '${row.Product_Name.replace(/'/g, "").replace(/"/g, '')}',   
                                     '${row.Date_Received}', 
                                     '${row.Date_Released}',
-                                    '${row.Released_To.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n')}')">
+                                    '${row.Released_To.replace(/'/g, "").replace(/"/g, '').replace(/\n/g, '\\n')}')">
                                 <i class="fa-solid fa-circle-info"></i>
                                 <span class="small">MoreInfo</span>
                             </button> 
                             <button type="button" class="btn btn-primary alata"
                                 onclick="openEditModal(${row.ID}, 
-                                    '${row.Product_Name.replace(/'/g, "\\'").replace(/"/g, '\\"')}', 
+                                    '${row.Product_Name.replace(/'/g, "").replace(/"/g, '')}', 
                                     ${row.Quantity}, 
-                                    '${row.Location.replace(/"/g, '\\"')}', 
-                                    '${row.Unit.name.toLowerCase().replace(/"/g, '\\"')}', 
-                                    '${row.Serial_Number.replace(/'/g, "\\'").replace(/"/g, '\\"')}', 
-                                    '${row.Status.replace(/"/g, '\\"')}',
-                                    '${row.Remarks.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n')}',
+                                    '${row.Location.replace(/"/g, '')}', 
+                                    '${row.Unit.name.toLowerCase().replace(/"/g, '')}', 
+                                    '${row.Serial_Number.replace(/'/g, "").replace(/"/g, '')}', 
+                                    '${row.Status.replace(/"/g, '')}',
+                                    '${row.Remarks.replace(/'/g, "").replace(/"/g, '').replace(/\n/g, '\\n')}',
                                     '${row.Date_Received}',
                                     '${row.Date_Released}',
-                                    '${row.Released_To.replace(/'/g, "\\'").replace(/"/g, '\\"')}',
+                                    '${row.Released_To.replace(/'/g, "").replace(/"/g, '')}',
                                     )">
                                 <i class="fa-regular fa-pen-to-square"></i> 
                                 Edit
@@ -696,8 +750,8 @@ document.getElementById('addProductModal').addEventListener('submit', function (
         I_Quantity: parseInt(document.getElementById('I_Quantity').value, 10),
         UNIT_ID: unitId,
         I_Location: document.getElementById('I_Location').value,
-        Storage_Category: category[0],
-        Storage_Subcategory: category[1],
+        Storage_Category: "Housekeeping",
+        Storage_Subcategory: "",
         Status: document.getElementById('I_Status').value,
         Remarks: document.getElementById('I_Remarks').value,
         Date_Received: document.getElementById('I_DateReceived').value,
@@ -752,16 +806,16 @@ document.getElementById('editModal').addEventListener('submit', function(event) 
     const changedEquipmentID = document.getElementById("editProductId").value;
 
     const changesMade = {
-        "I_Product": (selectedEquipment["I_Product"] === document.getElementById("editProductName").value)? null : document.getElementById("editProductName").value,
-        "I_SN": (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
-        "I_Quantity": (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseFloat(document.getElementById("editQuantity").value),
-        "UNIT_ID": (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
-        "I_Location": (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
-        "Status": (selectedEquipment["Status"] === document.getElementById("editStatus").value)? null : document.getElementById("editStatus").value,
-        "Remarks": (selectedEquipment["Remarks"] === document.getElementById("editRemarks").value)? null : document.getElementById("editRemarks").value,
-        "Date_Received": (selectedEquipment["Date_Received"] === document.getElementById("editDateReceived").value)? null : document.getElementById("editDateReceived").value,
-        "Date_Released": (selectedEquipment["Date_Released"] === document.getElementById("editDateReleased").value)? null : document.getElementById("editDateReleased").value,
-        "Released_To": (selectedEquipment["Released_To"] === document.getElementById("editReleasedTo").value)? null : document.getElementById("editReleasedTo").value
+        I_Product: (selectedEquipment["I_Product"] === document.getElementById("editProductName").value)? null : document.getElementById("editProductName").value,
+        I_SN: (selectedEquipment["I_SN"] === document.getElementById("editSerialNum").value)? null : document.getElementById("editSerialNum").value,
+        I_Quantity: (selectedEquipment["I_Quantity"] == document.getElementById("editQuantity").value)? null : parseFloat(document.getElementById("editQuantity").value),
+        UNIT_ID: (selectedEquipment["UNIT_ID"] === document.getElementById("editQuantityUnit").value)? null : unitMapping[document.getElementById("editQuantityUnit").value],
+        I_Location: (selectedEquipment["I_Location"] === document.getElementById("editLocation").value)? null : document.getElementById("editLocation").value,
+        Status: (selectedEquipment["Status"] === document.getElementById("editStatus").value)? null : document.getElementById("editStatus").value,
+        Remarks: (selectedEquipment["Remarks"] === document.getElementById("editRemarks").value)? null : document.getElementById("editRemarks").value,
+        Date_Received: (selectedEquipment["Date_Received"] === document.getElementById("editDateReceived").value)? null : document.getElementById("editDateReceived").value,
+        Date_Released: (selectedEquipment["Date_Released"] === document.getElementById("editDateReleased").value)? null : document.getElementById("editDateReleased").value,
+        Released_To: (selectedEquipment["Released_To"] === document.getElementById("editReleasedTo").value)? null : document.getElementById("editReleasedTo").value
     };
 
     console.log(changesMade);
