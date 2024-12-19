@@ -5,7 +5,7 @@
 // Change these accordingly
 namespace SQLConsts {
 	const std::string username = "user";
-	const std::string password = "";
+	const std::string password = "prodeoetpatria";
 	const std::string dbName = "lantaka_ims";
 }
 
